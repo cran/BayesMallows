@@ -1,4 +1,5 @@
 #include "RcppArmadillo.h"
+#include <cmath>
 #include "misc.h"
 
 
@@ -27,7 +28,7 @@ arma::vec get_summation_distances(int n, arma::vec cardinalities,
 
     if(n > 50) Rcpp::stop("n > 50 currently not supported for footrule");
 
-    int max = floor(pow(n, 2) / 2.0);
+    int max = std::floor(std::pow(static_cast<double>(n), 2) / 2.0);
     // Sequence from 0 to max with increment 1
     distances = arma::linspace(0, max, max + 1);
 
@@ -106,7 +107,7 @@ double get_rank_distance(arma::vec r1, arma::vec r2, std::string metric = "footr
   } else if (metric == "spearman") {
 
     // Spearman distance is the sum of squares
-    distance = pow(arma::norm(r1 - r2, 2), 2.0);
+    distance = std::pow(arma::norm(r1 - r2, 2), 2.0);
 
   } else {
     Rcpp::stop("Inadmissible value of metric.");
@@ -123,7 +124,7 @@ double rank_dist_matrix(const arma::mat& rankings, const arma::vec& rho, std::st
   double total_distance = 0;
 
   for(int i = 0; i < N; ++i){
-    total_distance += get_rank_distance(rankings.col(i), rho, metric = metric);
+    total_distance += get_rank_distance(rankings.col(i), rho, metric);
   }
 
   return total_distance;

@@ -308,10 +308,10 @@ knitr::kable(head(sushi_rankings), caption = "First 6 rows of example dataset `s
 model_fit1 <- compute_mallows(sushi_rankings, nmc = 1000, include_wcd = TRUE)
 model_fit2 <- compute_mallows(sushi_rankings, n_clusters = 2, nmc = 1000)
 
-## ------------------------------------------------------------------------
+## ---- fig.width=6--------------------------------------------------------
 assess_convergence(model_fit2)
 
-## ------------------------------------------------------------------------
+## ---- fig.width=6--------------------------------------------------------
 assess_convergence(model_fit2, type = "cluster_probs")
 
 ## ------------------------------------------------------------------------
@@ -347,18 +347,18 @@ models <- compute_mallows_mixtures(n_clusters = n_clusters,
                                    aug_thinning = nmc - 1
                                    )
 
-## ------------------------------------------------------------------------
+## ---- fig.width=6--------------------------------------------------------
 plot_elbow(models, burnin = 1000)
 
-## ------------------------------------------------------------------------
+## ---- fig.width=6--------------------------------------------------------
 model <- compute_mallows(rankings = sushi_rankings, nmc = nmc, n_clusters = 5)
 
-## ------------------------------------------------------------------------
+## ---- fig.width=6--------------------------------------------------------
 plot(model, burnin = 1000, type = "cluster_assignment")
 
 ## ------------------------------------------------------------------------
 cluster_assignment <- assign_cluster(model, burnin = 1000, soft = FALSE)
 
 ## ---- echo=FALSE, results='asis'-----------------------------------------
-knitr::kable(cluster_assignment, caption = "The first few rows of `cluster_assignment`.")
+knitr::kable(head(cluster_assignment), caption = "The first few rows of `cluster_assignment`.")
 

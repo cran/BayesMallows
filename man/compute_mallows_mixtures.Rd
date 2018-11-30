@@ -13,7 +13,8 @@ to use.}
 \item{...}{Other named arguments, passed to \code{\link{compute_mallows}}.}
 }
 \value{
-A list of Mallows model, one for each number of mixtures that
+A list of Mallows models of class \code{BayesMallowsMixtures}, with one element
+for each number of mixtures that
 was computed. This object can be studied with \code{\link{plot_elbow}}.
 }
 \description{
@@ -21,18 +22,15 @@ Convenience function for computing Mallows models with varying
 numbers of mixtures. This is useful for deciding the number of
 mixtures to use in the final model.
 }
-\details{
-\code{compute_mallows_mixtures} always sets \code{include_wcd = TRUE}
-in the code to \code{\link{compute_mallows}}, since the purpose of this
-function is to create an elbow plot with \code{\link{plot_elbow}}.
-}
 \examples{
 # DETERMINING THE NUMBER OF CLUSTERS IN THE SUSHI EXAMPLE DATA
 \dontrun{
   # Let us look at any number of clusters from 1 to 10
   # We use the convenience function compute_mallows_mixtures
   n_clusters <- seq(from = 1, to = 10)
-  models <- compute_mallows_mixtures(n_clusters = n_clusters, rankings = sushi_rankings)
+  models <- compute_mallows_mixtures(n_clusters = n_clusters,
+                                     rankings = sushi_rankings,
+                                     include_wcd = TRUE)
   # models is a list in which each element is an object of class BayesMallows,
   # returned from compute_mallows
   # We can create an elbow plot
@@ -41,8 +39,9 @@ function is to create an elbow plot with \code{\link{plot_elbow}}.
   # an "elbow", e.g., n_clusters = 5.
 
   # Having chosen the number of clusters, we can now study the final model
-  # Extract the model with 5 clusters
-  mixture_model <- models[[5]]
+  # Rerun with 5 clusters, now setting save_clus = TRUE to get cluster assignments
+  mixture_model <- compute_mallows(rankings = sushi_rankings, n_clusters = 5,
+                                   include_wcd = TRUE, save_clus = TRUE)
   # Delete the models object to free some memory
   rm(models)
   # Set the burnin
@@ -53,20 +52,20 @@ function is to create an elbow plot with \code{\link{plot_elbow}}.
   compute_posterior_intervals(mixture_model,
                               parameter = "alpha")
   # Plot the posterior distributions of cluster probabilities
-  plot(mixture_model, type = "cluster_probs")
+  plot(mixture_model, parameter = "cluster_probs")
   # Plot the posterior probability of cluster assignment
-  plot(mixture_model, type = "cluster_assignment")
+  plot(mixture_model, parameter = "cluster_assignment")
   # Plot the posterior distribution of "tuna roll" in each cluster
-  plot(mixture_model, type = "rho", items = "tuna roll")
+  plot(mixture_model, parameter = "rho", items = "tuna roll")
   # Compute the cluster-wise CP consensus, and show one column per cluster
-  cp <- compute_cp_consensus(mixture_model)
+  cp <- compute_consensus(mixture_model, type = "CP")
   library(dplyr)
   library(tidyr)
   cp \%>\%
     select(-cumprob) \%>\%
     spread(key = cluster, value = item)
   # Compute the MAP consensus, and show one column per cluster
-  map <- compute_map_consensus(mixture_model)
+  map <- compute_consensus(mixture_model, type = "MAP")
   map \%>\%
     select(-probability) \%>\%
     spread(key = cluster, value = item)

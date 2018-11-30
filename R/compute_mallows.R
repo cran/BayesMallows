@@ -30,7 +30,7 @@
 #'
 #' @param metric A character string specifying the distance metric to use in the
 #'   Bayesian Mallows Model. Available options are \code{"footrule"},
-#'   \code{"spearman"}, \code{"kendall"}, and \code{"cayley"}. The distance
+#'   \code{"spearman"}, \code{"kendall"}, \code{"cayley"}, and \code{"hamming"}. The distance
 #'   given by \code{metric} is also used to compute within-cluster distances,
 #'   when \code{include_wcd = TRUE}.
 #'
@@ -40,11 +40,16 @@
 #'   convenience function for computing several models with varying numbers of
 #'   mixtures.
 #'
-#' @param cluster_assignment_thinning Integer specifying the thinning to be
-#'   applied to the cluster assignments. Defaults to \code{1L}.
+#'
+#' @param save_clus Logical specifying whether or not to save cluster
+#' assignments. Defaults to \code{FALSE}.
+#'
+#' @param clus_thin Integer specifying the thinning to be
+#'   applied to the cluster assignments. Defaults to \code{1L}. Not used
+#'   when \code{save_clus = FALSE}.
 #'
 #' @param nmc Integer specifying the number of iteration of the
-#'   Metropolis-Hastings algorithm. Defaults to \code{2000L}. See
+#'   Metropolis-Hastings algorithm to run. Defaults to \code{2000L}. See
 #'   \code{\link{assess_convergence}} for tools to check convergence of the
 #'   Markov chain.
 #'
@@ -77,9 +82,9 @@
 #'   parameters like augmented ranks \eqn{\tilde{R}} or cluster assignments
 #'   \eqn{z}. Setting \code{alpha_jump} to a high number can speed up
 #'   computation time, by reducing the number of times the partition function
-#'   for the Mallows model needs to be computed.
+#'   for the Mallows model needs to be computed. Defaults to \code{1L}.
 #'
-#' @param lambda Numeric value specifying the rate parameter of the exponential
+#' @param lambda Strictly positive numeric value specifying the rate parameter of the exponential
 #'   prior distribution of \eqn{\alpha}, \eqn{\pi(\alpha) = \lambda
 #'   \exp{(-\lambda \alpha)}}. Defaults to \code{0.1}. When \code{n_cluster >
 #'   1}, each mixture component \eqn{\alpha_{c}} has the same prior
@@ -92,12 +97,12 @@
 #'   argument is not used.
 #'
 #' @param include_wcd Logical indicating whether to store the within-cluster
-#'   distances computing during the Metropolis-Hastings algorithm. Defaults to
+#'   distances computed during the Metropolis-Hastings algorithm. Defaults to
 #'   \code{TRUE} if \code{n_clusters > 1} and otherwise \code{FALSE}. Setting
 #'   \code{include_wcd = TRUE} is useful when deciding the number of mixture
 #'   components to include, and is required by \code{\link{plot_elbow}}.
 #'
-#' @param save_augmented_data Logical specifying whether or not to save the
+#' @param save_aug Logical specifying whether or not to save the
 #'   augmented rankings every \code{aug_thinning}th iteration, for the case of
 #'   missing data or pairwise preferences. Defaults to \code{FALSE}. Saving
 #'   augmented data is useful for predicting the rankings each assessor would
@@ -105,7 +110,7 @@
 #'   \code{\link{plot_top_k}}.
 #'
 #' @param aug_thinning Integer specifying the thinning for saving augmented
-#'   data. Only used when \code{save_augmented_data = TRUE}. Defaults to 1L.
+#'   data. Only used when \code{save_aug = TRUE}. Defaults to \code{1L}.
 #'
 #' @param logz_estimate Estimate of the partition function, computed with
 #'   \code{\link{estimate_partition_function}}. Be aware that when using an
@@ -122,7 +127,7 @@
 #'
 #' @param verbose Logical specifying whether to print out the progress of the
 #'   Metropolis-Hastings algorithm. If \code{TRUE}, a notification is printed
-#'   every 1000th iteration.
+#'   every 1000th iteration. Defaults to \code{FALSE}.
 #'
 #' @param validate_rankings Logical specifying whether the rankings provided (or
 #'   generated from \code{preferences}) should be validated. Defaults to
@@ -161,9 +166,10 @@ compute_mallows <- function(rankings = NULL,
                             preferences = NULL,
                             metric = "footrule",
                             n_clusters = 1L,
-                            cluster_assignment_thinning = 1L,
+                            save_clus = FALSE,
+                            clus_thin = 1L,
                             nmc = 2000L,
-                            leap_size = floor(n_items / 5),
+                            leap_size = max(1L, floor(n_items / 5)),
                             rho_init = NULL,
                             rho_thinning = 1L,
                             alpha_prop_sd = 0.1,
@@ -172,7 +178,7 @@ compute_mallows <- function(rankings = NULL,
                             lambda = 0.001,
                             psi = 10L,
                             include_wcd = (n_clusters > 1),
-                            save_augmented_data = FALSE,
+                            save_aug = FALSE,
                             aug_thinning = 1L,
                             logz_estimate = NULL,
                             verbose = FALSE,
@@ -182,15 +188,30 @@ compute_mallows <- function(rankings = NULL,
                             ){
 
   # Check that at most one of rankings and preferences is set
-  stopifnot(!is.null(rankings) || !is.null(preferences))
-
-  if(!is.null(rho_init)) {
-    stopifnot(validate_permutation(rho_init) && (sum(is.na(rho_init)) == 0))
+  if(is.null(rankings) && is.null(preferences)){
+    stop("Either rankings or preferences (or both) must be provided.")
   }
+
+  if(nmc <= 0) stop("nmc must be strictly positive")
+
+  # Check that we do not jump over all alphas
+  if(alpha_jump >= nmc) stop("alpha_jump must be strictly smaller than nmc")
+
+  # Check that we do not jump over all rhos
+  if(rho_thinning >= nmc) stop("rho_thinning must be strictly smaller than nmc")
+  if(aug_thinning >= nmc) stop("aug_thinning must be strictly smaller than nmc")
+
+  if(lambda <= 0) stop("exponential rate parameter lambda must be strictly positive")
+
+  # Check that all rows of rankings are proper permutations
+  if(!is.null(rankings) && validate_rankings && !all(apply(rankings, 1, validate_permutation))){
+    stop("invalid permutations provided in rankings matrix")
+  }
+
 
   # Deal with pairwise comparisons. Generate rankings compatible with them.
   if(!is.null(preferences)){
-    if(!("BayesMallowsTC" %in% class(preferences))){
+    if(!inherits(preferences, "BayesMallowsTC")){
       message("Generating transitive closure of preferences.")
       preferences <- generate_transitive_closure(preferences)
     }
@@ -200,20 +221,27 @@ compute_mallows <- function(rankings = NULL,
     }
   }
 
-  # Check that all rows of rankings are proper permutations
-  if(validate_rankings && !all(apply(rankings, 1, validate_permutation))){
-    stop("Not valid permutation.")
-  }
-
-  # Check that we do not jump over all alphas
-  stopifnot(alpha_jump < nmc)
-
-  # Check that we do not jump over all rhos
-  stopifnot(rho_thinning < nmc && aug_thinning < nmc)
-
   # Find the number of items
   n_items <- ncol(rankings)
 
+  # If any row of rankings has only one missing value, replace it with the implied ranking
+  if(any(is.na(rankings))){
+    dn <- dimnames(rankings)
+    rankings <- purrr::map(purrr::array_branch(rankings, margin = 1),
+                           function(x) {
+                             if(sum(is.na(x)) == 1) x[is.na(x)] <- setdiff(1:length(x), x)
+                             return(x)
+                           })
+    rankings <- t(matrix(unlist(rankings), nrow = n_items))
+    dimnames(rankings) <- dn
+  }
+
+
+  if(!is.null(rho_init)) {
+    if(!validate_permutation(rho_init)) stop("rho_init must be a proper permutation")
+    if(!(sum(is.na(rho_init)) == 0)) stop("rho_init cannot have missing values")
+    if(length(rho_init) != n_items) stop("rho_init must have the same number of items as implied by rankings or preferences")
+  }
 
   # Generate the constraint set
   if(!is.null(preferences) && is.null(constraints)){
@@ -222,41 +250,41 @@ compute_mallows <- function(rankings = NULL,
     constraints <- list()
   }
 
-
-  # Set leap_size if it is not alredy set.
-  #if(is.null(leap_size)) leap_size <- floor(n_items / 5)
-
   # Extract the right sequence of cardinalities, if relevant
   if(!is.null(logz_estimate)){
     cardinalities <- NULL
     message("Using user-provided importance sampling estimate of partition function.")
   } else if(metric %in% c("footrule", "spearman")){
     # Extract the relevant rows from partition_function_data
-    # Note that we need to evaluate the right-hand side, in particular metric,
-    # to avoid confusion with columns of the tibble
     relevant_params <- dplyr::filter(partition_function_data,
                                      .data$n_items == !!n_items,
                                      .data$metric == !!metric
     )
 
     type <- dplyr::pull(relevant_params, type)
+    message(dplyr::pull(relevant_params, message))
 
     if((length(type) == 0) || !(type %in% c("cardinalities", "importance_sampling"))){
       stop("Precomputed partition function not available yet. Consider computing one
            with the function estimate_partition_function(), and provide it
            in the logz_estimate argument to compute_mallows().")
-    } else {
+    } else if(type == "cardinalities") {
       cardinalities <- unlist(relevant_params$values)
       logz_estimate <- NULL
+    } else if(type == "importance_sampling") {
+      cardinalities <- NULL
+      logz_estimate <- unlist(relevant_params$values)
     }
 
-  } else if (metric %in% c("cayley", "kendall")) {
+  } else if (metric %in% c("cayley", "hamming", "kendall")) {
     cardinalities <- NULL
     logz_estimate <- NULL
+    message("Using exact partition function")
   } else {
     stop(paste("Unknown metric", metric))
   }
 
+  if(!save_clus) clus_thin <- nmc
 
   # Transpose rankings to get samples along columns, since we typically want
   # to extract one sample at a time. armadillo is column major, just like rankings
@@ -276,8 +304,8 @@ compute_mallows <- function(rankings = NULL,
                   alpha_jump = alpha_jump,
                   rho_thinning = rho_thinning,
                   aug_thinning = aug_thinning,
-                  cluster_assignment_thinning = cluster_assignment_thinning,
-                  save_augmented_data = save_augmented_data,
+                  clus_thin = clus_thin,
+                  save_aug = save_aug,
                   verbose = verbose
                   )
 
@@ -297,7 +325,8 @@ compute_mallows <- function(rankings = NULL,
   fit$leap_size <- leap_size
   fit$alpha_prop_sd <- alpha_prop_sd
   fit$include_wcd <- include_wcd
-  fit$save_augmented_data <- save_augmented_data
+  fit$save_aug <- save_aug
+  fit$save_clus <- save_clus
 
   # Add names of item
   if(!is.null(colnames(rankings))) {
@@ -307,7 +336,8 @@ compute_mallows <- function(rankings = NULL,
   }
 
   # Tidy MCMC results
-  if(!skip_postprocessing) fit <- tidy_mcmc(fit)
+  if(!skip_postprocessing) fit <- tidy_mcmc(fit, tidy_cluster_assignment = save_clus)
+
 
   # Add class attribute
   class(fit) <- "BayesMallows"

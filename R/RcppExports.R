@@ -7,7 +7,7 @@
 #' @param n The number of items.
 #' @param cardinalities Number of times each distance appears.
 #' @param metric A string. Available options are \code{"footrule"},
-#' \code{"kendall"}, and \code{"spearman"}. Defaults to \code{"footrule"}.
+#' and \code{"spearman"}. Defaults to \code{"footrule"}.
 #' @return A scalar, the logarithm of the partition function.
 #' @keywords internal
 #'
@@ -20,7 +20,8 @@ get_summation_distances <- function(n, cardinalities, metric = "footrule") {
 #' @param r1 A vector of ranks.
 #' @param r2 A vector of ranks.
 #' @param metric A string. Available options are \code{"footrule"},
-#' \code{"kendall"}, \code{"cayley"}, \code{"hamming"} and \code{"spearman"}. Defaults to \code{"footrule"}.
+#' \code{"kendall"}, \code{"cayley"}, \code{"hamming"}, and \code{"spearman"}.
+#' Defaults to \code{"footrule"}.
 #' @return A scalar.
 #' @details Note that the Spearman distance is the squared L2 norm, whereas
 #' the footrule distance is the L1 norm.
@@ -110,8 +111,9 @@ asymptotic_partition_function <- function(alpha_vector, n_items, metric, K, n_it
 #' between each time a random rank vector is sampled.
 #' @param leap_size Integer specifying the step size of the leap-and-shift proposal distribution.
 #' @param metric Character string specifying the distance measure to use. Available
-#' options are \code{"footrule"} (default), \code{"spearman"}, \code{"cayley"}, and
-#' \code{"kendall"}. For sampling from the Mallows model with Cayley and Kendall distances
+#' options are \code{"footrule"} (default), \code{"spearman"}, \code{"cayley"}, \code{"hamming"}, and
+#' \code{"kendall"}. For sampling from the Mallows model with Cayley, Hamming, Kendall,
+#' and Ulam distances
 #' the \code{PerMallows} package \insertCite{irurozki2016}{BayesMallows} can also be used.
 #'
 #' @keywords internal
@@ -150,15 +152,15 @@ rmallows <- function(rho0, alpha0, n_samples, burnin, thinning, leap_size = 1L, 
 #' @param rho_thinning Thinning parameter. Keep only every \code{rho_thinning} rank
 #' sample from the posterior distribution.
 #' @param aug_thinning Integer specifying the thinning for data augmentation.
-#' @param cluster_assignment_thinning Integer specifying the thinning for saving cluster assignments.
-#' @param save_augmented_data Whether or not to save the augmented data every
+#' @param clus_thin Integer specifying the thinning for saving cluster assignments.
+#' @param save_aug Whether or not to save the augmented data every
 #' \code{aug_thinning}th iteration.
 #' @param verbose Logical specifying whether to print out the progress of the
 #' Metropolis-Hastings algorithm. If \code{TRUE}, a notification is printed every
 #' 1000th iteration.
 #' @keywords internal
 #'
-run_mcmc <- function(rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric = "footrule", n_clusters = 1L, include_wcd = FALSE, leap_size = 1L, alpha_prop_sd = 0.5, alpha_init = 5, alpha_jump = 1L, lambda = 0.1, psi = 10L, rho_thinning = 1L, aug_thinning = 1L, cluster_assignment_thinning = 1L, save_augmented_data = FALSE, verbose = FALSE) {
-    .Call(`_BayesMallows_run_mcmc`, rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric, n_clusters, include_wcd, leap_size, alpha_prop_sd, alpha_init, alpha_jump, lambda, psi, rho_thinning, aug_thinning, cluster_assignment_thinning, save_augmented_data, verbose)
+run_mcmc <- function(rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric = "footrule", n_clusters = 1L, include_wcd = FALSE, leap_size = 1L, alpha_prop_sd = 0.5, alpha_init = 5, alpha_jump = 1L, lambda = 0.1, psi = 10L, rho_thinning = 1L, aug_thinning = 1L, clus_thin = 1L, save_aug = FALSE, verbose = FALSE) {
+    .Call(`_BayesMallows_run_mcmc`, rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric, n_clusters, include_wcd, leap_size, alpha_prop_sd, alpha_init, alpha_jump, lambda, psi, rho_thinning, aug_thinning, clus_thin, save_aug, verbose)
 }
 

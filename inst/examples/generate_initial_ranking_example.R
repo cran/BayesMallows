@@ -19,12 +19,12 @@ head(beach_init)
   model_fit <- compute_mallows(rankings = beach_init,
                                preferences = beach_tc,
                                nmc = 2000,
-                               save_augmented_data = TRUE)
+                               save_aug = TRUE)
 
   # We can study the acceptance rate of the augmented rankings
-  assess_convergence(model_fit, type = "Rtilde")
+  assess_convergence(model_fit, parameter = "Rtilde")
 
   # We can also study the posterior distribution of the consensus rank of each beach
   model_fit$burnin <- 500
-  plot(model_fit, type = "rho", items = 1:15)
+  plot(model_fit, parameter = "rho", items = 1:15)
 }

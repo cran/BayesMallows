@@ -27,7 +27,7 @@ model_fit <- compute_mallows(potato_visual)
 assess_convergence(model_fit)
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(model_fit, type = "rho", items = 1:5)
+assess_convergence(model_fit, parameter = "rho", items = 1:5)
 
 ## ------------------------------------------------------------------------
 model_fit$burnin <- 1000
@@ -42,7 +42,7 @@ intervals <- compute_posterior_intervals(model_fit, parameter = "alpha")
 knitr::kable(intervals)
 
 ## ---- fig.width=6, fig.height=6------------------------------------------
-plot(model_fit, type = "rho", items = 1:20)
+plot(model_fit, parameter = "rho", items = 1:20)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  compute_posterior_intervals(model_fit, parameter = "rho")
@@ -54,7 +54,7 @@ knitr::kable(compute_posterior_intervals(model_fit, parameter = "rho"))
 model_fit <- compute_mallows(potato_visual, alpha_jump = 10)
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(model_fit, type = "alpha")
+assess_convergence(model_fit, parameter = "alpha")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  model_fit <- compute_mallows(potato_visual, alpha_jump = 10, rho_thinning = 2)
@@ -79,7 +79,7 @@ potato_top <- potato_top[, item_ranked, drop = FALSE]
 knitr::kable(potato_top, caption = "Example dataset `potato_top`.")
 
 ## ------------------------------------------------------------------------
-model_fit <- compute_mallows(potato_top, save_augmented_data = TRUE)
+model_fit <- compute_mallows(potato_top, save_aug = TRUE)
 
 ## ------------------------------------------------------------------------
 model_fit$any_missing
@@ -91,11 +91,11 @@ model_fit$any_missing
 knitr::kable(model_fit$aug_acceptance, digits = 2)
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(model_fit, type = "Rtilde", assessors = 1, 
+assess_convergence(model_fit, parameter = "Rtilde", assessors = 1, 
                    items = "P14")
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  assess_convergence(model_fit, type = "Rtilde", assessors = 1,
+#  assess_convergence(model_fit, parameter = "Rtilde", assessors = 1,
 #                     items = c("P7", "P9", "P10", "P12", "P13"))
 
 ## ---- eval=FALSE---------------------------------------------------------
@@ -119,7 +119,7 @@ model_fit <- compute_mallows(potato_missing)
 #  assess_convergence(model_fit)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  assess_convergence(model_fit, type = "rho", items = 1:6)
+#  assess_convergence(model_fit, parameter = "rho", items = 1:6)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  bind_cols(model_fit$aug_acceptance,
@@ -180,7 +180,7 @@ colnames(beach_init_rank) <- paste0("B", seq(from = 1, to = ncol(beach_init_rank
 test_run <- compute_mallows(
   rankings = beach_init_rank, 
   preferences = beach_tc,
-  save_augmented_data = TRUE
+  save_aug = TRUE
   )
 
 ## ---- eval=FALSE---------------------------------------------------------
@@ -193,7 +193,7 @@ beach_tc %>%
   knitr::kable()
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 1, items = c(2, 6, 15))
 
 ## ------------------------------------------------------------------------
@@ -202,7 +202,7 @@ beach_tc %>%
   nrow()
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 1, items = c(2, 4))
 
 ## ------------------------------------------------------------------------
@@ -211,7 +211,7 @@ beach_tc %>%
   nrow()
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 1, items = c(5, 8))
 
 ## ---- eval=FALSE---------------------------------------------------------
@@ -224,7 +224,7 @@ beach_tc %>%
   knitr::kable()
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 2, items = c(5, 7, 10))
 
 ## ------------------------------------------------------------------------
@@ -233,7 +233,7 @@ beach_tc %>%
   nrow()
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 2, items = c(1, 15))
 
 ## ------------------------------------------------------------------------
@@ -244,22 +244,22 @@ model_fit <- compute_mallows(
   rankings = beach_init_rank, 
   preferences = beach_tc,
   nmc = 6000,
-  save_augmented_data = TRUE
+  save_aug = TRUE
   )
 
 model_fit$burnin <- 1000
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  compute_cp_consensus(model_fit)
+#  compute_consensus(model_fit, type = "CP")
 
 ## ---- results='asis', echo=FALSE-----------------------------------------
-knitr::kable(compute_cp_consensus(model_fit), digits = 2)
+knitr::kable(compute_consensus(model_fit, type = "CP"), digits = 2)
 
 ## ---- eval=FALSE---------------------------------------------------------
-#  compute_map_consensus(model_fit)
+#  compute_consensus(model_fit, type = "MAP")
 
 ## ---- results='asis', echo=FALSE-----------------------------------------
-knitr::kable(compute_map_consensus(model_fit), digits = 2)
+knitr::kable(compute_consensus(model_fit, type = "MAP"), digits = 2)
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  compute_posterior_intervals(model_fit, parameter = "rho")
@@ -293,10 +293,10 @@ model_fit <- compute_mallows(
 assess_convergence(model_fit)
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(model_fit, type = "rho", items = c(8, 12))
+assess_convergence(model_fit, parameter = "rho", items = c(8, 12))
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(model_fit, type = "cluster_probs")
+assess_convergence(model_fit, parameter = "cluster_probs")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  sushi_rankings
@@ -305,21 +305,21 @@ assess_convergence(model_fit, type = "cluster_probs")
 knitr::kable(head(sushi_rankings), caption = "First 6 rows of example dataset `sushi_rankings`.")
 
 ## ------------------------------------------------------------------------
-model_fit1 <- compute_mallows(sushi_rankings, nmc = 1000, include_wcd = TRUE)
-model_fit2 <- compute_mallows(sushi_rankings, n_clusters = 2, nmc = 1000)
+model_fit1 <- compute_mallows(sushi_rankings, nmc = 1000, include_wcd = TRUE, save_clus = TRUE)
+model_fit2 <- compute_mallows(sushi_rankings, n_clusters = 2, nmc = 1000, save_clus = TRUE)
 
 ## ---- fig.width=6--------------------------------------------------------
 assess_convergence(model_fit2)
 
 ## ---- fig.width=6--------------------------------------------------------
-assess_convergence(model_fit2, type = "cluster_probs")
+assess_convergence(model_fit2, parameter = "cluster_probs")
 
 ## ------------------------------------------------------------------------
 model_fit1$burnin <- 400
 model_fit2$burnin <- 400
 
 ## ------------------------------------------------------------------------
-cp_consensus_sushi <- compute_cp_consensus(model_fit2)
+cp_consensus_sushi <- compute_consensus(model_fit2, type = "CP")
 
 ## ---- eval=FALSE---------------------------------------------------------
 #  filter(cp_consensus_sushi, cluster == "Cluster 1")
@@ -342,19 +342,19 @@ nmc <- 2000
 models <- compute_mallows_mixtures(n_clusters = n_clusters, 
                                    rankings = sushi_rankings,
                                    nmc = nmc, 
-                                   cluster_assignment_thinning = nmc - 1,
                                    rho_thinning = nmc - 1,
-                                   aug_thinning = nmc - 1
+                                   aug_thinning = nmc - 1,
+                                   include_wcd = TRUE
                                    )
 
 ## ---- fig.width=6--------------------------------------------------------
 plot_elbow(models, burnin = 1000)
 
 ## ---- fig.width=6--------------------------------------------------------
-model <- compute_mallows(rankings = sushi_rankings, nmc = nmc, n_clusters = 5)
+model <- compute_mallows(rankings = sushi_rankings, nmc = nmc, n_clusters = 5, save_clus = TRUE)
 
 ## ---- fig.width=6--------------------------------------------------------
-plot(model, burnin = 1000, type = "cluster_assignment")
+plot(model, burnin = 1000, parameter = "cluster_assignment")
 
 ## ------------------------------------------------------------------------
 cluster_assignment <- assign_cluster(model, burnin = 1000, soft = FALSE)

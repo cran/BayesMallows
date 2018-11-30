@@ -42,13 +42,10 @@ Internal Function for Tidying MCMC Output
 # dataset is very large, it may be useful to skip the postprocessing. We
 # demonstrate it here with the example dataset potato_visual (which is not
 # large).
-# Define a vector the number of clusters to try
-n_clusters <- 1:10
 # Use the map function from purrr to compute a model for each number of clusters
-library(purrr)
-models <- n_clusters \%>\%
-  map(~ compute_mallows(potato_visual, n_clusters = .x,
-                        include_wcd = TRUE, skip_postprocessing = TRUE))
+models <- compute_mallows_mixtures(n_clusters = 1:10, rankings = potato_visual,
+                                   include_wcd = TRUE, save_clus = TRUE,
+                                   skip_postprocessing = TRUE)
 
 # Let us look at the within-cluster distances for one of the models
 # In this case, it is a 5 times 2000 matrix with the values from MCMC,
@@ -56,27 +53,32 @@ models <- n_clusters \%>\%
 str(models[[5]]$within_cluster_distance)
 
 # Since we skipped postprocessing, the following will fail:
-\dontrun{plot_elbow(models, burnin = 500)}
+\dontrun{
+  plot_elbow(models, burnin = 500)
 
-# We now tidy the within-cluster distances, which is what is used by
-# plot_elbow
-tidy_models <- models \%>\%
-  map(~ tidy_mcmc(.x,
-                  tidy_rho = FALSE,
-                  tidy_alpha = FALSE,
-                  tidy_cluster_assignment = FALSE,
-                  tidy_cluster_probabilities = FALSE,
-                  tidy_wcd = TRUE,
-                  tidy_augmented_data = TRUE,
-                  tidy_augmentation_acceptance = TRUE)
-      )
+  # We now tidy the within-cluster distances, which is what is used by
+  # plot_elbow
+  library(dplyr)
+  library(tidyr)
+  library(purrr)
+  tidy_models <- models \%>\%
+    map(~ tidy_mcmc(.x,
+                    tidy_rho = FALSE,
+                    tidy_alpha = FALSE,
+                    tidy_cluster_assignment = FALSE,
+                    tidy_cluster_probabilities = FALSE,
+                    tidy_wcd = TRUE,
+                    tidy_augmented_data = TRUE,
+                    tidy_augmentation_acceptance = TRUE)
+        )
 
-# Let us again look at the within-cluster distances
-# It is a dataframe in "tidy" format.
-str(tidy_models[[5]]$within_cluster_distance)
-tidy_models[[5]]$within_cluster_distance
+  # Let us again look at the within-cluster distances
+  # It is a dataframe in "tidy" format.
+  str(tidy_models[[5]]$within_cluster_distance)
+  tidy_models[[5]]$within_cluster_distance
 
-# We can now call plot_elbow
-plot_elbow(tidy_models, burnin = 500)
+  # We can now call plot_elbow
+  plot_elbow(tidy_models, burnin = 500)
+}
 }
 \keyword{internal}

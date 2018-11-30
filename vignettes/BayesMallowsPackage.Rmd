@@ -6,6 +6,7 @@ bibliography: ../inst/REFERENCES.bib
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{BayesMallows Package}
+  
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -18,13 +19,7 @@ knitr::opts_chunk$set(
 set.seed(232312)
 ```
 
-The `BayesMallows` package implements methods for Bayesian preference learning with the Mallows rank model, as originally described in @vitelli2018, and further developed in @asfaw2016 and @crispino2018. This vignette describes the usage of the package, starting from the complete data cases, through top-$k$ rankings, pairwise comparisons, and finally clustering. We refer to the above mentioned papers, as well as the review @liu2018 for a thorough description of the methods. The necessary methods for data preprocessing, tuning of algorithms, and assessment of the posterior distributions will be described along the way. For ways to compute the partition function of the Mallows rank model with various distance measures, please see the separate vignette.
-
-
-
-## Mixture of Mallows Models
-
-
+The `BayesMallows` package implements methods for Bayesian preference learning with the Mallows rank model, as originally described in @vitelli2018, and further developed in @asfaw2016 and @crispino2018. This vignette describes the usage of the package, starting from the complete data cases, through top-$k$ rankings, pairwise comparisons, and finally clustering. We refer to the above mentioned papers, as well as the review @liu2018 for a thorough description of the methods. The necessary methods for data preprocessing, tuning of algorithms, and assessment of the posterior distributions will be described along the way.
 
 ```{r, message=FALSE}
 library(BayesMallows)
@@ -42,7 +37,7 @@ library(tidyr)
 
 ## Functions
 
-Here is an overview of the most used function. You can read their documentation with `?function_name`, or search for an example in this vignette.
+Here is an overview of the most used functions. You can read their documentation with `?function_name`, or search for an example in this vignette.
 
 ----------------------------- ------------------------------------------------------
 Function Name                 Description
@@ -53,7 +48,7 @@ Function Name                 Description
 
 `sample_mallows`              Sample from the Mallows model.
 
-`plot.BayesMallows`           Quick plots of the posterior densities of $\alpha$ and $\rho$.
+`plot.BayesMallows`           Quick plots of the posterior densities of parameters of the Mallows model.
 
  `assess_convergence`         Study the convergence of the Markov chain, in order to determine burnin and other algorithm parameters.  
  
@@ -63,9 +58,7 @@ Function Name                 Description
  
  `assign_cluster`             Compute the cluster assignment of assessors.
  
- `compute_map_consensus`       Compute the MAP estimate of the latent ranks. 
- 
- `compute_cp_consensus`       Rank the items according to their CP consensus. 
+ `compute_consensus`       Compute the CP or MAP consensus ranking of the latent ranks. 
  
  `compute_posterior_intervals` Compute Bayesian posterior intervals for the parameters. 
  
@@ -169,7 +162,7 @@ assess_convergence(model_fit)
 Next, we study the convergence of $\rho$. To avoid too complicated plots, we pick 5 items to plot. Again, you can read more about this function by running `?assess_convergence` in the console.
 
 ```{r, fig.width=6}
-assess_convergence(model_fit, type = "rho", items = 1:5)
+assess_convergence(model_fit, parameter = "rho", items = 1:5)
 ```
 
 Based on these plots, it looks like the algorithm starts to converge after around 1000 iterations. Discarding the first 1000 iterations as burn-in hence seems like a safe choice. We create a new list element for `model_fit` called `burnin`, in which this choice is saved. Having done this, we do not have to provide a `burnin` argument to subsequent analyses of the posterior distributions.
@@ -203,10 +196,10 @@ knitr::kable(intervals)
 ```
 
 #### Latent Ranks $\rho$
-Obtaining posterior samples from $\rho$ is in general harder than for $\alpha$. Some items tend to be very sticky. We start by plotting the `model_fit` object from above. We now have to tell `plot.BayesMallows` that we want a plot of `type = "rho"` and all the items. This gives us posterior the posterior density of all the items.
+Obtaining posterior samples from $\rho$ is in general harder than for $\alpha$. Some items tend to be very sticky. We start by plotting the `model_fit` object from above. We now have to tell `plot.BayesMallows` that we want a plot of `parameter = "rho"` and all the items. This gives us posterior the posterior density of all the items.
 
 ```{r, fig.width=6, fig.height=6}
-plot(model_fit, type = "rho", items = 1:20)
+plot(model_fit, parameter = "rho", items = 1:20)
 ```
 
 
@@ -233,7 +226,7 @@ model_fit <- compute_mallows(potato_visual, alpha_jump = 10)
 We should assess convergence again:
 
 ```{r, fig.width=6}
-assess_convergence(model_fit, type = "alpha")
+assess_convergence(model_fit, parameter = "alpha")
 ```
 
 
@@ -298,10 +291,10 @@ knitr::kable(potato_top, caption = "Example dataset `potato_top`.")
 The `compute_mallows` function automatically recognizes the `NA` values as missing ranks, and augments the data, as described in Section 4.1 of @vitelli2018. Let us try:
 
 ```{r}
-model_fit <- compute_mallows(potato_top, save_augmented_data = TRUE)
+model_fit <- compute_mallows(potato_top, save_aug = TRUE)
 ```
 
-Looking at the returned object, we see that `any_missing` is `TRUE`, so `compute_mallows` has correctly detected that there are missing values. We set `save_augmented_data = TRUE` so we can get a diagnostic plot for the convergence of the data augmentation. After you are confident that the algorithm converges, you might want to use the default `save_augmented_data = FALSE`, because saving the data takes memory.
+Looking at the returned object, we see that `any_missing` is `TRUE`, so `compute_mallows` has correctly detected that there are missing values. We set `save_aug = TRUE` so we can get a diagnostic plot for the convergence of the data augmentation. After you are confident that the algorithm converges, you might want to use the default `save_aug = FALSE`, because saving the data takes memory.
 
 ```{r}
 model_fit$any_missing
@@ -326,14 +319,14 @@ The tuning of $\alpha$ and $\rho$ can be done exactly as described above for the
 Looking back, we see that assessor 1 does not have values for potatoes 14, 16, and 17. Hence, we expect these to jump between ranks 6, 7, and 8, since the 5 ranked items are fixed to values 1,...,5. Below we have plotted potato 14, which fluctuates between 6 and 8. You can confirm that these same happens to 16 and 17.
 
 ```{r, fig.width=6}
-assess_convergence(model_fit, type = "Rtilde", assessors = 1, 
+assess_convergence(model_fit, parameter = "Rtilde", assessors = 1, 
                    items = "P14")
 ```
 
 Assessor 1 has ranks for potatoes 7, 9, 10, 12, and 13, which are fixed. You can confirm that they are fixed by running the following command.
 
 ```{r, eval=FALSE}
-assess_convergence(model_fit, type = "Rtilde", assessors = 1, 
+assess_convergence(model_fit, parameter = "Rtilde", assessors = 1, 
                    items = c("P7", "P9", "P10", "P12", "P13"))
 ```
 
@@ -383,7 +376,7 @@ assess_convergence(model_fit)
 ```
 
 ```{r, eval=FALSE}
-assess_convergence(model_fit, type = "rho", items = 1:6)
+assess_convergence(model_fit, parameter = "rho", items = 1:6)
 ```
 
 Again, we can look at the acceptance rates for the augmented data. Now let us compare it to the number of missing ranks per assessor.
@@ -521,7 +514,7 @@ We can now check the convergence, using the same tools as before.
 test_run <- compute_mallows(
   rankings = beach_init_rank, 
   preferences = beach_tc,
-  save_augmented_data = TRUE
+  save_aug = TRUE
   )
 ```
 
@@ -529,7 +522,7 @@ The trace plots for $\alpha$ and $\rho$ show good convergence.
 
 #### Convergence of Rtilde
 
-When using `assess_convergence`, we can set `type = "Rtilde"` and choose `assessors` and `items`. We now illustrate this by going a bit deeper into some assessors. Referring to the mathematical notation in the top of the vignette, `Rtilde` corresponds to the augmented rankings $\tilde{R}_{1}, \dots, \tilde{R}_{N}$.
+When using `assess_convergence`, we can set `parameter = "Rtilde"` and choose `assessors` and `items`. We now illustrate this by going a bit deeper into some assessors. Referring to the mathematical notation in the top of the vignette, `Rtilde` corresponds to the augmented rankings $\tilde{R}_{1}, \dots, \tilde{R}_{N}$.
 
 ##### Assessor 1
 
@@ -550,7 +543,7 @@ beach_tc %>%
 It is implied by the preferences of assessor 1 that $\{B_{2} \prec B_{6}\}$ and $\{B_{2} \prec B_{15}\}$.
 
 ```{r, fig.width=6}
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 1, items = c(2, 6, 15))
 ```
 
@@ -566,7 +559,7 @@ beach_tc %>%
 
 The traces of item 2 and 4 do indeed cross.
 ```{r, fig.width=6}
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 1, items = c(2, 4))
 ```
 
@@ -581,7 +574,7 @@ beach_tc %>%
 
 The traces of beaches 5 and 8 do indeed cross.
 ```{r, fig.width=6}
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 1, items = c(5, 8))
 ```
 
@@ -604,7 +597,7 @@ beach_tc %>%
 Beach 10 is preferred to beach 7, but disfavored to beach 5. The trace plot does indeed show this:
 
 ```{r, fig.width=6}
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 2, items = c(5, 7, 10))
 ```
 
@@ -618,7 +611,7 @@ beach_tc %>%
 
 Their traces do indeed cross.
 ```{r, fig.width=6}
-assess_convergence(test_run, type = "Rtilde", 
+assess_convergence(test_run, parameter = "Rtilde", 
                    assessors = 2, items = c(1, 15))
 ```
 
@@ -637,7 +630,7 @@ model_fit <- compute_mallows(
   rankings = beach_init_rank, 
   preferences = beach_tc,
   nmc = 6000,
-  save_augmented_data = TRUE
+  save_aug = TRUE
   )
 
 model_fit$burnin <- 1000
@@ -647,15 +640,15 @@ The posterior densities of $\alpha$ and $\rho$ can be studied as shown above.
 
 #### CP Consensus
 
-We can rank the beaches according to the cumulative probability (CP) consensus. This functionality is provided by `compute_cp_consensus`, which returns a dataframe.
+We can rank the beaches according to the cumulative probability (CP) consensus. This functionality is provided by `compute_consensus`, which returns a dataframe.
 
 ```{r, eval=FALSE}
-compute_cp_consensus(model_fit)
+compute_consensus(model_fit, type = "CP")
 ```
 
 
 ```{r, results='asis', echo=FALSE}
-knitr::kable(compute_cp_consensus(model_fit), digits = 2)
+knitr::kable(compute_consensus(model_fit, type = "CP"), digits = 2)
 ```
 
 #### MAP Consensus
@@ -663,12 +656,12 @@ knitr::kable(compute_cp_consensus(model_fit), digits = 2)
 The maximum a posterior (MAP) consensus ranking is the a posterior most likely value of $\rho$.
 
 ```{r, eval=FALSE}
-compute_map_consensus(model_fit)
+compute_consensus(model_fit, type = "MAP")
 ```
 
 
 ```{r, results='asis', echo=FALSE}
-knitr::kable(compute_map_consensus(model_fit), digits = 2)
+knitr::kable(compute_consensus(model_fit, type = "MAP"), digits = 2)
 ```
 
 #### Posterior Intervals
@@ -748,7 +741,7 @@ assess_convergence(model_fit)
 We plot the potato that is most often ranked heaviest (P8), and the potato that is most often ranked lightest (P12). 
 
 ```{r, fig.width=6}
-assess_convergence(model_fit, type = "rho", items = c(8, 12))
+assess_convergence(model_fit, parameter = "rho", items = c(8, 12))
 ```
 
 ##### Convergence of Cluster Probabilities
@@ -756,7 +749,7 @@ assess_convergence(model_fit, type = "rho", items = c(8, 12))
 We also see that the probability of each cluster, $\tau_{1}$ and $\tau_{2}$, fluctuate around 0.5, which is just as expected, since we reverted half of the rankings.
 
 ```{r, fig.width=6}
-assess_convergence(model_fit, type = "cluster_probs")
+assess_convergence(model_fit, parameter = "cluster_probs")
 ```
 
 We now go on to show clustering in a real data example.
@@ -773,11 +766,11 @@ sushi_rankings
 knitr::kable(head(sushi_rankings), caption = "First 6 rows of example dataset `sushi_rankings`.")
 ```
 
-With clustering, we can see if there are subsets of assessors with similar preferences. We set `nmc = 1000` here, to speed up the vignette building. The argument `include_wcd` specifies whether to compute within-cluster distance during MCMC. When `n_cluster > 1` it defaults to `TRUE`, otherwise to `FALSE`. Hence, in order to get the within-cluster distance for the one-cluster case, we set `include_wcd = TRUE` when calling `compute_mallows`:
+With clustering, we can see if there are subsets of assessors with similar preferences. We set `nmc = 1000` here, to speed up the vignette building. The argument `include_wcd` specifies whether to compute within-cluster distance during MCMC. When `n_cluster > 1` it defaults to `TRUE`, otherwise to `FALSE`. Hence, in order to get the within-cluster distance for the one-cluster case, we set `include_wcd = TRUE` when calling `compute_mallows`. We also set `save_clus = TRUE` to get the cluster assignments.
 
 ```{r}
-model_fit1 <- compute_mallows(sushi_rankings, nmc = 1000, include_wcd = TRUE)
-model_fit2 <- compute_mallows(sushi_rankings, n_clusters = 2, nmc = 1000)
+model_fit1 <- compute_mallows(sushi_rankings, nmc = 1000, include_wcd = TRUE, save_clus = TRUE)
+model_fit2 <- compute_mallows(sushi_rankings, n_clusters = 2, nmc = 1000, save_clus = TRUE)
 ```
 
 #### Algorithm Tuning
@@ -791,7 +784,7 @@ assess_convergence(model_fit2)
 We can also look at the trace plot of the cluster probabilities, $\tau_{1}$ and $\tau_{2}$:
 
 ```{r, fig.width=6}
-assess_convergence(model_fit2, type = "cluster_probs")
+assess_convergence(model_fit2, parameter = "cluster_probs")
 ```
 
 
@@ -810,7 +803,7 @@ model_fit2$burnin <- 400
 
 We can find the CP consensus for each of the two clusters.
 ```{r}
-cp_consensus_sushi <- compute_cp_consensus(model_fit2)
+cp_consensus_sushi <- compute_consensus(model_fit2, type = "CP")
 ```
 
 We can now look at each cluster:
@@ -844,7 +837,7 @@ args(plot_elbow)
 
 In order to systematically investigate how many clusters to include, we can use the function `compute_mallows_mixtures`, which takes a vector that specifies the number of clusters, and calls `compute_mallows` once for each number. 
 
-We only need the within-cluster distances to compute the elbow plot. Thus, we can basically "thin out" all the other parameters, since we do not need them. This reduce the amount of memory used.
+We only need the within-cluster distances to compute the elbow plot. Thus, we can basically "thin out" all the other parameters, since we do not need them. This reduces the amount of memory used.
 
 ```{r, message=FALSE}
 n_clusters <- seq(from = 1, to = 10)
@@ -852,9 +845,9 @@ nmc <- 2000
 models <- compute_mallows_mixtures(n_clusters = n_clusters, 
                                    rankings = sushi_rankings,
                                    nmc = nmc, 
-                                   cluster_assignment_thinning = nmc - 1,
                                    rho_thinning = nmc - 1,
-                                   aug_thinning = nmc - 1
+                                   aug_thinning = nmc - 1,
+                                   include_wcd = TRUE
                                    )
 ```
 
@@ -866,15 +859,15 @@ We can now provide the `models` list to `plot_elbow`.
 plot_elbow(models, burnin = 1000)
 ```
 
-Let us choose 5 clusters. We then compute this model, now without the extreme thinning.
+Let us choose 5 clusters. We then compute this model, now without the extreme thinning, and also saving cluster assignments.
 
 ```{r, fig.width=6}
-model <- compute_mallows(rankings = sushi_rankings, nmc = nmc, n_clusters = 5)
+model <- compute_mallows(rankings = sushi_rankings, nmc = nmc, n_clusters = 5, save_clus = TRUE)
 ```
 
 
 ```{r, fig.width=6}
-plot(model, burnin = 1000, type = "cluster_assignment")
+plot(model, burnin = 1000, parameter = "cluster_assignment")
 ```
 
 

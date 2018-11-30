@@ -5,14 +5,14 @@
 \title{Preference Learning with the Mallows Rank Model}
 \usage{
 compute_mallows(rankings = NULL, preferences = NULL,
-  metric = "footrule", n_clusters = 1L,
-  cluster_assignment_thinning = 1L, nmc = 2000L,
-  leap_size = floor(n_items/5), rho_init = NULL, rho_thinning = 1L,
-  alpha_prop_sd = 0.1, alpha_init = 1, alpha_jump = 1L,
-  lambda = 0.001, psi = 10L, include_wcd = (n_clusters > 1),
-  save_augmented_data = FALSE, aug_thinning = 1L,
-  logz_estimate = NULL, verbose = FALSE, validate_rankings = TRUE,
-  constraints = NULL, skip_postprocessing = FALSE)
+  metric = "footrule", n_clusters = 1L, save_clus = FALSE,
+  clus_thin = 1L, nmc = 2000L, leap_size = max(1L, floor(n_items/5)),
+  rho_init = NULL, rho_thinning = 1L, alpha_prop_sd = 0.1,
+  alpha_init = 1, alpha_jump = 1L, lambda = 0.001, psi = 10L,
+  include_wcd = (n_clusters > 1), save_aug = FALSE,
+  aug_thinning = 1L, logz_estimate = NULL, verbose = FALSE,
+  validate_rankings = TRUE, constraints = NULL,
+  skip_postprocessing = FALSE)
 }
 \arguments{
 \item{rankings}{A matrix of ranked items, of size \code{n_assessors x
@@ -34,7 +34,7 @@ the pairwise preferences are assumed to be mutually compatible.}
 
 \item{metric}{A character string specifying the distance metric to use in the
 Bayesian Mallows Model. Available options are \code{"footrule"},
-\code{"spearman"}, \code{"kendall"}, and \code{"cayley"}. The distance
+\code{"spearman"}, \code{"kendall"}, \code{"cayley"}, and \code{"hamming"}. The distance
 given by \code{metric} is also used to compute within-cluster distances,
 when \code{include_wcd = TRUE}.}
 
@@ -44,11 +44,15 @@ clustering is performed. See \code{\link{compute_mallows_mixtures}} for a
 convenience function for computing several models with varying numbers of
 mixtures.}
 
-\item{cluster_assignment_thinning}{Integer specifying the thinning to be
-applied to the cluster assignments. Defaults to \code{1L}.}
+\item{save_clus}{Logical specifying whether or not to save cluster
+assignments. Defaults to \code{FALSE}.}
+
+\item{clus_thin}{Integer specifying the thinning to be
+applied to the cluster assignments. Defaults to \code{1L}. Not used
+when \code{save_clus = FALSE}.}
 
 \item{nmc}{Integer specifying the number of iteration of the
-Metropolis-Hastings algorithm. Defaults to \code{2000L}. See
+Metropolis-Hastings algorithm to run. Defaults to \code{2000L}. See
 \code{\link{assess_convergence}} for tools to check convergence of the
 Markov chain.}
 
@@ -81,9 +85,9 @@ jump over \eqn{\alpha} while sampling \eqn{\rho}, and possibly other
 parameters like augmented ranks \eqn{\tilde{R}} or cluster assignments
 \eqn{z}. Setting \code{alpha_jump} to a high number can speed up
 computation time, by reducing the number of times the partition function
-for the Mallows model needs to be computed.}
+for the Mallows model needs to be computed. Defaults to \code{1L}.}
 
-\item{lambda}{Numeric value specifying the rate parameter of the exponential
+\item{lambda}{Strictly positive numeric value specifying the rate parameter of the exponential
 prior distribution of \eqn{\alpha}, \eqn{\pi(\alpha) = \lambda
 \exp{(-\lambda \alpha)}}. Defaults to \code{0.1}. When \code{n_cluster >
 1}, each mixture component \eqn{\alpha_{c}} has the same prior
@@ -96,12 +100,12 @@ Dirichlet prior distribution used for the cluster probabilities
 argument is not used.}
 
 \item{include_wcd}{Logical indicating whether to store the within-cluster
-distances computing during the Metropolis-Hastings algorithm. Defaults to
+distances computed during the Metropolis-Hastings algorithm. Defaults to
 \code{TRUE} if \code{n_clusters > 1} and otherwise \code{FALSE}. Setting
 \code{include_wcd = TRUE} is useful when deciding the number of mixture
 components to include, and is required by \code{\link{plot_elbow}}.}
 
-\item{save_augmented_data}{Logical specifying whether or not to save the
+\item{save_aug}{Logical specifying whether or not to save the
 augmented rankings every \code{aug_thinning}th iteration, for the case of
 missing data or pairwise preferences. Defaults to \code{FALSE}. Saving
 augmented data is useful for predicting the rankings each assessor would
@@ -109,7 +113,7 @@ give to the items not yet ranked, and is required by
 \code{\link{plot_top_k}}.}
 
 \item{aug_thinning}{Integer specifying the thinning for saving augmented
-data. Only used when \code{save_augmented_data = TRUE}. Defaults to 1L.}
+data. Only used when \code{save_aug = TRUE}. Defaults to \code{1L}.}
 
 \item{logz_estimate}{Estimate of the partition function, computed with
 \code{\link{estimate_partition_function}}. Be aware that when using an
@@ -126,7 +130,7 @@ this range, or \eqn{\lambda} should be increased.}
 
 \item{verbose}{Logical specifying whether to print out the progress of the
 Metropolis-Hastings algorithm. If \code{TRUE}, a notification is printed
-every 1000th iteration.}
+every 1000th iteration. Defaults to \code{FALSE}.}
 
 \item{validate_rankings}{Logical specifying whether the rankings provided (or
 generated from \code{preferences}) should be validated. Defaults to
@@ -169,18 +173,18 @@ preferences.
 model_fit <- compute_mallows(potato_visual)
 
 # We study the trace plot of the parameters
-assess_convergence(model_fit, type = "alpha")
-\dontrun{assess_convergence(model_fit, type = "rho")}
+assess_convergence(model_fit, parameter = "alpha")
+\dontrun{assess_convergence(model_fit, parameter = "rho")}
 
 # Based on these plots, we set burnin = 1000.
 model_fit$burnin <- 1000
 # Next, we use the generic plot function to study the posterior distributions
 # of alpha and rho
-plot(model_fit, type = "alpha")
-\dontrun{plot(model_fit, type = "rho", items = 10:15)}
+plot(model_fit, parameter = "alpha")
+\dontrun{plot(model_fit, parameter = "rho", items = 10:15)}
 
 # We can also compute the CP consensus posterior ranking
-compute_cp_consensus(model_fit)
+compute_consensus(model_fit, type = "CP")
 
 # And we can compute the posterior intervals:
 # First we compute the interval for alpha
@@ -202,16 +206,16 @@ compute_posterior_intervals(model_fit, parameter = "alpha")
   # We save the augmented data for diagnostics purposes.
   model_fit <- compute_mallows(rankings = beach_rankings,
                                preferences = beach_tc,
-                               save_augmented_data = TRUE,
+                               save_aug = TRUE,
                                verbose = TRUE)
   # We can assess the convergence of the scale parameter
   assess_convergence(model_fit)
   # We can assess the convergence of latent rankings. Here we
   # show beaches 1-5.
-  assess_convergence(model_fit, type = "rho", items = 1:5)
+  assess_convergence(model_fit, parameter = "rho", items = 1:5)
   # We can also look at the convergence of the augmented rankings for
   # each assessor.
-  assess_convergence(model_fit, type = "Rtilde",
+  assess_convergence(model_fit, parameter = "Rtilde",
                      items = c(2, 4), assessors = c(1, 2))
   # Notice how, for assessor 1, the lines cross each other, while
   # beach 2 consistently has a higher rank value (lower preference) for
@@ -230,23 +234,24 @@ compute_posterior_intervals(model_fit, parameter = "alpha")
 \dontrun{
   # The example dataset sushi_rankings contains 5000 complete
   # rankings of 10 types of sushi
-  # We start with computing a 3-cluster solution
+  # We start with computing a 3-cluster solution, and save
+  # cluster assignments by setting save_clus = TRUE
   model_fit <- compute_mallows(sushi_rankings, n_clusters = 3,
-                               nmc = 10000, verbose = TRUE)
+                               nmc = 10000, save_clus = TRUE, verbose = TRUE)
   # We then assess convergence of the scale parameter alpha
   assess_convergence(model_fit)
   # Next, we assess convergence of the cluster probabilities
-  assess_convergence(model_fit, type = "cluster_probs")
+  assess_convergence(model_fit, parameter = "cluster_probs")
   # Based on this, we set burnin = 1000
   # We now plot the posterior density of the scale parameters alpha in
   # each mixture:
   model_fit$burnin <- 1000
-  plot(model_fit, type = "alpha")
+  plot(model_fit, parameter = "alpha")
   # We can also compute the posterior density of the cluster probabilities
-  plot(model_fit, type = "cluster_probs")
+  plot(model_fit, parameter = "cluster_probs")
   # We can also plot the posterior cluster assignment. In this case,
   # the assessors are sorted according to their maximum a posteriori cluster estimate.
-  plot(model_fit, type = "cluster_assignment")
+  plot(model_fit, parameter = "cluster_assignment")
   # We can also assign each assessor to a cluster
   cluster_assignments <- assign_cluster(model_fit, soft = FALSE)
   }
@@ -258,7 +263,7 @@ compute_posterior_intervals(model_fit, parameter = "alpha")
   # We use the convenience function compute_mallows_mixtures
   n_clusters <- seq(from = 1, to = 10)
   models <- compute_mallows_mixtures(n_clusters = n_clusters, rankings = sushi_rankings,
-                                     nmc = 6000, alpha_jump = 10)
+                                     nmc = 6000, alpha_jump = 10, include_wcd = TRUE)
   # models is a list in which each element is an object of class BayesMallows,
   # returned from compute_mallows
   # We can create an elbow plot

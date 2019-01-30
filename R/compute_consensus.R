@@ -31,42 +31,12 @@ compute_consensus <- function(model_fit, type = "CP", burnin = model_fit$burnin)
 
 }
 
-#' Compute CP Consensus Ranking
-#'
-#' Compute the cumulative probability (CP) consensus ranking
-#' \insertCite{vitelli2018}{BayesMallows}. For mixture models, the
-#' consensus is given for each mixture.
-#'
-#' @param model_fit An object returned from \code{\link{compute_mallows}}.
-#'
-#' @param burnin A numeric value specifying the number of iterations
-#' to discard as burn-in. Defaults to \code{model_fit$burnin}, and must be
-#' provided if \code{model_fit$burnin} does not exist. See \code{\link{assess_convergence}}.
-#'
-#' @details
-#' This function is deprecated. Please use \code{\link{compute_consensus}} instead, with
-#' argument \code{type = "CP"}.
-#'
-#' @references \insertAllCited{}
-#'
-#'
-#' @export
-#'
-#'
-compute_cp_consensus <- function(model_fit, burnin = model_fit$burnin){
-  .Deprecated("compute_consensus")
-
-  compute_consensus(model_fit = model_fit, type = "CP", burnin = burnin)
-
-}
-
 .compute_cp_consensus <- function(model_fit, burnin = model_fit$burnin){
 
   stopifnot(class(model_fit) == "BayesMallows")
 
   if(is.null(burnin)){
-    stop("Please specify the burnin, either by setting x$burnin or
-         as an argument to the plot.BayesMallows function.")
+    stop("Please specify the burnin.")
   }
 
   stopifnot(burnin < model_fit$nmc)
@@ -84,8 +54,9 @@ compute_cp_consensus <- function(model_fit, burnin = model_fit$burnin){
   # the model object
   stopifnot(model_fit$n_clusters * model_fit$n_items == n_rows)
 
-  # Convert items to character, since factor levels are not needed in this case
-  df <- dplyr::mutate(df, item = as.character(.data$item))
+  # Convert items and clustr to character, since factor levels are not needed in this case
+  df <- dplyr::mutate_at(df, dplyr::vars(.data$item, .data$cluster),
+                         dplyr::funs(as.character))
 
   # Group by item, cluster, and value
   df <- dplyr::group_by(df, .data$item, .data$cluster, .data$value)
@@ -151,41 +122,10 @@ find_cpc <- function(group_df){
   return(result)
 }
 
-
-#' Compute MAP Consensus Ranking
-#'
-#' Compute the maximum a posterior (MAP) consensus ranking
-#' \insertCite{vitelli2018}{BayesMallows}. For mixture models, the
-#' consensus is given for each mixture.
-#'
-#' @param model_fit An object returned from \code{\link{compute_mallows}}.
-#'
-#' @param burnin A numeric value specifying the number of iterations
-#' to discard as burn-in. Defaults to \code{model_fit$burnin}, and must be
-#' provided if \code{model_fit$burnin} does not exist. See \code{\link{assess_convergence}}.
-#'
-#' @details
-#' This function is deprecated. Please use \code{\link{compute_consensus}} instead, with
-#' argument \code{type = "MAP"}.
-#'
-#' @references \insertAllCited{}
-#'
-#'
-#' @export
-#'
-#'
-compute_map_consensus <- function(model_fit, burnin = model_fit$burnin){
-  .Deprecated("compute_consensus")
-
-  compute_consensus(model_fit = model_fit, type = "MAP", burnin = burnin)
-  }
-
-
 .compute_map_consensus <- function(model_fit, burnin = model_fit$burnin){
 
   if(is.null(burnin)){
-    stop("Please specify the burnin, either by setting x$burnin or
-         as an argument to the plot.BayesMallows function.")
+    stop("Please specify the burnin.")
   }
 
   df <- dplyr::filter(model_fit$rho, .data$iteration > burnin)

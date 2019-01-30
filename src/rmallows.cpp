@@ -1,6 +1,6 @@
 #include "RcppArmadillo.h"
 #include "leapandshift.h"
-#include "distfuns.h"
+#include "distances.h"
 
 // via the depends attribute we tell Rcpp to create hooks for
 // RcppArmadillo so that the build process will know what to do
@@ -20,8 +20,8 @@
 //' between each time a random rank vector is sampled.
 //' @param leap_size Integer specifying the step size of the leap-and-shift proposal distribution.
 //' @param metric Character string specifying the distance measure to use. Available
-//' options are \code{"footrule"} (default), \code{"spearman"}, \code{"cayley"}, \code{"hamming"}, and
-//' \code{"kendall"}. For sampling from the Mallows model with Cayley, Hamming, Kendall,
+//' options are \code{"footrule"} (default), \code{"spearman"}, \code{"cayley"}, \code{"hamming"},
+//' \code{"kendall"}, and \code{"ulam"}. For sampling from the Mallows model with Cayley, Hamming, Kendall,
 //' and Ulam distances
 //' the \code{PerMallows} package \insertCite{irurozki2016}{BayesMallows} can also be used.
 //'
@@ -66,16 +66,16 @@ arma::mat rmallows(
 
     // Sample a proposal
     leap_and_shift(rho_proposal, indices, prob_backward, prob_forward,
-                   rho_iter, leap_size);
+                   rho_iter, leap_size, true);
 
     // These distances do not work with the computational shortcut
-    if(metric == "cayley"){
+    if((metric == "cayley") | (metric == "ulam")){
       indices = arma::regspace<arma::uvec>(0, n_items - 1);
     }
 
     // Compute the distances to current and proposed ranks
     double dist_new = get_rank_distance(rho0(indices), rho_proposal(indices), metric);
-    double dist_old = rank_dist_matrix(rho0(indices), rho_iter(indices), metric);
+    double dist_old = rank_dist_sum(rho0(indices), rho_iter(indices), metric);
 
     // Metropolis-Hastings ratio
     double ratio = - alpha0 / n_items * (dist_new - dist_old) +

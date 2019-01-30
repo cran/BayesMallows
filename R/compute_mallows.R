@@ -1,14 +1,30 @@
 #' Preference Learning with the Mallows Rank Model
 #'
-#' Compute the posterior distributions of the parameters of the Bayesian Mallows
-#' Rank Model \insertCite{mallows1957,vitelli2018}{BayesMallows}, given rankings
-#' or preferences stated by a set of assessors. \code{compute_mallows} always
-#' returns posterior distributions of the latent consensus ranking \eqn{\rho}
-#' and the scale parameter \eqn{\alpha}. Several distance measures are
-#' supported, and the preferences can take the form of complete or incomplete
-#' rankings, as well as pairwise preferences. \code{compute_mallows} can also
-#' compute mixtures of Mallows models, for clustering of assessors with similar
-#' preferences.
+#' @description Compute the posterior distributions of the parameters of the
+#'   Bayesian Mallows Rank Model, given rankings or preferences stated by a set
+#'   of assessors.
+#'
+#'   The \code{BayesMallows} package uses the following parametrization of the Mallows
+#'   rank model
+#'   \insertCite{mallows1957}{BayesMallows}: \deqn{p(r|\alpha,\rho)
+#'   = (1/Z_{n}(\alpha)) \exp{-\alpha/n d(r,\rho)}} where \eqn{r} is a ranking,
+#'   \eqn{\alpha} is a scale parameter, \eqn{\rho} is the latent consensus
+#'   ranking, \eqn{Z_{n}(\alpha)} is the partition function (normalizing
+#'   constant), and \eqn{d(r,\rho)} is a distance function measuring the
+#'   distance between \eqn{r} and \eqn{\rho}. Note that some authors use a
+#'   Mallows model without division by \eqn{n} in the exponent;
+#'   this includes the \code{PerMallows} package, whose scale parameter \eqn{\theta}
+#'   corresponds to \eqn{\alpha/n} in the \code{BayesMallows} package. We refer
+#'   to \insertCite{vitelli2018}{BayesMallows} for further details of the
+#'   Bayesian Mallows model.
+#'
+#'   \code{compute_mallows} always returns posterior distributions of the latent
+#'   consensus ranking \eqn{\rho} and the scale parameter \eqn{\alpha}. Several
+#'   distance measures are supported, and the preferences can take the form of
+#'   complete or incomplete rankings, as well as pairwise preferences.
+#'   \code{compute_mallows} can also compute mixtures of Mallows models, for
+#'   clustering of assessors with similar preferences.
+#'
 #'
 #'
 #' @param rankings A matrix of ranked items, of size \code{n_assessors x
@@ -30,9 +46,16 @@
 #'
 #' @param metric A character string specifying the distance metric to use in the
 #'   Bayesian Mallows Model. Available options are \code{"footrule"},
-#'   \code{"spearman"}, \code{"kendall"}, \code{"cayley"}, and \code{"hamming"}. The distance
-#'   given by \code{metric} is also used to compute within-cluster distances,
-#'   when \code{include_wcd = TRUE}.
+#'   \code{"spearman"}, \code{"cayley"}, \code{"hamming"}, \code{"kendall"}, and
+#'   \code{"ulam"}. The distance given by \code{metric} is also used to compute
+#'   within-cluster distances, when \code{include_wcd = TRUE}.
+#'
+#' @param error_model Character string specifying which model to use for
+#'   inconsistent rankings. Defaults to \code{NULL}, which means that
+#'   inconsistent rankings are not allowed. At the moment, the only available
+#'   other option is \code{"bernoulli"}, which means that the Bernoulli error
+#'   model is used. See \insertCite{crispino2018;textual}{BayesMallows} for a definition
+#'   of the Bernoulli model.
 #'
 #' @param n_clusters Integer specifying the number of clusters, i.e., the number
 #'   of mixture components to use. Defaults to \code{1L}, which means no
@@ -42,11 +65,10 @@
 #'
 #'
 #' @param save_clus Logical specifying whether or not to save cluster
-#' assignments. Defaults to \code{FALSE}.
+#'   assignments. Defaults to \code{FALSE}.
 #'
-#' @param clus_thin Integer specifying the thinning to be
-#'   applied to the cluster assignments. Defaults to \code{1L}. Not used
-#'   when \code{save_clus = FALSE}.
+#' @param clus_thin Integer specifying the thinning to be applied to cluster
+#'   assignments and cluster probabilities. Defaults to \code{1L}. Not used when \code{save_clus = FALSE}.
 #'
 #' @param nmc Integer specifying the number of iteration of the
 #'   Metropolis-Hastings algorithm to run. Defaults to \code{2000L}. See
@@ -65,8 +87,7 @@
 #' @param rho_thinning Integer specifying the thinning of \code{rho} to be
 #'   performed in the Metropolis- Hastings algorithm. Defaults to \code{1L}.
 #'   \code{compute_mallows} save every \code{rho_thinning}th value of
-#'   \eqn{\rho}. See \insertCite{link2011;textual}{BayesMallows} for a
-#'   discussion of when it is appropriate to use thinning, and when it is not.
+#'   \eqn{\rho}.
 #'
 #' @param alpha_prop_sd Numeric value specifying the standard deviation of the
 #'   lognormal proposal distribution used for \eqn{\alpha} in the
@@ -84,11 +105,11 @@
 #'   computation time, by reducing the number of times the partition function
 #'   for the Mallows model needs to be computed. Defaults to \code{1L}.
 #'
-#' @param lambda Strictly positive numeric value specifying the rate parameter of the exponential
-#'   prior distribution of \eqn{\alpha}, \eqn{\pi(\alpha) = \lambda
-#'   \exp{(-\lambda \alpha)}}. Defaults to \code{0.1}. When \code{n_cluster >
-#'   1}, each mixture component \eqn{\alpha_{c}} has the same prior
-#'   distribution.
+#' @param lambda Strictly positive numeric value specifying the rate parameter
+#'   of the exponential prior distribution of \eqn{\alpha}, \eqn{\pi(\alpha) =
+#'   \lambda \exp{(-\lambda \alpha)}}. Defaults to \code{0.1}. When
+#'   \code{n_cluster > 1}, each mixture component \eqn{\alpha_{c}} has the same
+#'   prior distribution.
 #'
 #' @param psi Integer specifying the concentration parameter \eqn{\psi} of the
 #'   Dirichlet prior distribution used for the cluster probabilities
@@ -102,12 +123,11 @@
 #'   \code{include_wcd = TRUE} is useful when deciding the number of mixture
 #'   components to include, and is required by \code{\link{plot_elbow}}.
 #'
-#' @param save_aug Logical specifying whether or not to save the
-#'   augmented rankings every \code{aug_thinning}th iteration, for the case of
-#'   missing data or pairwise preferences. Defaults to \code{FALSE}. Saving
-#'   augmented data is useful for predicting the rankings each assessor would
-#'   give to the items not yet ranked, and is required by
-#'   \code{\link{plot_top_k}}.
+#' @param save_aug Logical specifying whether or not to save the augmented
+#'   rankings every \code{aug_thinning}th iteration, for the case of missing
+#'   data or pairwise preferences. Defaults to \code{FALSE}. Saving augmented
+#'   data is useful for predicting the rankings each assessor would give to the
+#'   items not yet ranked, and is required by \code{\link{plot_top_k}}.
 #'
 #' @param aug_thinning Integer specifying the thinning for saving augmented
 #'   data. Only used when \code{save_aug = TRUE}. Defaults to \code{1L}.
@@ -141,17 +161,11 @@
 #'   set may be time consuming. In this case it can be beneficial to precompute
 #'   it and provide it as a separate argument.
 #'
-#' @param skip_postprocessing Logical specifying whether to skip the
-#'   postprocessing of the output of the Metropolis-Hastings algorithm. This can
-#'   be useful for very large datasets, which cause the postprocessing to crash.
-#'   Note that when \code{skip_postprocessing=TRUE}, the functions for studying
-#'   the posterior distributions will not work unless the internal function
-#'   \code{\link{tidy_mcmc}} has been run.
 #'
 #' @return A list of class BayesMallows.
 #'
 #' @seealso \code{\link{compute_mallows_mixtures}} for a function that computes
-#'   separate Mallows models for varying number of clusters.
+#'   separate Mallows models for varying numbers of clusters.
 #'
 #'
 #'
@@ -165,6 +179,7 @@
 compute_mallows <- function(rankings = NULL,
                             preferences = NULL,
                             metric = "footrule",
+                            error_model = NULL,
                             n_clusters = 1L,
                             save_clus = FALSE,
                             clus_thin = 1L,
@@ -183,14 +198,18 @@ compute_mallows <- function(rankings = NULL,
                             logz_estimate = NULL,
                             verbose = FALSE,
                             validate_rankings = TRUE,
-                            constraints = NULL,
-                            skip_postprocessing = FALSE
+                            constraints = NULL
                             ){
 
   # Check that at most one of rankings and preferences is set
   if(is.null(rankings) && is.null(preferences)){
     stop("Either rankings or preferences (or both) must be provided.")
   }
+
+  if(is.null(preferences) && !is.null(error_model)){
+    stop("Error model requires preferences to be set.")
+  }
+
 
   if(nmc <= 0) stop("nmc must be strictly positive")
 
@@ -210,7 +229,7 @@ compute_mallows <- function(rankings = NULL,
 
 
   # Deal with pairwise comparisons. Generate rankings compatible with them.
-  if(!is.null(preferences)){
+  if(!is.null(preferences) && is.null(error_model)){
     if(!inherits(preferences, "BayesMallowsTC")){
       message("Generating transitive closure of preferences.")
       preferences <- generate_transitive_closure(preferences)
@@ -218,6 +237,14 @@ compute_mallows <- function(rankings = NULL,
     if(is.null(rankings)){
       message("Generating initial ranking.")
       rankings <- generate_initial_ranking(preferences)
+    }
+  } else if(!is.null(error_model)){
+    stopifnot(error_model == "bernoulli")
+    n_items <- max(c(preferences$bottom_item, preferences$top_item))
+    n_assessors <- length(unique(preferences$assessor))
+    if(is.null(rankings)){
+      rankings <- purrr::rerun(n_assessors, sample(x = n_items, size = n_items))
+      rankings <- matrix(unlist(rankings), ncol = n_items, nrow = n_assessors, byrow = TRUE)
     }
   }
 
@@ -241,6 +268,7 @@ compute_mallows <- function(rankings = NULL,
     if(!validate_permutation(rho_init)) stop("rho_init must be a proper permutation")
     if(!(sum(is.na(rho_init)) == 0)) stop("rho_init cannot have missing values")
     if(length(rho_init) != n_items) stop("rho_init must have the same number of items as implied by rankings or preferences")
+    rho_init <- matrix(rho_init, ncol = 1)
   }
 
   # Generate the constraint set
@@ -250,39 +278,7 @@ compute_mallows <- function(rankings = NULL,
     constraints <- list()
   }
 
-  # Extract the right sequence of cardinalities, if relevant
-  if(!is.null(logz_estimate)){
-    cardinalities <- NULL
-    message("Using user-provided importance sampling estimate of partition function.")
-  } else if(metric %in% c("footrule", "spearman")){
-    # Extract the relevant rows from partition_function_data
-    relevant_params <- dplyr::filter(partition_function_data,
-                                     .data$n_items == !!n_items,
-                                     .data$metric == !!metric
-    )
-
-    type <- dplyr::pull(relevant_params, type)
-    message(dplyr::pull(relevant_params, message))
-
-    if((length(type) == 0) || !(type %in% c("cardinalities", "importance_sampling"))){
-      stop("Precomputed partition function not available yet. Consider computing one
-           with the function estimate_partition_function(), and provide it
-           in the logz_estimate argument to compute_mallows().")
-    } else if(type == "cardinalities") {
-      cardinalities <- unlist(relevant_params$values)
-      logz_estimate <- NULL
-    } else if(type == "importance_sampling") {
-      cardinalities <- NULL
-      logz_estimate <- unlist(relevant_params$values)
-    }
-
-  } else if (metric %in% c("cayley", "hamming", "kendall")) {
-    cardinalities <- NULL
-    logz_estimate <- NULL
-    message("Using exact partition function")
-  } else {
-    stop(paste("Unknown metric", metric))
-  }
+  logz_list <- prepare_partition_function(logz_estimate, metric, n_items)
 
   if(!save_clus) clus_thin <- nmc
 
@@ -291,10 +287,11 @@ compute_mallows <- function(rankings = NULL,
   fit <- run_mcmc(rankings = t(rankings),
                   nmc = nmc,
                   constraints = constraints,
-                  cardinalities = cardinalities,
-                  logz_estimate = logz_estimate,
+                  cardinalities = logz_list$cardinalities,
+                  logz_estimate = logz_list$logz_estimate,
                   rho_init = rho_init,
                   metric = metric,
+                  error_model = dplyr::if_else(is.null(error_model), "none", error_model),
                   n_clusters = n_clusters,
                   include_wcd = include_wcd,
                   lambda = lambda,
@@ -335,9 +332,7 @@ compute_mallows <- function(rankings = NULL,
     fit$items <- paste("Item", seq(from = 1, to = nrow(fit$rho), by = 1))
   }
 
-  # Tidy MCMC results
-  if(!skip_postprocessing) fit <- tidy_mcmc(fit, tidy_cluster_assignment = save_clus)
-
+  fit <- tidy_mcmc(fit)
 
   # Add class attribute
   class(fit) <- "BayesMallows"

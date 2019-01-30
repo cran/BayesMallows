@@ -10,8 +10,8 @@
 #' provided if \code{x$burnin} does not exist. See \code{\link{assess_convergence}}.
 #'
 #' @param parameter Character string defining the parameter to plot. Available
-#' options are \code{"alpha"}, \code{"rho"}, \code{"cluster_probs"}, and
-#' \code{"cluster_assignment"}.
+#' options are \code{"alpha"}, \code{"rho"}, \code{"cluster_probs"},
+#' \code{"cluster_assignment"}, and \code{"theta"}.
 #'
 #' @param items The items to study in the diagnostic plot for \code{rho}. Either
 #'   a vector of item names, corresponding to \code{x$items} or a
@@ -30,12 +30,11 @@ plot.BayesMallows <- function(x, burnin = x$burnin, parameter = "alpha", items =
   # required arguments as graphics::plot.
 
   if(is.null(burnin)){
-    stop("Please specify the burnin, either by setting x$burnin or
-         as an argument to the plot.BayesMallows function.")
+    stop("Please specify the burnin.")
   }
   if(x$nmc <= burnin) stop("nmc must be <= burnin")
 
-  stopifnot(parameter %in% c("alpha", "rho", "cluster_probs", "cluster_assignment"))
+  stopifnot(parameter %in% c("alpha", "rho", "cluster_probs", "cluster_assignment", "theta"))
 
   if(parameter == "alpha") {
     df <- dplyr::filter(x$alpha, .data$iteration > burnin)
@@ -50,7 +49,7 @@ plot.BayesMallows <- function(x, burnin = x$burnin, parameter = "alpha", items =
       p <- p + ggplot2::facet_wrap(~ .data$cluster, scales = "free_x")
     }
 
-    print(p)
+    return(p)
 
   } else if(parameter == "rho") {
 
@@ -87,13 +86,13 @@ plot.BayesMallows <- function(x, burnin = x$burnin, parameter = "alpha", items =
       p <- p + ggplot2::facet_wrap(~ .data$cluster + .data$item)
     }
 
-    print(p)
+    return(p)
   } else if(parameter == "cluster_probs"){
     df <- dplyr::filter(x$cluster_probs, .data$iteration > burnin)
 
     ggplot2::ggplot(df, ggplot2::aes(x = .data$value)) +
       ggplot2::geom_density() +
-      ggplot2::xlab(expression(tau[k])) +
+      ggplot2::xlab(expression(tau[c])) +
       ggplot2::ylab("Posterior density") +
       ggplot2::ggtitle(label = "Posterior density of cluster probabilities") +
       ggplot2::facet_wrap(~ .data$cluster)
@@ -125,6 +124,23 @@ plot.BayesMallows <- function(x, burnin = x$burnin, parameter = "alpha", items =
       ) +
       ggplot2::xlab(paste0("Assessors (", min(assessor_order), " - ", max(assessor_order), ")")) +
       ggplot2::ggtitle("Posterior Probabilities of Cluster Assignment")
+
+  } else if(parameter == "theta") {
+
+    if(is.null(x$theta)){
+      stop("Please run compute_mallows with error_model = 'bernoulli'.")
+    }
+
+    df <- dplyr::filter(x$theta, .data$iteration > burnin)
+
+    p <- ggplot2::ggplot(df, ggplot2::aes(x = .data$value)) +
+      ggplot2::geom_density() +
+      ggplot2::xlab(expression(theta)) +
+      ggplot2::ylab("Posterior density") +
+      ggplot2::ggtitle(label = "Posterior density of theta")
+
+
+    return(p)
 
   }
 }

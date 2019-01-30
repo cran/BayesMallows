@@ -1,36 +1,4 @@
-#' Internal Function for Tidying MCMC Output
-#'
-#' @param fit A fitted object, returned from \code{\link{compute_mallows}} with the option
-#' \code{skip_postprocessing = TRUE}.
-#' @param tidy_rho Logical specifying whether or not to tidy the output for \code{rho}.
-#' Defaults to \code{TRUE}.
-#' @param tidy_alpha Logical specifying whether or not to tidy the output for \code{alpha}.
-#' Defaults to \code{TRUE}.
-#' @param tidy_cluster_assignment Logical specifying whether or not to tidy the output for
-#' cluster assignments. Defaults to \code{TRUE}.
-#' @param tidy_cluster_probabilities Logical specifying whether or not to tidy the output for
-#' cluster probabilities. Defaults to \code{TRUE}.
-#' @param tidy_wcd Logical specifying whether or not to tidy the output for
-#' within-cluster distances. Defaults to \code{TRUE}.
-#' @param tidy_augmented_data Logical specifying whether or not to tidy the output for
-#' augmented data. Defaults to \code{TRUE}.
-#' @param tidy_augmentation_acceptance Logical specifying whether or not to tidy the output for
-#' augmentation acceptance. Defaults to \code{TRUE}.
-#'
-#' @export
-#'
-#' @keywords internal
-#'
-#' @example /inst/examples/tidy_mcmc_example.R
-#'
-tidy_mcmc <- function(fit,
-                      tidy_rho = TRUE,
-                      tidy_alpha = TRUE,
-                      tidy_cluster_assignment = TRUE,
-                      tidy_cluster_probabilities = TRUE,
-                      tidy_wcd = TRUE,
-                      tidy_augmented_data = TRUE,
-                      tidy_augmentation_acceptance = TRUE){
+tidy_mcmc <- function(fit){
 
   fit <- tidy_rho(fit)
   fit <- tidy_alpha(fit)
@@ -39,6 +7,7 @@ tidy_mcmc <- function(fit,
   fit <- tidy_wcd(fit)
   fit <- tidy_augmented_data(fit)
   fit <- tidy_augmentation_acceptance(fit)
+  fit <- tidy_error_probability(fit)
 
   return(fit)
 }
@@ -57,10 +26,12 @@ tidy_rho <- function(fit){
   item <- factor(item, levels = fit$items)
 
   cluster <- rep(
-    paste("Cluster", seq(from = 1, to = rho_dims[[2]], by = 1)),
+    seq(from = 1, to = rho_dims[[2]], by = 1),
     each = rho_dims[[1]],
     times = rho_dims[[3]]
   )
+  cluster <- factor(paste("Cluster", cluster),
+                    levels = paste("Cluster", sort(unique(cluster))))
 
   iteration <- rep(seq(from = 1, to = rho_dims[[3]] * fit$rho_thinning, by = fit$rho_thinning),
                    each = rho_dims[[1]] * rho_dims[[2]])
@@ -84,9 +55,12 @@ tidy_alpha <- function(fit){
   value <- c(fit$alpha)
 
   cluster <- rep(
-    paste("Cluster", seq(from = 1, to = alpha_dims[[1]], by = 1)),
+    seq(from = 1, to = alpha_dims[[1]], by = 1),
     times = alpha_dims[[2]]
   )
+
+  cluster <- factor(paste("Cluster", cluster),
+                    levels = paste("Cluster", sort(unique(cluster))))
 
   iteration <- rep(
     seq(from = 1, to = alpha_dims[[2]] * fit$alpha_jump, by = fit$alpha_jump),
@@ -154,9 +128,12 @@ tidy_cluster_probabilities <- function(fit){
   # Cluster1, Cluster2, ..., Cluster1, Cluster2
   # Iteration1, Iteration1, ..., Iteration2, Iteration2
   cluster <- rep(
-    paste("Cluster", seq(from = 1, to = clusprob_dims[[1]], by = 1)),
+    seq(from = 1, to = clusprob_dims[[1]], by = 1),
     times = clusprob_dims[[2]]
   )
+
+  cluster <- factor(paste("Cluster", cluster),
+                    levels = paste("Cluster", sort(unique(cluster))))
 
   iteration <- rep(
     seq(from = 1, to = clusprob_dims[[2]], by = 1),
@@ -185,6 +162,8 @@ tidy_wcd <- function(fit){
       paste("Cluster", seq(from = 1, to = wcd_dims[[1]], by = 1)),
       times = wcd_dims[[2]]
     )
+    cluster <- factor(paste("Cluster", cluster),
+                      levels = paste("Cluster", sort(unique(cluster))))
 
     iteration <- rep(
       seq(from = 1, to = wcd_dims[[2]], by = 1),
@@ -251,5 +230,24 @@ tidy_augmentation_acceptance <- function(fit){
   } else {
     fit$aug_acceptance <- NULL
   }
+  return(fit)
+}
+
+
+
+tidy_error_probability <- function(fit){
+  theta_length <- length(fit$theta)
+
+  if(theta_length > 0){
+    fit$theta <- dplyr::tibble(
+      iteration = seq(from = 1, to = theta_length, by = 1),
+      value = c(fit$theta)
+    )
+  } else {
+    fit$theta <- NULL
+  }
+
+
+
   return(fit)
 }

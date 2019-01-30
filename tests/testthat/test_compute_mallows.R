@@ -29,3 +29,29 @@ test_that("compute_mallows discovers inconsistent rankings",{
   ))
   }
 )
+
+
+test_that("compute_mallows error model works", {
+  preferences <- data.frame(assessor = c(1, 1, 2, 2),
+                            bottom_item = c(1, 2, 1, 2),
+                            top_item = c(2, 1, 2, 3)
+                            )
+  expect_error(invisible(capture.output(compute_mallows(preferences = preferences, nmc = 10))))
+  expect_s3_class(compute_mallows(preferences = preferences, error_model = "bernoulli", nmc = 10),
+                  "BayesMallows")
+
+})
+
+test_that("compute_mallows with missing data works", {
+  mat <- potato_visual * ifelse(runif(length(potato_visual)) > 0.8, NA_real_, 1)
+  expect_s3_class(compute_mallows(mat, nmc = 3), "BayesMallows")
+
+})
+
+
+test_that("compute_mallows runs with the right distances", {
+  for(metric in c("footrule", "spearman", "cayley", "kendall", "ulam", "hamming")){
+    expect_s3_class(compute_mallows(potato_visual, metric = metric, nmc = 3), "BayesMallows")
+  }
+
+})

@@ -1,3 +1,33 @@
+# BayesMallows 0.3.0
+* See all bullet points below, since 0.2.0.
+
+# BayesMallows 0.2.0.9006
+* `generate_transitive_closure`, `generate_initial_ranking`, and `generate_constraints` now are able to run in parallel.
+* Large changes to the underlying code base which should make it more maintainable but not affect the user.
+
+# BayesMallows 0.2.0.9005
+* `estimate_partition_function` now has an option to run in parallel, leading to significant speed-up.
+
+# BayesMallows 0.2.0.9004
+* Implemented the Bernoulli error model. Set `error_model = "bernoulli"` in `compute_mallows` in order to use it. Examples will come later.
+
+# BayesMallows 0.2.0.9003
+* Added parallelization option to `compute_mallows_mixtures` and added `parallel` to **Suggests** field.
+
+# BayesMallows 0.2.0.9002
+* Deprecated functions `compute_cp_consensus` and `compute_map_consensus` have been removed. Use `compute_consensus` instead.
+
+# BayesMallows 0.2.0.9001
+* Clusters are now `factor` variables sorted according to the cluster number. Hence, in plot legends, "Cluster 10" comes after "Cluster 9", rather than after "Cluster 1" which it used to do until now, because it was a `character`.
+* `plot.BayesMallows` no longer contains print statements which forces display of plots. Instead plots are returned from the function. Using `p <- plot(fit)` hence does no longer display a plot, whereas using `plot(fit)` without assigning it to an object, displays a plot. Until now the plot was always shown for `rho` and `alpha`.
+
+# BayesMallows 0.2.0.9000
+* `compute_mallows` and `sample_mallows` now support Ulam distance, with argument `metric = "ulam"`.
+* Slimmed down the vignette significantly, in order to avoid clang-UBSAN error caused by running the vignette (which was then again caused by `Rcpp`, cf. [this issue](https://github.com/RcppCore/Rcpp/issues/832)). The long vignette is no longer needed in any case, since all the functions are well documented with executable examples.
+
+# BayesMallows 0.2.0
+* New release on CRAN, which contains all the updates in 0.1.1, described below.
+
 # BayesMallows 0.1.1.9009
 * `Rankcluster` package has been removed from dependencies.
 

@@ -1,6 +1,7 @@
 #include "RcppArmadillo.h"
 #include <cmath>
 #include "partitionfuns.h"
+#include <string>
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
@@ -16,9 +17,11 @@ arma::uvec update_cluster_labels(
     const arma::vec& cluster_probs,
     const arma::vec& alpha_old,
     const int& n_items,
+    const int& t,
     const std::string& metric,
     const Rcpp::Nullable<arma::vec> cardinalities = R_NilValue,
-    const Rcpp::Nullable<arma::vec> logz_estimate = R_NilValue
+    const Rcpp::Nullable<arma::vec> logz_estimate = R_NilValue,
+    const bool& save_ind_clus = false
 ){
   int n_assessors = dist_mat.n_rows;
   int n_clusters = dist_mat.n_cols;
@@ -44,6 +47,10 @@ arma::uvec update_cluster_labels(
     assignment_prob.row(i) = probs;
     new_cluster_assignment(i) = sample_int(assignment_prob.row(i));
   }
+
+  if(save_ind_clus){
+    assignment_prob.save(std::string("cluster_probs") + std::to_string(t + 1) + std::string(".csv"), arma::csv_ascii);
+  }
   return(new_cluster_assignment);
 }
 
@@ -57,7 +64,7 @@ arma::vec update_cluster_probs(
 
   for(int i = 0; i < n_clusters; ++i){
     // Find the parameter for this cluster and provide it to the gamma distribution
-    cluster_probs(i) = arma::randg<double>(arma::distr_param(arma::sum(current_cluster_assignment == i) + psi, 1.0));
+    cluster_probs(i) = R::rgamma(arma::sum(current_cluster_assignment == i) + psi, 1.0);
   }
   // Finally, normalize cluster_probs with 1-norm.
   // result now comes from Dirichlet(tau_k(0), ..., tau_k(n_clusters))

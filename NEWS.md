@@ -1,5 +1,27 @@
+# BayesMallows 0.4.0
+* Implements all fixes since version 0.3.1 below.
+* Fixed typo on y-axis label of elbow plot.
+* Fixed an issue which caused the cluster probabilities to differ across platforms, despite using the same seed. https://stackoverflow.com/questions/54822702
+
+# BayesMallows 0.3.1.9005
+* Fixed a bug which caused `compute_mallows` not to work (without giving any errors) when `rankings` contained missing values.
+* Fixed a bug which caused `compute_mallows` to fail when `preferences` had integer columns.
+
+# BayesMallows 0.3.1.9004
+* Changed the name of `save_individual_cluster_probs` to `save_ind_clus`, to save typing.
+
+# BayesMallows 0.3.1.9003
+* Added a user prompt asking if the user really wants to save csv files, when `save_individual_cluster_probs = TRUE` in compute_mallows.
+* Added `alpha_max`, the truncation of the exponential prior for `alpha`, as a user option in `compute_mallows`.
+
+# BayesMallows 0.3.1.9002
+* Added functionality for checking label switching. See `?label_switching` for more info.
+
+# BayesMallows 0.3.1.9001
+* The internal function `compute_importance_sampling_estimate` has been updated to avoid numerical overflow. Previusly, importance sampling failed at below 200 items. Now it works way above 10,000 items.
+
 # BayesMallows 0.3.1
-This is an update of some parts of the C++ code, to avoid failing the sanitizer checks clang-UBSAN and gcc-UBSAN.
+* This is an update of some parts of the C++ code, to avoid failing the sanitizer checks clang-UBSAN and gcc-UBSAN.
 
 # BayesMallows 0.3.0
 * See all bullet points below, since 0.2.0.

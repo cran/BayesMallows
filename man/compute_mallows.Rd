@@ -7,12 +7,13 @@
 compute_mallows(rankings = NULL, preferences = NULL,
   metric = "footrule", error_model = NULL, n_clusters = 1L,
   save_clus = FALSE, clus_thin = 1L, nmc = 2000L,
-  leap_size = max(1L, floor(n_items/5)), rho_init = NULL,
-  rho_thinning = 1L, alpha_prop_sd = 0.1, alpha_init = 1,
-  alpha_jump = 1L, lambda = 0.001, psi = 10L,
-  include_wcd = (n_clusters > 1), save_aug = FALSE,
-  aug_thinning = 1L, logz_estimate = NULL, verbose = FALSE,
-  validate_rankings = TRUE, constraints = NULL)
+  leap_size = max(1L, floor(n_items/5)), swap_leap = 1L,
+  rho_init = NULL, rho_thinning = 1L, alpha_prop_sd = 0.1,
+  alpha_init = 1, alpha_jump = 1L, lambda = 0.001,
+  alpha_max = 1e+06, psi = 10L, include_wcd = (n_clusters > 1),
+  save_aug = FALSE, aug_thinning = 1L, logz_estimate = NULL,
+  verbose = FALSE, validate_rankings = TRUE, constraints = NULL,
+  save_ind_clus = FALSE, seed = NULL)
 }
 \arguments{
 \item{rankings}{A matrix of ranked items, of size \code{n_assessors x
@@ -55,7 +56,7 @@ mixtures.}
 assignments. Defaults to \code{FALSE}.}
 
 \item{clus_thin}{Integer specifying the thinning to be applied to cluster
-assignments and cluster probabilities. Defaults to \code{1L}. Not used when \code{save_clus = FALSE}.}
+assignments and cluster probabilities. Defaults to \code{1L}.}
 
 \item{nmc}{Integer specifying the number of iteration of the
 Metropolis-Hastings algorithm to run. Defaults to \code{2000L}. See
@@ -64,6 +65,9 @@ Markov chain.}
 
 \item{leap_size}{Integer specifying the step size of the leap-and-shift
 proposal distribution. Defaults \code{floor(n_items / 5)}.}
+
+\item{swap_leap}{Integer specifying the step size of the Swap proposal.
+Only used when \code{error_model} is not \code{NULL}.}
 
 \item{rho_init}{Numeric vector specifying the initial value of the latent
 consensus ranking \eqn{\rho}. Defaults to NULL, which means that the
@@ -93,10 +97,11 @@ computation time, by reducing the number of times the partition function
 for the Mallows model needs to be computed. Defaults to \code{1L}.}
 
 \item{lambda}{Strictly positive numeric value specifying the rate parameter
-of the exponential prior distribution of \eqn{\alpha}, \eqn{\pi(\alpha) =
-\lambda \exp{(-\lambda \alpha)}}. Defaults to \code{0.1}. When
+of the truncated exponential prior distribution of \eqn{\alpha}. Defaults to \code{0.1}. When
 \code{n_cluster > 1}, each mixture component \eqn{\alpha_{c}} has the same
 prior distribution.}
+
+\item{alpha_max}{Maximum value of \code{alpha} in the truncated exponential prior distribution.}
 
 \item{psi}{Integer specifying the concentration parameter \eqn{\psi} of the
 Dirichlet prior distribution used for the cluster probabilities
@@ -147,6 +152,14 @@ the the constraint set is computed internally. In repeated calls to
 \code{compute_mallows}, with very large datasets, computing the constraint
 set may be time consuming. In this case it can be beneficial to precompute
 it and provide it as a separate argument.}
+
+\item{save_ind_clus}{Whether or not to save the individual cluster probabilities in each step.
+This results in csv files \code{cluster_probs1.csv},
+\code{cluster_probs2.csv}, ..., being saved in the calling directory. This option may slow down the code
+considerably, but is necessary for detecting label switching using Stephen's algorithm. See \code{\link{label_switching}}
+for more information.}
+
+\item{seed}{Optional integer to be used as random number seed.}
 }
 \value{
 A list of class BayesMallows.

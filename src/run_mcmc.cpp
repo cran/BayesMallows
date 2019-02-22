@@ -21,6 +21,8 @@
 //' @param metric The distance metric to use. One of \code{"spearman"},
 //' \code{"footrule"}, \code{"kendall"}, \code{"cayley"}, or
 //' \code{"hamming"}.
+//' @param error_model Error model to use.
+//' @param Lswap Swap parameter used by Swap proposal for proposing rank augmentations in the case of non-transitive pairwise comparisons.
 //' @param n_clusters Number of clusters. Defaults to 1.
 //' @param include_wcd Boolean defining whether or
 //' not to store the within-cluster distance.
@@ -32,6 +34,7 @@
 //' number can significantly speed up computation time, since we then do not
 //' have to do expensive computation of the partition function.
 //' @param lambda Parameter of the prior distribution.
+//' @param alpha_max Maximum value of \code{alpha}, used for truncating the exponential prior distribution.
 //' @param psi Hyperparameter for the Dirichlet prior distribution used in clustering.
 //' @param rho_thinning Thinning parameter. Keep only every \code{rho_thinning} rank
 //' sample from the posterior distribution.
@@ -44,6 +47,10 @@
 //' 1000th iteration.
 //' @param kappa_1 Hyperparameter for \eqn{theta} in the Bernoulli error model. Defaults to 1.0.
 //' @param kappa_2 Hyperparameter for \eqn{theta} in the Bernoulli error model. Defaults to 1.0.
+//' @param save_ind_clus Whether or not to save the individual cluster probabilities in each step,
+//' thinned as specified in argument \code{clus_thin}. This results in csv files \code{cluster_probs1.csv},
+//' \code{cluster_probs2.csv}, ..., being saved in the calling directory. This option may slow down the code
+//' considerably, but is necessary for detecting label switching using Stephen's algorithm.
 //' @keywords internal
 //'
 // [[Rcpp::export]]
@@ -54,6 +61,7 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
                     Rcpp::Nullable<arma::mat> rho_init,
                     std::string metric = "footrule",
                     std::string error_model = "none",
+                    int Lswap = 1,
                     int n_clusters = 1,
                     bool include_wcd = false,
                     int leap_size = 1,
@@ -61,6 +69,7 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
                     double alpha_init = 5,
                     int alpha_jump = 1,
                     double lambda = 0.1,
+                    double alpha_max = 1e6,
                     int psi = 10,
                     int rho_thinning = 1,
                     int aug_thinning = 1,
@@ -68,7 +77,8 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
                     bool save_aug = false,
                     bool verbose = false,
                     double kappa_1 = 1.0,
-                    double kappa_2 = 1.0
+                    double kappa_2 = 1.0,
+                      bool save_ind_clus = false
                       ){
 
   // The number of items ranked
@@ -80,13 +90,14 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
   bool augpair = (constraints.length() > 0);
   bool any_missing = !arma::is_finite(rankings);
 
-  arma::mat missing_indicator;
-  arma::vec assessor_missing;
+  arma::umat missing_indicator;
+  arma::uvec assessor_missing;
 
   if(any_missing){
-    missing_indicator = rankings;
-    missing_indicator.transform( [](double val) { return (arma::is_finite(val)) ? 0 : 1; } );
-    assessor_missing = arma::conv_to<arma::vec>::from(sum(missing_indicator, 0));
+    // Converting to umat will convert NA to 0
+    missing_indicator = arma::conv_to<arma::umat>::from(rankings);
+    missing_indicator.transform( [](int val) { return (val == 0) ? 1 : 0; } );
+    assessor_missing = arma::conv_to<arma::uvec>::from(arma::sum(missing_indicator, 0));
     initialize_missing_ranks(rankings, missing_indicator, assessor_missing);
   } else {
     missing_indicator.reset();
@@ -118,6 +129,7 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
   arma::umat cluster_assignment(n_assessors, n_cluster_assignments);
   cluster_assignment.col(0) = arma::randi<arma::uvec>(n_assessors, arma::distr_param(0, n_clusters - 1));
   arma::uvec current_cluster_assignment = cluster_assignment.col(0);
+
   // Matrix with precomputed distances d(R_j, \rho_j), used to avoid looping during cluster assignment
   arma::mat dist_mat(n_assessors, n_clusters);
   update_dist_mat(dist_mat, rankings, rho_old, metric);
@@ -193,7 +205,7 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
       for(int i = 0; i < n_clusters; ++i){
         alpha(i, alpha_index) = update_alpha(alpha_acceptance, alpha_old(i),
               clustering ? rankings.submat(element_indices, arma::find(current_cluster_assignment == i)) : rankings,
-              i, rho_old.col(i), alpha_prop_sd, metric, lambda, cardinalities, logz_estimate);
+              i, rho_old.col(i), alpha_prop_sd, metric, lambda, cardinalities, logz_estimate, alpha_max);
       }
       // Update alpha_old
       alpha_old = alpha.col(alpha_index);
@@ -203,7 +215,8 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
     current_cluster_probs = update_cluster_probs(current_cluster_assignment, n_clusters, psi);
 
     current_cluster_assignment = update_cluster_labels(dist_mat, current_cluster_probs,
-                                                       alpha_old, n_items, metric, cardinalities, logz_estimate);
+                                                       alpha_old, n_items, t, metric, cardinalities,
+                                                       logz_estimate, save_ind_clus);
 
     if(t % clus_thin == 0){
       ++cluster_assignment_index;
@@ -226,7 +239,7 @@ Rcpp::List run_mcmc(arma::mat rankings, int nmc,
   // Perform data augmentation of pairwise comparisons, if needed
   if(augpair){
     augment_pairwise(rankings, current_cluster_assignment, alpha_old, 0.1, rho_old,
-                     metric, constraints, aug_acceptance, clustering, error_model);
+                     metric, constraints, aug_acceptance, clustering, error_model, Lswap);
 
   }
 

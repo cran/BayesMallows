@@ -128,6 +128,8 @@ rmallows <- function(rho0, alpha0, n_samples, burnin, thinning, leap_size = 1L, 
 #' @param metric The distance metric to use. One of \code{"spearman"},
 #' \code{"footrule"}, \code{"kendall"}, \code{"cayley"}, or
 #' \code{"hamming"}.
+#' @param error_model Error model to use.
+#' @param Lswap Swap parameter used by Swap proposal for proposing rank augmentations in the case of non-transitive pairwise comparisons.
 #' @param n_clusters Number of clusters. Defaults to 1.
 #' @param include_wcd Boolean defining whether or
 #' not to store the within-cluster distance.
@@ -139,6 +141,7 @@ rmallows <- function(rho0, alpha0, n_samples, burnin, thinning, leap_size = 1L, 
 #' number can significantly speed up computation time, since we then do not
 #' have to do expensive computation of the partition function.
 #' @param lambda Parameter of the prior distribution.
+#' @param alpha_max Maximum value of \code{alpha}, used for truncating the exponential prior distribution.
 #' @param psi Hyperparameter for the Dirichlet prior distribution used in clustering.
 #' @param rho_thinning Thinning parameter. Keep only every \code{rho_thinning} rank
 #' sample from the posterior distribution.
@@ -151,9 +154,13 @@ rmallows <- function(rho0, alpha0, n_samples, burnin, thinning, leap_size = 1L, 
 #' 1000th iteration.
 #' @param kappa_1 Hyperparameter for \eqn{theta} in the Bernoulli error model. Defaults to 1.0.
 #' @param kappa_2 Hyperparameter for \eqn{theta} in the Bernoulli error model. Defaults to 1.0.
+#' @param save_ind_clus Whether or not to save the individual cluster probabilities in each step,
+#' thinned as specified in argument \code{clus_thin}. This results in csv files \code{cluster_probs1.csv},
+#' \code{cluster_probs2.csv}, ..., being saved in the calling directory. This option may slow down the code
+#' considerably, but is necessary for detecting label switching using Stephen's algorithm.
 #' @keywords internal
 #'
-run_mcmc <- function(rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric = "footrule", error_model = "none", n_clusters = 1L, include_wcd = FALSE, leap_size = 1L, alpha_prop_sd = 0.5, alpha_init = 5, alpha_jump = 1L, lambda = 0.1, psi = 10L, rho_thinning = 1L, aug_thinning = 1L, clus_thin = 1L, save_aug = FALSE, verbose = FALSE, kappa_1 = 1.0, kappa_2 = 1.0) {
-    .Call(`_BayesMallows_run_mcmc`, rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric, error_model, n_clusters, include_wcd, leap_size, alpha_prop_sd, alpha_init, alpha_jump, lambda, psi, rho_thinning, aug_thinning, clus_thin, save_aug, verbose, kappa_1, kappa_2)
+run_mcmc <- function(rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric = "footrule", error_model = "none", Lswap = 1L, n_clusters = 1L, include_wcd = FALSE, leap_size = 1L, alpha_prop_sd = 0.5, alpha_init = 5, alpha_jump = 1L, lambda = 0.1, alpha_max = 1e6, psi = 10L, rho_thinning = 1L, aug_thinning = 1L, clus_thin = 1L, save_aug = FALSE, verbose = FALSE, kappa_1 = 1.0, kappa_2 = 1.0, save_ind_clus = FALSE) {
+    .Call(`_BayesMallows_run_mcmc`, rankings, nmc, constraints, cardinalities, logz_estimate, rho_init, metric, error_model, Lswap, n_clusters, include_wcd, leap_size, alpha_prop_sd, alpha_init, alpha_jump, lambda, alpha_max, psi, rho_thinning, aug_thinning, clus_thin, save_aug, verbose, kappa_1, kappa_2, save_ind_clus)
 }
 

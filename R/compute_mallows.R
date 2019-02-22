@@ -68,7 +68,7 @@
 #'   assignments. Defaults to \code{FALSE}.
 #'
 #' @param clus_thin Integer specifying the thinning to be applied to cluster
-#'   assignments and cluster probabilities. Defaults to \code{1L}. Not used when \code{save_clus = FALSE}.
+#'   assignments and cluster probabilities. Defaults to \code{1L}.
 #'
 #' @param nmc Integer specifying the number of iteration of the
 #'   Metropolis-Hastings algorithm to run. Defaults to \code{2000L}. See
@@ -77,6 +77,10 @@
 #'
 #' @param leap_size Integer specifying the step size of the leap-and-shift
 #'   proposal distribution. Defaults \code{floor(n_items / 5)}.
+#'
+#' @param swap_leap Integer specifying the step size of the Swap proposal.
+#' Only used when \code{error_model} is not \code{NULL}.
+#'
 #'
 #' @param rho_init Numeric vector specifying the initial value of the latent
 #'   consensus ranking \eqn{\rho}. Defaults to NULL, which means that the
@@ -106,10 +110,11 @@
 #'   for the Mallows model needs to be computed. Defaults to \code{1L}.
 #'
 #' @param lambda Strictly positive numeric value specifying the rate parameter
-#'   of the exponential prior distribution of \eqn{\alpha}, \eqn{\pi(\alpha) =
-#'   \lambda \exp{(-\lambda \alpha)}}. Defaults to \code{0.1}. When
+#'   of the truncated exponential prior distribution of \eqn{\alpha}. Defaults to \code{0.1}. When
 #'   \code{n_cluster > 1}, each mixture component \eqn{\alpha_{c}} has the same
 #'   prior distribution.
+#'
+#' @param alpha_max Maximum value of \code{alpha} in the truncated exponential prior distribution.
 #'
 #' @param psi Integer specifying the concentration parameter \eqn{\psi} of the
 #'   Dirichlet prior distribution used for the cluster probabilities
@@ -161,6 +166,14 @@
 #'   set may be time consuming. In this case it can be beneficial to precompute
 #'   it and provide it as a separate argument.
 #'
+#' @param save_ind_clus Whether or not to save the individual cluster probabilities in each step.
+#' This results in csv files \code{cluster_probs1.csv},
+#' \code{cluster_probs2.csv}, ..., being saved in the calling directory. This option may slow down the code
+#' considerably, but is necessary for detecting label switching using Stephen's algorithm. See \code{\link{label_switching}}
+#' for more information.
+#'
+#' @param seed Optional integer to be used as random number seed.
+#'
 #'
 #' @return A list of class BayesMallows.
 #'
@@ -185,12 +198,14 @@ compute_mallows <- function(rankings = NULL,
                             clus_thin = 1L,
                             nmc = 2000L,
                             leap_size = max(1L, floor(n_items / 5)),
+                            swap_leap = 1L,
                             rho_init = NULL,
                             rho_thinning = 1L,
                             alpha_prop_sd = 0.1,
                             alpha_init = 1,
                             alpha_jump = 1L,
                             lambda = 0.001,
+                            alpha_max = 1e6,
                             psi = 10L,
                             include_wcd = (n_clusters > 1),
                             save_aug = FALSE,
@@ -198,8 +213,12 @@ compute_mallows <- function(rankings = NULL,
                             logz_estimate = NULL,
                             verbose = FALSE,
                             validate_rankings = TRUE,
-                            constraints = NULL
+                            constraints = NULL,
+                            save_ind_clus = FALSE,
+                            seed = NULL
                             ){
+
+  if(!is.null(seed)) set.seed(seed)
 
   # Check that at most one of rankings and preferences is set
   if(is.null(rankings) && is.null(preferences)){
@@ -210,7 +229,7 @@ compute_mallows <- function(rankings = NULL,
     stop("Error model requires preferences to be set.")
   }
 
-
+  if(!swap_leap > 0) stop("swap_leap must be strictly positive")
   if(nmc <= 0) stop("nmc must be strictly positive")
 
   # Check that we do not jump over all alphas
@@ -230,8 +249,15 @@ compute_mallows <- function(rankings = NULL,
 
   # Deal with pairwise comparisons. Generate rankings compatible with them.
   if(!is.null(preferences) && is.null(error_model)){
+
     if(!inherits(preferences, "BayesMallowsTC")){
       message("Generating transitive closure of preferences.")
+      # Make sure the preference columns are double
+      preferences <- dplyr::mutate(preferences,
+                                   bottom_item = as.numeric(.data$bottom_item),
+                                   top_item = as.numeric(.data$top_item)
+      )
+
       preferences <- generate_transitive_closure(preferences)
     }
     if(is.null(rankings)){
@@ -253,6 +279,7 @@ compute_mallows <- function(rankings = NULL,
 
   # If any row of rankings has only one missing value, replace it with the implied ranking
   if(any(is.na(rankings))){
+
     dn <- dimnames(rankings)
     rankings <- purrr::map(purrr::array_branch(rankings, margin = 1),
                            function(x) {
@@ -280,7 +307,12 @@ compute_mallows <- function(rankings = NULL,
 
   logz_list <- prepare_partition_function(logz_estimate, metric, n_items)
 
-  if(!save_clus) clus_thin <- nmc
+  if(save_ind_clus){
+    abort <- readline(
+      prompt = paste(nmc, "csv files will be saved in your current working directory.",
+                     "Proceed? (yes/no): "))
+    if(tolower(abort) %in% c("n", "no")) stop()
+  }
 
   # Transpose rankings to get samples along columns, since we typically want
   # to extract one sample at a time. armadillo is column major, just like rankings
@@ -292,9 +324,11 @@ compute_mallows <- function(rankings = NULL,
                   rho_init = rho_init,
                   metric = metric,
                   error_model = dplyr::if_else(is.null(error_model), "none", error_model),
+                  Lswap = swap_leap,
                   n_clusters = n_clusters,
                   include_wcd = include_wcd,
                   lambda = lambda,
+                  alpha_max = alpha_max,
                   leap_size = leap_size,
                   alpha_prop_sd = alpha_prop_sd,
                   alpha_init = alpha_init,
@@ -303,7 +337,8 @@ compute_mallows <- function(rankings = NULL,
                   aug_thinning = aug_thinning,
                   clus_thin = clus_thin,
                   save_aug = save_aug,
-                  verbose = verbose
+                  verbose = verbose,
+                  save_ind_clus = save_ind_clus
                   )
 
   if(verbose){

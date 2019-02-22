@@ -1,3 +1,4 @@
+library(dplyr)
 context("Testing compute_mallows")
 
 test_that("miscellaneous input validation", {
@@ -44,7 +45,10 @@ test_that("compute_mallows error model works", {
 
 test_that("compute_mallows with missing data works", {
   mat <- potato_visual * ifelse(runif(length(potato_visual)) > 0.8, NA_real_, 1)
-  expect_s3_class(compute_mallows(mat, nmc = 3), "BayesMallows")
+  m <- compute_mallows(rankings = mat, nmc = 30)
+  expect_gt(sd(m$rho$value), 0)
+  expect_gt(sd(m$alpha$value), 0.001)
+  expect_s3_class(m, "BayesMallows")
 
 })
 
@@ -55,3 +59,33 @@ test_that("compute_mallows runs with the right distances", {
   }
 
 })
+
+test_that("compute_mallows handles integer preferences", {
+  m <- beach_preferences %>%
+    mutate_all(as.integer) %>%
+    compute_mallows(preferences = .)
+
+})
+
+test_that("compute_mallows handles data with lots of missings",{
+  R_partial2 <- structure(c(NA, NA, NA, NA, NA, NA, 9, NA, NA, 7, NA, NA, NA,
+                            NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
+                            NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
+                            NA, NA, NA, NA, NA, NA, NA, 7, 8, 10, NA, NA, 9, NA, NA, NA,
+                            NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 6, NA, 5, 2,
+                            6, 5, 6, 6, 5, 7, 8, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
+                            NA, NA, 3, 4, NA, 3, 3, 3, 3, 4, 5, 3, 3, 3, NA, 3, 3, 4, NA,
+                            7, 8, 3, 3, 10, 5, 4, NA, NA, NA, 8, NA, NA, NA, NA, NA, 11,
+                            NA, NA, 1, 1, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 1, 2, 4, 2,
+                            2, 2, 4, 2, 2, 2, NA, NA, 4, 7, 5, 4, 6, 7, 2, 6, 6, 7, NA, NA,
+                            NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, 9,
+                            7, 8, NA, 8, 10, 6, NA, 5, NA, 6, 6, 5, 4, 5, NA, 4, 4, 5, NA,
+                            NA, NA, NA, 8, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
+                            NA, NA, NA, NA, NA, 8, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA,
+                            NA, 9, NA), .Dim = c(12L, 20L))
+
+  m <- compute_mallows(R_partial2)
+  expect_s3_class(assess_convergence(m), "gg")
+
+}
+          )

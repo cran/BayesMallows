@@ -20,32 +20,35 @@
 #' @param assessors Numeric vector specifying the assessors to study in
 #' the diagnostic plot for \code{"Rtilde"}.
 #'
-#' @param ... Additional arguments passed on to \code{cowplot::plot_grid}. Only used
-#' when \code{model_fit} is of class \code{BayesMallowsMixtures}.
 #'
 #' @seealso \code{\link{compute_mallows}}, \code{\link{plot.BayesMallows}}
 #'
 #' @export
 #'
 assess_convergence <- function(model_fit, parameter = "alpha", items = NULL,
-                               assessors = NULL, ...){
+                               assessors = NULL){
 
   stopifnot(inherits(model_fit, "BayesMallows") ||
               inherits(model_fit, "BayesMallowsMixtures"))
 
-
   if(parameter == "alpha") {
     if(inherits(model_fit, "BayesMallows")){
-      trace_alpha(model_fit)
+      m <- model_fit$alpha
+      trace_alpha(m, FALSE)
     } else if(inherits(model_fit, "BayesMallowsMixtures")){
-      cowplot::plot_grid(plotlist = purrr::map(model_fit, trace_alpha, clusters = TRUE), ...)
-    }
+      m <- purrr::map_dfr(model_fit, function(x){
+        dplyr::mutate(x$alpha,
+                      cluster = as.character(.data$cluster),
+                      n_clusters = x$n_clusters)
+      })
+      trace_alpha(m, TRUE)
+      }
 
   } else if(parameter == "rho"){
     if(inherits(model_fit, "BayesMallows")){
       trace_rho(model_fit, items)
     } else if(inherits(model_fit, "BayesMallowsMixtures")){
-      cowplot::plot_grid(plotlist = purrr::map(model_fit, trace_rho, clusters = TRUE, items = items), ...)
+      cowplot::plot_grid(plotlist = purrr::map(model_fit, trace_rho, clusters = TRUE, items = items))
     }
 
   } else if(parameter == "Rtilde") {
@@ -57,10 +60,15 @@ assess_convergence <- function(model_fit, parameter = "alpha", items = NULL,
     }
   } else if (parameter == "cluster_probs"){
     if(inherits(model_fit, "BayesMallows")){
-      trace_cluster_probs(model_fit)
+      m <- model_fit$cluster_probs
     } else if(inherits(model_fit, "BayesMallowsMixtures")){
-      cowplot::plot_grid(plotlist = purrr::map(model_fit, trace_cluster_probs), ...)
+      m <- purrr::map_dfr(model_fit, function(x){
+        dplyr::mutate(x$cluster_probs,
+                      cluster = as.character(.data$cluster),
+                      n_clusters = x$n_clusters)
+      })
     }
+    trace_cluster_probs(m)
 
   } else if (parameter == "theta"){
       trace_theta(model_fit)
@@ -69,11 +77,9 @@ assess_convergence <- function(model_fit, parameter = "alpha", items = NULL,
   }
 }
 
-
-
-trace_alpha <- function(model_fit, clusters = model_fit$n_clusters > 1){
+trace_alpha <- function(m, clusters){
   # Create the diagnostic plot for alpha
-  p <- ggplot2::ggplot(model_fit$alpha, ggplot2::aes(x = .data$iteration, y = .data$value)) +
+  p <- ggplot2::ggplot(m, ggplot2::aes(x = .data$iteration, y = .data$value)) +
     ggplot2::xlab("Iteration") +
     ggplot2::ylab(expression(alpha))
 
@@ -82,8 +88,11 @@ trace_alpha <- function(model_fit, clusters = model_fit$n_clusters > 1){
   } else {
     p <- p +
       ggplot2::geom_line(ggplot2::aes(color = .data$cluster)) +
-      ggplot2::theme(legend.position = "bottom") +
-      ggplot2::theme(legend.title = ggplot2::element_blank())
+      ggplot2::theme(legend.position = "none") +
+      ggplot2::facet_wrap(ggplot2::vars(.data$n_clusters),
+                          labeller = ggplot2::as_labeller(function(n_clusters) {
+                            paste(n_clusters, dplyr::if_else(n_clusters == 1, "cluster", "clusters"))
+                          }), scales = "free_y")
   }
   return(p)
 }
@@ -110,14 +119,14 @@ trace_rho <- function(model_fit, items, clusters = model_fit$n_clusters > 1){
     ggplot2::ylab(expression(rho))
 
   if(clusters){
-    p <- p + ggplot2::facet_wrap(~ .data$cluster)
+    p <- p + ggplot2::facet_wrap(ggplot2::vars(.data$cluster))
   }
 
   return(p)
 }
 
 
-trace_rtilde <- function(model_fit, items, assessors){
+trace_rtilde <- function(model_fit, items, assessors, ...){
 
 
   if(!model_fit$save_aug){
@@ -153,26 +162,25 @@ trace_rtilde <- function(model_fit, items, assessors){
 
   ggplot2::ggplot(df, ggplot2::aes(x = .data$iteration, y = .data$value, color = .data$item)) +
     ggplot2::geom_line() +
-    ggplot2::facet_wrap(~ .data$assessor) +
+    ggplot2::facet_wrap(ggplot2::vars(.data$assessor)) +
     ggplot2::theme(legend.title = ggplot2::element_blank()) +
     ggplot2::xlab("Iteration") +
     ggplot2::ylab("Rtilde")
 }
 
 
-trace_cluster_probs <- function(model_fit){
-  if(!exists("cluster_probs", model_fit)){
-    stop("cluster_probs not found")
-  }
+trace_cluster_probs <- function(m){
 
-  ggplot2::ggplot(model_fit$cluster_probs,
-                  ggplot2::aes(x = .data$iteration, y = .data$value,
+  ggplot2::ggplot(m, ggplot2::aes(x = .data$iteration, y = .data$value,
                                color = .data$cluster)) +
     ggplot2::geom_line() +
-    ggplot2::theme(legend.title = ggplot2::element_blank()) +
-    ggplot2::theme(legend.position = "bottom") +
+    ggplot2::theme(legend.position = "none") +
     ggplot2::xlab("Iteration") +
-    ggplot2::ylab(expression(tau[c]))
+    ggplot2::ylab(expression(tau[c])) +
+    ggplot2::facet_wrap(ggplot2::vars(.data$n_clusters),
+                        labeller = ggplot2::as_labeller(function(n_clusters) {
+                          paste(n_clusters, dplyr::if_else(n_clusters == 1, "cluster", "clusters"))
+                        }), scales = "free_y")
 }
 
 

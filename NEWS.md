@@ -1,3 +1,17 @@
+# BayesMallows 0.4.1
+
+* Improvement of plotting functions, as noted below.
+
+# BayesMallows 0.4.0.9002
+* plot.BayesMallows and plot_elbow no longer print titles automatically.
+
+# BayesMallows 0.4.0.9001
+* assess_convergence no longer prints legends for clusters, as the cluster number is essentially arbitrary.
+
+# BayesMallows 0.4.0.9000
+* Added CITATION.
+* Updated test of random number seed.
+
 # BayesMallows 0.4.0
 * Implements all fixes since version 0.3.1 below.
 * Fixed typo on y-axis label of elbow plot.

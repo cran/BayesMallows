@@ -1,6 +1,5 @@
 library(dplyr)
-library(tidyr)
-library(purrr)
+
 # The first example uses full rankings in the potato_visual dataset, but we assume
 # that each row in the data corresponds to between 100 and 500 assessors.
 set.seed(1234)
@@ -8,7 +7,7 @@ set.seed(1234)
 obs_freq <- sample(x = seq(from = 100L, to = 500L, by = 1L),
                   size = nrow(potato_visual), replace = TRUE)
 # We also create a set of repeated indices, used to extend the matrix rows
-repeated_indices <- unlist(map2(1:nrow(potato_visual), obs_freq, ~ rep(.x, each = .y)))
+repeated_indices <- unlist(Map(function(x, y) rep(x, each = y), 1:nrow(potato_visual), obs_freq))
 # The potato_repeated matrix consists of all rows repeated corresponding to
 # the number of assessors in the obs_freq vector. This is how a large dataset
 # would look like without using the obs_freq argument
@@ -69,11 +68,19 @@ obs_freq <- sample(x = 1:4, size = length(unique(beach_preferences$assessor)), r
 
 # Next, we create a new hypthetical beach_preferences dataframe where each
 # assessor is replicated 1-4 times
-beach_pref_rep <- beach_preferences %>%
-  mutate(new_assessor = map(obs_freq[assessor], ~ 1:.x)) %>%
-  unnest(cols = new_assessor) %>%
-  mutate(assessor = paste(assessor, new_assessor, sep = ",")) %>%
-  select(-new_assessor)
+beach_pref_rep <- do.call(
+  rbind,
+  lapply(split(beach_preferences, f = beach_preferences$assessor),
+         function(dd){
+           ret <- merge(
+             dd,
+             data.frame(
+               new_assessor = seq_len(obs_freq[unique(dd$assessor)])
+               ), all = TRUE)
+           ret$assessor <- paste(ret$assessor, ret$new_assessor, sep = ",")
+           ret$new_assessor <- NULL
+           ret
+           }))
 
 # We generate transitive closure for these preferences
 beach_tc_rep <- generate_transitive_closure(beach_pref_rep)

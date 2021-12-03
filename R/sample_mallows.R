@@ -97,13 +97,14 @@ sample_mallows <- function(rho0, alpha0, n_samples,
                       lag.max = max_lag, plot = FALSE, demean = TRUE)
     names(autocorr) <- items_to_plot
 
-
-    autocorr <- purrr::map_dfr(autocorr, function(x) {
-      dplyr::tibble(
+    autocorr <- do.call(rbind, Map(function(x, xnm){
+      data.frame(
+        item = xnm,
         acf = x$acf[, 1, 1],
         lag = x$lag[, 1, 1]
       )
-    }, .id = "item")
+    }, x = autocorr, xnm = names(autocorr)))
+
     autocorr <- dplyr::mutate(autocorr, item = as.factor(as.integer(.data$item)))
 
     ac_plot <- ggplot2::ggplot(autocorr,
@@ -115,15 +116,19 @@ sample_mallows <- function(rho0, alpha0, n_samples,
       ggplot2::ggtitle("Autocorrelation of Rank Values")
 
     colnames(samples) <- seq(from = 1, to = n_items, by = 1)
-    diagnostic <- dplyr::as_tibble(samples)
+    diagnostic <- as.data.frame(samples)
     diagnostic <- dplyr::mutate(diagnostic, iteration = dplyr::row_number())
 
-    diagnostic <- tidyr::gather(diagnostic, key = "item",
-                                value = "value", -.data$iteration)
+    diagnostic <- stats::reshape(diagnostic, direction = "long",
+            varying = setdiff(names(diagnostic), "iteration"),
+            v.names = "value",
+            timevar = "item",
+            times = setdiff(names(diagnostic), "iteration"),
+            idvar = "iteration",
+            ids = diagnostic$iteration)
+
     diagnostic <- dplyr::filter(diagnostic, .data$item %in% items_to_plot)
     diagnostic <- dplyr::mutate(diagnostic, item = as.factor(as.integer(.data$item)))
-
-
 
     rho_plot <- ggplot2::ggplot(diagnostic,
                          ggplot2::aes(x = .data$iteration, y = .data$value, color = .data$item)) +

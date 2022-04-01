@@ -16,7 +16,19 @@
 
 <title>SMC-Mallows Tutorial</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -26,6 +38,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -149,7 +162,187 @@ div.csl-indent {
 }
 </style>
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -167,7 +360,19 @@ div.csl-indent {
 
 
 
-<p>This vignette describes the extension to the <code>BayesMallows</code> R package called <code>SMC-Mallows</code>. This uses Sequential Monte Carlo (SMC) algorithms to provide updated approximations to the posterior distribution of a single Mallows model. We consider scenarios where we receive sequential information in the form of complete rankings, partial rankings and updated rankings from existing individuals who have previously provided a (partial) ranking. We use an alternative data augmentation method, called the pseudolikelihood approach, when we are using the footrule and Spearman distance functions instead of using an independent sampler. The extension currently uses functions, similar to the <code>BayesMallows</code> R package, to visualise and analyse the posterior distributions.</p>
+<p>This vignette describes the extension to the
+<code>BayesMallows</code> R package called <code>SMC-Mallows</code>.
+This uses Sequential Monte Carlo (SMC) algorithms to provide updated
+approximations to the posterior distribution of a single Mallows model.
+We consider scenarios where we receive sequential information in the
+form of complete rankings, partial rankings and updated rankings from
+existing individuals who have previously provided a (partial) ranking.
+We use an alternative data augmentation method, called the
+pseudolikelihood approach, when we are using the footrule and Spearman
+distance functions instead of using an independent sampler. The
+extension currently uses functions, similar to the
+<code>BayesMallows</code> R package, to visualise and analyse the
+posterior distributions.</p>
 <div id="overview-of-extension" class="section level2">
 <h2>Overview of Extension</h2>
 <div id="set-up" class="section level3">
@@ -179,7 +384,8 @@ div.csl-indent {
 </div>
 <div id="functions" class="section level3">
 <h3>Functions</h3>
-<p>A list is provided with the most commonly used functions in this extension of the R package.</p>
+<p>A list is provided with the most commonly used functions in this
+extension of the R package.</p>
 <table>
 <colgroup>
 <col width="40%" />
@@ -194,19 +400,23 @@ div.csl-indent {
 <tbody>
 <tr class="odd">
 <td align="left"><code>smc_mallows_new_users_complete</code></td>
-<td align="left">Runs the SMC algorithm for case where we observe full rankings as new observational data.</td>
+<td align="left">Runs the SMC algorithm for case where we observe full
+rankings as new observational data.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>smc_mallows_new_users_partial</code></td>
-<td align="left">Runs the SMC algorithm for case where we observe partial rankings as new observational data.</td>
+<td align="left">Runs the SMC algorithm for case where we observe
+partial rankings as new observational data.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>smc_mallows_new_item_rank</code></td>
-<td align="left">Runs the SMC algorithm for case where we observe updated partial rankings as from existing users.</td>
+<td align="left">Runs the SMC algorithm for case where we observe
+updated partial rankings as from existing users.</td>
 </tr>
 <tr class="even">
 <td align="left"><code>plot_rho_posterior</code></td>
-<td align="left">Plots posterior density of <span class="math inline">\(\boldsymbol{\rho}\)</span> for a selection of items.</td>
+<td align="left">Plots posterior density of <span class="math inline">\(\boldsymbol{\rho}\)</span> for a selection of
+items.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>compute_posterior_intervals_rho</code></td>
@@ -214,7 +424,8 @@ div.csl-indent {
 </tr>
 <tr class="even">
 <td align="left"><code>compute_consensus_rho</code></td>
-<td align="left">Computes the CP estimate or MAP estimate of the latent ranks.</td>
+<td align="left">Computes the CP estimate or MAP estimate of the latent
+ranks.</td>
 </tr>
 <tr class="odd">
 <td align="left"><code>plot_alpha_posterior</code></td>
@@ -230,41 +441,197 @@ div.csl-indent {
 </div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>We provide a summary on the Bayesian Mallows model and the proposed Sequential Monte Carlo framework which updates the parameter estimates of the posterior each time we receive new observations for a fixed computational cost. More information on the Bayesian Mallows model can found in <span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> and <span class="citation"><a href="#ref-liu2019" role="doc-biblioref">Liu et al.</a> (<a href="#ref-liu2019" role="doc-biblioref">2019</a>)</span>, and a vignette on the <code>BayesMallows</code> R package can be found in <span class="citation"><a href="#ref-sorensen2020" role="doc-biblioref">Sørensen et al.</a> (<a href="#ref-sorensen2020" role="doc-biblioref">2020</a>)</span>. A general discussion on SMC can be found in <span class="citation"><a href="#ref-del2006sequential" role="doc-biblioref">Del Moral, Doucet, and Jasra</a> (<a href="#ref-del2006sequential" role="doc-biblioref">2006</a>)</span> and <span class="citation"><a href="#ref-doucet2009tutorial" role="doc-biblioref">Doucet and Johansen</a> (<a href="#ref-doucet2009tutorial" role="doc-biblioref">2009</a>)</span>.</p>
+<p>We provide a summary on the Bayesian Mallows model and the proposed
+Sequential Monte Carlo framework which updates the parameter estimates
+of the posterior each time we receive new observations for a fixed
+computational cost. More information on the Bayesian Mallows model can
+found in <span class="citation">Vitelli et al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> and <span class="citation">Liu et al. (<a href="#ref-liu2019" role="doc-biblioref">2019</a>)</span>, and a vignette on the
+<code>BayesMallows</code> R package can be found in <span class="citation">Sørensen et al. (<a href="#ref-sorensen2020" role="doc-biblioref">2020</a>)</span>. A general discussion on SMC can
+be found in <span class="citation">Del Moral, Doucet, and Jasra (<a href="#ref-del2006sequential" role="doc-biblioref">2006</a>)</span> and
+<span class="citation">Doucet and Johansen (<a href="#ref-doucet2009tutorial" role="doc-biblioref">2009</a>)</span>.</p>
 <div id="notation" class="section level3">
 <h3>Notation</h3>
-<p>We have set of <span class="math inline">\(m\)</span> distinct items, labelled <span class="math inline">\(\mathcal{A} = \{A_1, \dots, A_m \}\)</span>, and we are asked to rank these items in order of personal preference with respect to some attribute. This information can be expressed as a ranking <span class="math inline">\(\boldsymbol{R} = \{ R_1 , \dots , R_m\}\)</span>, which is a mapping <span class="math inline">\(\boldsymbol{R}:\mathcal{A} \rightarrow \mathcal{P}_m\)</span>, where <span class="math inline">\(\mathcal{P}_m\)</span> is the space of <span class="math inline">\(m\)</span>-dimensional permutations of <span class="math inline">\(\{1, \dots, m\}\)</span>. Each <span class="math inline">\(R_i \in \{1,\dots,m\}\)</span> corresponds to the rank of an item <span class="math inline">\(A_i\)</span>. We fundamentally assume that the preference information we receive from a group of individuals is transitive, i.e., each individual does not contradict themselves when specifying their preferences. In other words, for any three distinct items <span class="math inline">\(\{A_i,A_j,A_k\}\)</span> in a set, then if <span class="math inline">\(A_i \prec A_j\)</span> and <span class="math inline">\(A_j \prec A_k\)</span>, then it must follow that <span class="math inline">\(A_i \prec A_k\)</span>. Sometimes, we are unable to provide full rankings, so instead we provide a ranking for a subset of the items in <span class="math inline">\(\mathcal{A}\)</span>. These are referred to as partial rankings. Partial rankings can occur either randomly or an individual can specify their top-k ranked items. In this scenario, we will need perform data augmentation in order to estimate the parameters of the Mallows model.</p>
+<p>We have set of <span class="math inline">\(m\)</span> distinct items,
+labelled <span class="math inline">\(\mathcal{A} = \{A_1, \dots, A_m
+\}\)</span>, and we are asked to rank these items in order of personal
+preference with respect to some attribute. This information can be
+expressed as a ranking <span class="math inline">\(\boldsymbol{R} = \{
+R_1 , \dots , R_m\}\)</span>, which is a mapping <span class="math inline">\(\boldsymbol{R}:\mathcal{A} \rightarrow
+\mathcal{P}_m\)</span>, where <span class="math inline">\(\mathcal{P}_m\)</span> is the space of <span class="math inline">\(m\)</span>-dimensional permutations of <span class="math inline">\(\{1, \dots, m\}\)</span>. Each <span class="math inline">\(R_i \in \{1,\dots,m\}\)</span> corresponds to the
+rank of an item <span class="math inline">\(A_i\)</span>. We
+fundamentally assume that the preference information we receive from a
+group of individuals is transitive, i.e., each individual does not
+contradict themselves when specifying their preferences. In other words,
+for any three distinct items <span class="math inline">\(\{A_i,A_j,A_k\}\)</span> in a set, then if <span class="math inline">\(A_i \prec A_j\)</span> and <span class="math inline">\(A_j \prec A_k\)</span>, then it must follow that
+<span class="math inline">\(A_i \prec A_k\)</span>. Sometimes, we are
+unable to provide full rankings, so instead we provide a ranking for a
+subset of the items in <span class="math inline">\(\mathcal{A}\)</span>.
+These are referred to as partial rankings. Partial rankings can occur
+either randomly or an individual can specify their top-k ranked items.
+In this scenario, we will need perform data augmentation in order to
+estimate the parameters of the Mallows model.</p>
 </div>
 <div id="the-bayesian-mallows-model" class="section level3">
 <h3>The Bayesian Mallows Model</h3>
-<p>The Mallows model <span class="citation">(<a href="#ref-mallows1957" role="doc-biblioref">Mallows 1957</a>)</span> is a probability distribution for ranking data. The probability of observing a ranking <span class="math inline">\(\boldsymbol{R}\)</span> is defined as <span class="math display">\[p(\boldsymbol{R}) = p(\boldsymbol{R}|\boldsymbol{\rho},\alpha) =\frac{1}{Z_m(\alpha)} \exp \Big\{ -\frac{\alpha}{m} { d(\boldsymbol{R}, \boldsymbol{\rho})} \Big\},\]</span></p>
-<p>where: <span class="math inline">\(\boldsymbol{\rho} \in \mathcal{P}_m\)</span> is the consensus ranking; <span class="math inline">\(\alpha &gt; 0\)</span> is the scale parameter which represents the variability in rankings within the group of individuals around the consensus ranking; and <span class="math inline">\(Z_m(\alpha)\)</span> is the normalisation constant. The distance function, <span class="math inline">\(d(\cdot,\cdot) : \mathcal{P}_m \times \mathcal{P}_m \rightarrow [0,\infty)\)</span>, measures the ‘’closeness’’ of a ranking to the consensus ranking. The Mallows literature discusses the use of a right-invariant distance function, which means that the relabelling of items between two rankings is unaffected <span class="citation">(<a href="#ref-diaconis1988" role="doc-biblioref">Diaconis 1988</a>)</span>. The distance metrics that the <code>BayesMallows</code> R package currently uses are: Footrule, Spearman, Cayley, Kendall and Hamming. This also means that the normalisation constant is independent of the consensus ranking.</p>
-<p><span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> extended the Mallows model to incorporate a Bayesian framework for inference. A Uniform prior is elicited for the consensus ranking <span class="math inline">\(\pi(\boldsymbol{\rho}) = (m!)^{-1} 1_{\mathcal{P}_m} (\boldsymbol{\rho})\)</span> in the space of <span class="math inline">\(\mathcal{P}_m\)</span>, and an Exponential prior for <span class="math inline">\(\alpha\)</span>, with density <span class="math inline">\(\pi(\alpha|\lambda) = \lambda \exp \{ -\lambda \alpha \} 1_{[0,\infty)}(\alpha)\)</span>. Given <span class="math inline">\(M\)</span> observed complete rankings and the prior distributions <span class="math inline">\(\pi(\boldsymbol{\rho})\)</span> and <span class="math inline">\(\pi(\alpha)\)</span>, assuming prior independence of these variables, we have the following posterior density, known as the Bayesian Mallows model,</p>
-<p><span class="math display">\[ \pi(\boldsymbol\rho, \alpha | \boldsymbol{R}_1, \dots, \boldsymbol{R}_M) \propto \frac{\pi(\boldsymbol\rho)\pi(\alpha) }{[Z(\alpha)]^M}   \exp \Bigg\{ - \frac{\alpha}{m} \sum_{j=1}^{M} d(\boldsymbol{R}_j, \boldsymbol\rho   )   \Bigg\}.\]</span></p>
-<p>Any posterior estimates of interest, such as the marginal posterior for <span class="math inline">\(\boldsymbol{\rho}\)</span>, are obtained through the use of Metropolis-Hastings based Markov Chain Monte Carlo (MCMC) algorithm. Full details of the algorithm can be found in <span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span>. In each iteration of the algorithm, a new consensus ranking <span class="math inline">\(\boldsymbol{\rho}&#39;\)</span> is proposed to update <span class="math inline">\(\boldsymbol{\rho}\)</span> according to a distribution which is centered around the current rank <span class="math inline">\(\boldsymbol{\rho}\)</span>. The proposal step for <span class="math inline">\(\boldsymbol{\rho}\)</span> is done using the leap-and-shift proposal algorithm of <span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> and a new value <span class="math inline">\(\alpha&#39;\)</span> is sampled from the log-Normal distribution to update the current value of <span class="math inline">\(\alpha\)</span>.</p>
-<p>Inference on the Bayesian Mallows model can sample the posterior distribution of the unknown consensus ranking and scale parameter using a variety of observed data including: full rankings, incomplete rankings (e.g. top-<span class="math inline">\(k\)</span> rankings and ranks missing at random), and implicit data such as pairwise comparisons. For example, in the case of partial rankings, we can create augmented full ranking <span class="math inline">\(\tilde{R}_1, \dots, \tilde{R}_M\)</span> by using an independent sampler for each assessor containing the set of rankings not already chosen. The MCMC algorithm alternates between sampling a new value of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> given the current <span class="math inline">\(\tilde{R}_1, \dots, \tilde{R}_M\)</span> and sampling <span class="math inline">\(\tilde{R}_1, \dots, \tilde{R}_M\)</span> given the current values of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span>. The existing methods are discussed in <span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> and are provided in the <code>BayesMallows</code> R package <span class="citation">(<a href="#ref-sorensen2020" role="doc-biblioref">Sørensen et al. 2020</a>)</span>.</p>
+<p>The Mallows model <span class="citation">(<a href="#ref-mallows1957" role="doc-biblioref">Mallows 1957</a>)</span> is a probability
+distribution for ranking data. The probability of observing a ranking
+<span class="math inline">\(\boldsymbol{R}\)</span> is defined as <span class="math display">\[p(\boldsymbol{R}) =
+p(\boldsymbol{R}|\boldsymbol{\rho},\alpha) =\frac{1}{Z_m(\alpha)} \exp
+\Big\{ -\frac{\alpha}{m} { d(\boldsymbol{R}, \boldsymbol{\rho})}
+\Big\},\]</span></p>
+<p>where: <span class="math inline">\(\boldsymbol{\rho} \in
+\mathcal{P}_m\)</span> is the consensus ranking; <span class="math inline">\(\alpha &gt; 0\)</span> is the scale parameter
+which represents the variability in rankings within the group of
+individuals around the consensus ranking; and <span class="math inline">\(Z_m(\alpha)\)</span> is the normalisation
+constant. The distance function, <span class="math inline">\(d(\cdot,\cdot) : \mathcal{P}_m \times
+\mathcal{P}_m \rightarrow [0,\infty)\)</span>, measures the
+‘’closeness’’ of a ranking to the consensus ranking. The Mallows
+literature discusses the use of a right-invariant distance function,
+which means that the relabelling of items between two rankings is
+unaffected <span class="citation">(<a href="#ref-diaconis1988" role="doc-biblioref">Diaconis 1988</a>)</span>. The distance metrics
+that the <code>BayesMallows</code> R package currently uses are:
+Footrule, Spearman, Cayley, Kendall and Hamming. This also means that
+the normalisation constant is independent of the consensus ranking.</p>
+<p><span class="citation">Vitelli et al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> extended the Mallows model to
+incorporate a Bayesian framework for inference. A Uniform prior is
+elicited for the consensus ranking <span class="math inline">\(\pi(\boldsymbol{\rho}) = (m!)^{-1}
+1_{\mathcal{P}_m} (\boldsymbol{\rho})\)</span> in the space of <span class="math inline">\(\mathcal{P}_m\)</span>, and an Exponential prior
+for <span class="math inline">\(\alpha\)</span>, with density <span class="math inline">\(\pi(\alpha|\lambda) = \lambda \exp \{ -\lambda
+\alpha \} 1_{[0,\infty)}(\alpha)\)</span>. Given <span class="math inline">\(M\)</span> observed complete rankings and the
+prior distributions <span class="math inline">\(\pi(\boldsymbol{\rho})\)</span> and <span class="math inline">\(\pi(\alpha)\)</span>, assuming prior independence
+of these variables, we have the following posterior density, known as
+the Bayesian Mallows model,</p>
+<p><span class="math display">\[ \pi(\boldsymbol\rho, \alpha |
+\boldsymbol{R}_1, \dots, \boldsymbol{R}_M) \propto
+\frac{\pi(\boldsymbol\rho)\pi(\alpha) }{[Z(\alpha)]^M}   \exp \Bigg\{ -
+\frac{\alpha}{m} \sum_{j=1}^{M} d(\boldsymbol{R}_j,
+\boldsymbol\rho   )   \Bigg\}.\]</span></p>
+<p>Any posterior estimates of interest, such as the marginal posterior
+for <span class="math inline">\(\boldsymbol{\rho}\)</span>, are obtained
+through the use of Metropolis-Hastings based Markov Chain Monte Carlo
+(MCMC) algorithm. Full details of the algorithm can be found in <span class="citation">Vitelli et al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span>. In each iteration of the
+algorithm, a new consensus ranking <span class="math inline">\(\boldsymbol{\rho}&#39;\)</span> is proposed to
+update <span class="math inline">\(\boldsymbol{\rho}\)</span> according
+to a distribution which is centered around the current rank <span class="math inline">\(\boldsymbol{\rho}\)</span>. The proposal step for
+<span class="math inline">\(\boldsymbol{\rho}\)</span> is done using the
+leap-and-shift proposal algorithm of <span class="citation">Vitelli et
+al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span>
+and a new value <span class="math inline">\(\alpha&#39;\)</span> is
+sampled from the log-Normal distribution to update the current value of
+<span class="math inline">\(\alpha\)</span>.</p>
+<p>Inference on the Bayesian Mallows model can sample the posterior
+distribution of the unknown consensus ranking and scale parameter using
+a variety of observed data including: full rankings, incomplete rankings
+(e.g. top-<span class="math inline">\(k\)</span> rankings and ranks
+missing at random), and implicit data such as pairwise comparisons. For
+example, in the case of partial rankings, we can create augmented full
+ranking <span class="math inline">\(\tilde{R}_1, \dots,
+\tilde{R}_M\)</span> by using an independent sampler for each assessor
+containing the set of rankings not already chosen. The MCMC algorithm
+alternates between sampling a new value of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> given the current <span class="math inline">\(\tilde{R}_1, \dots, \tilde{R}_M\)</span> and
+sampling <span class="math inline">\(\tilde{R}_1, \dots,
+\tilde{R}_M\)</span> given the current values of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span>. The existing methods are
+discussed in <span class="citation">Vitelli et al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> and are
+provided in the <code>BayesMallows</code> R package <span class="citation">(<a href="#ref-sorensen2020" role="doc-biblioref">Sørensen et al. 2020</a>)</span>.</p>
 </div>
 <div id="sequential-monte-carlo" class="section level3">
 <h3>Sequential Monte Carlo</h3>
-<p>Sequential Monte Carlo (SMC) methods are a class of sampling algorithms which are used to estimate a sequence of target distributions given a stream of observations over discrete time. Each target distribution is approximated by a collection of random samples, termed particles, at each time step and evolve according to importance sampling and resampling steps. The literature on SMC methods is vast and diverse, but we are interested in using SMC as an alternative to MCMC methods <span class="citation">(<a href="#ref-chopin2002sequential" role="doc-biblioref">Chopin 2002</a>)</span>. A nice summary of the different variants of SMC is given in <span class="citation"><a href="#ref-del2006sequential" role="doc-biblioref">Del Moral, Doucet, and Jasra</a> (<a href="#ref-del2006sequential" role="doc-biblioref">2006</a>)</span>.</p>
-<p>In SMC, the aim is to approximate a sequence of target distributions <span class="math inline">\(\pi_t(\boldsymbol{\theta})\)</span> with parameters <span class="math inline">\(\boldsymbol{\theta}\)</span> that we wish to estimate given a set of observed data <span class="math inline">\(D_t\)</span> which has accumulated up to time <span class="math inline">\(t\)</span>. So we can write a target distribution <span class="math inline">\(\pi_t\)</span> as a posterior distribution <span class="math display">\[\pi_t(\boldsymbol{\theta})  = \pi_t(\boldsymbol{\theta} | D_t) \propto \pi_0(\boldsymbol{\theta})p_t(D_t| \boldsymbol{\theta}).\]</span></p>
-<p>The SMC algorithm begins by generating <span class="math inline">\(N\)</span> particles using the prior distributions for each parameter and assigning each particle an equal weight. In each time step <span class="math inline">\(t=1,\dots,T\)</span>, we assume that an additional <span class="math inline">\(p\)</span> independent observations <span class="math inline">\(y_{1:p}\)</span> become available from the target distribution. We reweight the particles in <span class="math inline">\(\pi(\boldsymbol{\theta}| D_{t-1})\)</span> from time <span class="math inline">\(t-1\)</span> to <span class="math inline">\(t\)</span> such that they are weighted with respect to <span class="math inline">\(\pi(\boldsymbol{\theta}| D_{t})\)</span>, <span class="math display">\[ w^{(i)}_t    = \frac{\pi(\boldsymbol{\theta}^{(i)}_{t-1}  | D_{t})}{\pi(\boldsymbol{\theta}^{(i)}_{t-1} | D_{t-1})} \propto \frac{p(D_t | \boldsymbol{\theta}^{(i)}_{t-1})}{p(D_{t-1} | \boldsymbol{\theta}^{(i)}_{t-1})} = p( y_{1:p}| D_{t-1}, \boldsymbol{\theta}_{t-1}^{(i)}   ), \ i = 1,\dots,N.\]</span> Next, we normalise the particle weights and resample the particles with replacement which replicates the heavier weighted particles and discard those with negligible weights. This results in a set of equally weighted particles <span class="math inline">\(\{ \boldsymbol{\theta}_t^{(i)}, w_t^{(i)} = \frac{1}{N} \}_{i=1}^N\)</span> that represent a sample of the posterior distribution. A summary of the possible methods for resampling is given in <span class="citation"><a href="#ref-doucet2009tutorial" role="doc-biblioref">Doucet and Johansen</a> (<a href="#ref-doucet2009tutorial" role="doc-biblioref">2009</a>)</span>.</p>
-<p>In the final stage, we move the particles using an MCMC kernel within SMC after resampling to give back the diversity of particle values <span class="citation">(<a href="#ref-berzuini2001resample" role="doc-biblioref">Berzuini and Gilks 2001</a>)</span>. This particular methodology in SMC is often referred to as the Resample-Move framework of <span class="citation"><a href="#ref-berzuini2001resample" role="doc-biblioref">Berzuini and Gilks</a> (<a href="#ref-berzuini2001resample" role="doc-biblioref">2001</a>)</span> and <span class="citation"><a href="#ref-berzuini2003particle" role="doc-biblioref">Berzuini and Gilks</a> (<a href="#ref-berzuini2003particle" role="doc-biblioref">2003</a>)</span>. We can apply MCMC kernel many times as we would like since the particles are still moving within the stationary distribution <span class="math inline">\(\pi_t\)</span>.</p>
+<p>Sequential Monte Carlo (SMC) methods are a class of sampling
+algorithms which are used to estimate a sequence of target distributions
+given a stream of observations over discrete time. Each target
+distribution is approximated by a collection of random samples, termed
+particles, at each time step and evolve according to importance sampling
+and resampling steps. The literature on SMC methods is vast and diverse,
+but we are interested in using SMC as an alternative to MCMC methods
+<span class="citation">(<a href="#ref-chopin2002sequential" role="doc-biblioref">Chopin 2002</a>)</span>. A nice summary of the
+different variants of SMC is given in <span class="citation">Del Moral,
+Doucet, and Jasra (<a href="#ref-del2006sequential" role="doc-biblioref">2006</a>)</span>.</p>
+<p>In SMC, the aim is to approximate a sequence of target distributions
+<span class="math inline">\(\pi_t(\boldsymbol{\theta})\)</span> with
+parameters <span class="math inline">\(\boldsymbol{\theta}\)</span> that
+we wish to estimate given a set of observed data <span class="math inline">\(D_t\)</span> which has accumulated up to time
+<span class="math inline">\(t\)</span>. So we can write a target
+distribution <span class="math inline">\(\pi_t\)</span> as a posterior
+distribution <span class="math display">\[\pi_t(\boldsymbol{\theta})  =
+\pi_t(\boldsymbol{\theta} | D_t) \propto
+\pi_0(\boldsymbol{\theta})p_t(D_t| \boldsymbol{\theta}).\]</span></p>
+<p>The SMC algorithm begins by generating <span class="math inline">\(N\)</span> particles using the prior distributions
+for each parameter and assigning each particle an equal weight. In each
+time step <span class="math inline">\(t=1,\dots,T\)</span>, we assume
+that an additional <span class="math inline">\(p\)</span> independent
+observations <span class="math inline">\(y_{1:p}\)</span> become
+available from the target distribution. We reweight the particles in
+<span class="math inline">\(\pi(\boldsymbol{\theta}| D_{t-1})\)</span>
+from time <span class="math inline">\(t-1\)</span> to <span class="math inline">\(t\)</span> such that they are weighted with
+respect to <span class="math inline">\(\pi(\boldsymbol{\theta}|
+D_{t})\)</span>, <span class="math display">\[ w^{(i)}_t    =
+\frac{\pi(\boldsymbol{\theta}^{(i)}_{t-1}  |
+D_{t})}{\pi(\boldsymbol{\theta}^{(i)}_{t-1} | D_{t-1})} \propto
+\frac{p(D_t | \boldsymbol{\theta}^{(i)}_{t-1})}{p(D_{t-1} |
+\boldsymbol{\theta}^{(i)}_{t-1})} = p( y_{1:p}| D_{t-1},
+\boldsymbol{\theta}_{t-1}^{(i)}   ), \ i = 1,\dots,N.\]</span> Next, we
+normalise the particle weights and resample the particles with
+replacement which replicates the heavier weighted particles and discard
+those with negligible weights. This results in a set of equally weighted
+particles <span class="math inline">\(\{ \boldsymbol{\theta}_t^{(i)},
+w_t^{(i)} = \frac{1}{N} \}_{i=1}^N\)</span> that represent a sample of
+the posterior distribution. A summary of the possible methods for
+resampling is given in <span class="citation">Doucet and Johansen (<a href="#ref-doucet2009tutorial" role="doc-biblioref">2009</a>)</span>.</p>
+<p>In the final stage, we move the particles using an MCMC kernel within
+SMC after resampling to give back the diversity of particle values <span class="citation">(<a href="#ref-berzuini2001resample" role="doc-biblioref">Berzuini and Gilks 2001</a>)</span>. This
+particular methodology in SMC is often referred to as the Resample-Move
+framework of <span class="citation">Berzuini and Gilks (<a href="#ref-berzuini2001resample" role="doc-biblioref">2001</a>)</span>
+and <span class="citation">Berzuini and Gilks (<a href="#ref-berzuini2003particle" role="doc-biblioref">2003</a>)</span>.
+We can apply MCMC kernel many times as we would like since the particles
+are still moving within the stationary distribution <span class="math inline">\(\pi_t\)</span>.</p>
 </div>
 </div>
 <div id="smc-mallows-user-guide" class="section level2">
 <h2>SMC-Mallows User Guide</h2>
-<p>The <code>SMC-Mallows</code> extension contains functions which contain algorithms to perform the Resample-Move SMC framework of <span class="citation"><a href="#ref-berzuini2001resample" role="doc-biblioref">Berzuini and Gilks</a> (<a href="#ref-berzuini2001resample" role="doc-biblioref">2001</a>)</span> using a single Mallows model. Each algorithm begins by drawing <span class="math inline">\(N\)</span> particles using the priors for <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> or by using specified initial values. Each particle is also assigned equal weight so at the start of the SMC algorithm we have <span class="math inline">\(\{\boldsymbol{\theta}^{(i)}_0 = (\boldsymbol{\rho}_0^{(i)}, \alpha_0^{(i)}), w^{(i)} \}_{i=1}^{N}\)</span> as the set of particles. Next, we observe some ranking data, <span class="math inline">\(D_t\)</span>, and we calculate the updated weights of the particles with respect to the new observations and their contribution to the current estimated posterior distribution before reweighting and multinomial resampling. Finally, we perturb the particles using the Metropolis-Hastings based MCMC kernel and we use the proposal distributions described in <span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> for sampling values of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span>.</p>
+<p>The <code>SMC-Mallows</code> extension contains functions which
+contain algorithms to perform the Resample-Move SMC framework of <span class="citation">Berzuini and Gilks (<a href="#ref-berzuini2001resample" role="doc-biblioref">2001</a>)</span> using a single Mallows model. Each
+algorithm begins by drawing <span class="math inline">\(N\)</span>
+particles using the priors for <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> or by using specified initial
+values. Each particle is also assigned equal weight so at the start of
+the SMC algorithm we have <span class="math inline">\(\{\boldsymbol{\theta}^{(i)}_0 =
+(\boldsymbol{\rho}_0^{(i)}, \alpha_0^{(i)}), w^{(i)}
+\}_{i=1}^{N}\)</span> as the set of particles. Next, we observe some
+ranking data, <span class="math inline">\(D_t\)</span>, and we calculate
+the updated weights of the particles with respect to the new
+observations and their contribution to the current estimated posterior
+distribution before reweighting and multinomial resampling. Finally, we
+perturb the particles using the Metropolis-Hastings based MCMC kernel
+and we use the proposal distributions described in <span class="citation">Vitelli et al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span> for sampling values of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span>.</p>
 <div id="complete-rankings" class="section level3">
 <h3>Complete Rankings</h3>
-<p>For this case, we assume that we observe a collection of complete rankings from new assessors over a sequence of discrete time steps, <span class="math inline">\(t=1,\dots, T\)</span>, such that up to a time <span class="math inline">\(t\)</span>, we will have observed <span class="math inline">\(|M_t|\)</span> complete rankings. The particles are reweighted such that they are representative of the underlying distribution of the <span class="math inline">\(|M_t|\)</span> complete rankings. The new weights for each particle are calculated as <span class="math display">\[\begin{align*}
-        {w}^{(i)}_t(\boldsymbol{\theta}^{(i)}_{t-1}, \boldsymbol{\theta}^{(i)}_{t})
-            &amp;=  \frac{  (Z_m(\alpha^{(i)}_{t-1}))^{-|M_t|} \exp \Big\{ - \frac{\alpha^{(i)}_{t-1}}{m} \sum_{j=1}^{|M_t|} d(\mathbf{R}^{(i)}_j, \boldsymbol{\rho}^{(i)}_{t-1}   )   \Big\}    }{ (Z_m(\alpha^{(i)}_{t-1}))^{-|M_{t-1}|} \exp \Big\{ - \frac{\alpha^{(i)}_{t-1}}{m} \sum_{j=1}^{|M_t|} d(\mathbf{R}^{(i)}_j, \boldsymbol{\rho}^{(i)}_{t-1}   )   \Big\}     }  \\
-            &amp;= (Z_m(\alpha^{(i)}_{t-1}))^{-(|M_t|-|M_{t-1}|)}\exp \Bigg\{ - \frac{\alpha^{(i)}_{t-1}}{m} \sum_{j= |M_{t-1}|+1}^{|M_t|} d(\mathbf{R}^{(i)}_j, \boldsymbol{\rho}^{(i)}_{t-1}   )   \Bigg\} ,
-    \end{align*}\]</span> where <span class="math inline">\(\alpha^{(i)}_{t-1}\)</span> and <span class="math inline">\(\boldsymbol{\rho}^{(i)}_{t-1}, \ i=1,\dots,N\)</span> are the current estimated parameter values of the Mallows posterior before we reweight.</p>
+<p>For this case, we assume that we observe a collection of complete
+rankings from new assessors over a sequence of discrete time steps,
+<span class="math inline">\(t=1,\dots, T\)</span>, such that up to a
+time <span class="math inline">\(t\)</span>, we will have observed <span class="math inline">\(|M_t|\)</span> complete rankings. The particles
+are reweighted such that they are representative of the underlying
+distribution of the <span class="math inline">\(|M_t|\)</span> complete
+rankings. The new weights for each particle are calculated as <span class="math display">\[\begin{align*}
+        {w}^{(i)}_t(\boldsymbol{\theta}^{(i)}_{t-1},
+\boldsymbol{\theta}^{(i)}_{t})
+            &amp;=  \frac{  (Z_m(\alpha^{(i)}_{t-1}))^{-|M_t|} \exp
+\Big\{ - \frac{\alpha^{(i)}_{t-1}}{m} \sum_{j=1}^{|M_t|}
+d(\mathbf{R}^{(i)}_j, \boldsymbol{\rho}^{(i)}_{t-1}   )   \Big\}    }{
+(Z_m(\alpha^{(i)}_{t-1}))^{-|M_{t-1}|} \exp \Big\{ -
+\frac{\alpha^{(i)}_{t-1}}{m} \sum_{j=1}^{|M_t|} d(\mathbf{R}^{(i)}_j,
+\boldsymbol{\rho}^{(i)}_{t-1}   )   \Big\}     }  \\
+            &amp;= (Z_m(\alpha^{(i)}_{t-1}))^{-(|M_t|-|M_{t-1}|)}\exp
+\Bigg\{ - \frac{\alpha^{(i)}_{t-1}}{m} \sum_{j= |M_{t-1}|+1}^{|M_t|}
+d(\mathbf{R}^{(i)}_j, \boldsymbol{\rho}^{(i)}_{t-1}   )   \Bigg\} ,
+    \end{align*}\]</span> where <span class="math inline">\(\alpha^{(i)}_{t-1}\)</span> and <span class="math inline">\(\boldsymbol{\rho}^{(i)}_{t-1}, \
+i=1,\dots,N\)</span> are the current estimated parameter values of the
+Mallows posterior before we reweight.</p>
 <div id="demonstration" class="section level4">
 <h4>Demonstration</h4>
-<p>We are interested in updating the parameter estimates of the Bayesian Mallows model based on the existing ranking data and new observations. We demonstrate the <code>SMC-Mallows</code> extension using the <code>sushi_rankings</code> dataset <span class="citation">(<a href="#ref-kamishima2003nantonac" role="doc-biblioref">Kamishima 2003</a>)</span>, which contains 5000 rankings for 10 sushi dishes.</p>
+<p>We are interested in updating the parameter estimates of the Bayesian
+Mallows model based on the existing ranking data and new observations.
+We demonstrate the <code>SMC-Mallows</code> extension using the
+<code>sushi_rankings</code> dataset <span class="citation">(<a href="#ref-kamishima2003nantonac" role="doc-biblioref">Kamishima
+2003</a>)</span>, which contains 5000 rankings for 10 sushi dishes.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(sushi_rankings)</span></code></pre></div>
 <pre><code>##      shrimp sea eel tuna squid sea urchin salmon roe egg fatty tuna tuna roll
 ## [1,]      2       8   10     3          4          1   5          9         7
@@ -280,7 +647,22 @@ div.csl-indent {
 ## [4,]            10
 ## [5,]             6
 ## [6,]             3</code></pre>
-<p>The function <code>smc_mallows_new_users_complete</code> shows the simplest version of the SMC algorithm in action. Many of the input variables, that the function requires, are also used in some of the existing functions in the <code>BayesMallows</code> R package. However, we will discuss what the new variables refer to in the algorithm. The variable <code>R_obs</code> in this instance is a 2D dataset with the number of columns as <code>n_items</code> and the number of rows, <span class="math inline">\(M\)</span>, represents the number of individuals in the dataset. We begin the algorithm with no observations and in each artificial time step we introduce a batch number of observations, this is controlled by the variable <code>num_new_obs</code> to control the size of the bath, and <code>Time</code> to specify the number of updates we will perform. There is a limit on the value for <code>Time</code>, and this depends on the number of individuals in the dataset and the value of <code>num_new_obs</code>. In the move stage we can apply an MCMC kernel as many times as we would like using the variable <code>mcmc_kernel_app</code> to specify the value.</p>
+<p>The function <code>smc_mallows_new_users_complete</code> shows the
+simplest version of the SMC algorithm in action. Many of the input
+variables, that the function requires, are also used in some of the
+existing functions in the <code>BayesMallows</code> R package. However,
+we will discuss what the new variables refer to in the algorithm. The
+variable <code>R_obs</code> in this instance is a 2D dataset with the
+number of columns as <code>n_items</code> and the number of rows, <span class="math inline">\(M\)</span>, represents the number of individuals
+in the dataset. We begin the algorithm with no observations and in each
+artificial time step we introduce a batch number of observations, this
+is controlled by the variable <code>num_new_obs</code> to control the
+size of the bath, and <code>Time</code> to specify the number of updates
+we will perform. There is a limit on the value for <code>Time</code>,
+and this depends on the number of individuals in the dataset and the
+value of <code>num_new_obs</code>. In the move stage we can apply an
+MCMC kernel as many times as we would like using the variable
+<code>mcmc_kernel_app</code> to specify the value.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>n_items <span class="ot">&lt;-</span> <span class="fu">dim</span>(sushi_rankings)[<span class="dv">2</span>]</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>metric <span class="ot">&lt;-</span> <span class="st">&quot;footrule&quot;</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>alpha_vector <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="at">from =</span> <span class="dv">0</span>, <span class="at">to =</span> <span class="dv">15</span>, <span class="at">by =</span> <span class="fl">0.1</span>)</span>
@@ -308,8 +690,23 @@ div.csl-indent {
 <span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda =</span> <span class="fl">0.15</span>,</span>
 <span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha_max =</span> <span class="fl">1e6</span></span>
 <span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>The example <code>smc_test</code> returns a list variable of the particles values for <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> at each time step, so we can observe the posterior as it evolves. Specifically the list contains a three dimensional matrix of size <code>N</code> by <code>n_items</code> by <code>Time+1</code>, named <code>rho_samples</code>, and an <code>N</code> by <code>Time+1</code> matrix called <code>alpha_samples</code>. These matrices can be studied using some post-processing functions for visualising and analysing the posterior. It is also possible to make comparative results using the MCMC algorithm and the SMC algorithm. Unlike MCMC we cannot observe the trace plots and we do not need to specify a non-zero value for the burn-in. The indexing in R means that we have to view the <code>Time+1</code> slice of the output in order to view the posterior once all 100 rankings have been observed.</p>
-<p>Here, we can observe the posterior probabilities of <span class="math inline">\(\boldsymbol{\rho}\)</span> for a selection of items can be observed by calling the function <code>plot_rho_posterior</code>.</p>
+<p>The example <code>smc_test</code> returns a list variable of the
+particles values for <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> at each time step, so we can
+observe the posterior as it evolves. Specifically the list contains a
+three dimensional matrix of size <code>N</code> by <code>n_items</code>
+by <code>Time+1</code>, named <code>rho_samples</code>, and an
+<code>N</code> by <code>Time+1</code> matrix called
+<code>alpha_samples</code>. These matrices can be studied using some
+post-processing functions for visualising and analysing the posterior.
+It is also possible to make comparative results using the MCMC algorithm
+and the SMC algorithm. Unlike MCMC we cannot observe the trace plots and
+we do not need to specify a non-zero value for the burn-in. The indexing
+in R means that we have to view the <code>Time+1</code> slice of the
+output in order to view the posterior once all 100 rankings have been
+observed.</p>
+<p>Here, we can observe the posterior probabilities of <span class="math inline">\(\boldsymbol{\rho}\)</span> for a selection of
+items can be observed by calling the function
+<code>plot_rho_posterior</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>test_sample_rho <span class="ot">&lt;-</span> smc_test<span class="sc">$</span>rho_samples[, , Time <span class="sc">+</span> <span class="dv">1</span>]</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_rho_posterior</span>(</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> test_sample_rho,</span>
@@ -317,7 +714,10 @@ div.csl-indent {
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">colnames =</span> <span class="fu">colnames</span>(sushi_rankings)</span>
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p><img src="data:image/png;base64,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pZearbbayqxatcpMmDDBbLLJJuY//uM/DA3h5z//uSG9S/QCJk6caL797W+b5cuXm1NPPdUcfPDBliUk203fqOco1gcffNBwvOuuu8wuu+xipk+fbjGiTnyhn3jiCXPhhReaG2+80axZs8Zi+pWvfMUOP8Hyb/7mb+z9f/u3f7O48uU+66yzzF577dWosATLTdsaO3as2XzzzW0769ixozn33HMt/xVXXGFefvll87d/+7fmG9/4hvmrv/oriwt4wn/cccdZvssuu8zsv//+pkOHDrbnef311xsU15gxYwy40k5J21akCiiAPMOdpUuXmjvvvNM2+oceesh+hf76r//aPPbYY+a2226zD+7hhx82999/vznttNNsg+DBizLhGsqGBuASac855xzzD//wD+XGcNBBB9kXMyTbTd+o51//+tfti/Hcc8+ZH/zgBxavWF3oSd58880GL+QRI0YYbBUofZaTMCSF5syZY7CPbYgKiPa37bbbmp/85Cfmj3/8o5k5c6ZVxCge/lDSX/jCF+z9GI7Zeyihvffe2wwbNsy2uRNOOCHLUrPfqoACUH/1q181u+++uznppJPMP/7jP5p9993XdO3a1TzwwAPmi1/8orn66qttSoYKb7zxhvnhD39oDj/8cMPLRcNYsWKFHYrR/XWJsfgrr7xiX5pHH33U3kLZvfbaa3ZIFpLtymgv5+AuSyD4qjMc44U8/vjjzR133GH+5V/+xeK2zTbbbJCQ7LbbbvZDN3ToULPnnnsaPlL0eGhvPXr0MH/xF39h643yRVmlEunpAUFf+9rXbLtOTVs0nyqgCKLnn3++tT8888wz5rrrrrNKha/4t771LXPYYYc1SwkPixJpKAceeKCZPHmy8YXcRskccsgh5QaELGSSNiS7WWYbyAXsQkLZWT4+AkJ86cHypZdeMpdccontSR111FGmW7duZsmSJcK2QR0ZNs2aNcv2dpjBGjlypP3wsSiWIaiQKCL5HcMUnr/8y7+0diHhpz22FakROoA84+STTz7Zrhw/8cQTTd++fa1heb/99rN2G77IXbp0sb0cvsZ8qenZMATr06ePfcjYJ7LG67//+783O+64o7UpkZ6V6Zdffrnli8kOFLPhLmNvkF4htjHsPKJ46D3mET1Fhq7gvMMOO9geJ4baDZEeeeQRa7ehvqNGjbKGZPBi+PSrX/3K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" /><!-- --></p>
-<p>The posterior distributions of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> can be studied with some of the the analysis tools provided by the extension. The posterior intervals for the consensus ranking of each sushi item are obtained by calling <code>compute_posterior_intervals_rho</code>.</p>
+<p>The posterior distributions of <span class="math inline">\(\boldsymbol{\rho}\)</span> and <span class="math inline">\(\alpha\)</span> can be studied with some of the
+the analysis tools provided by the extension. The posterior intervals
+for the consensus ranking of each sushi item are obtained by calling
+<code>compute_posterior_intervals_rho</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>test_sample_rho <span class="ot">&lt;-</span> smc_test<span class="sc">$</span>rho_samples[, , Time <span class="sc">+</span> <span class="dv">1</span>]</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">compute_posterior_intervals_rho</span>(</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> test_sample_rho,</span>
@@ -337,7 +737,11 @@ div.csl-indent {
 ##  8 Item 8  rho           1      1 95 %       [1]   [1]             
 ##  9 Item 9  rho           7      7 95 %       [6,8] [6,8]           
 ## 10 Item 10 rho          10     10 95 %       [10]  [10]</code></pre>
-<p>We can also rank the sushi items according to their cumulative probability (CP) consensus and their maximum posterior rankings (MAP). These are calculated by calling the function <code>compute_consensus_rho</code>. We demonstrate with the CP consensus:</p>
+<p>We can also rank the sushi items according to their cumulative
+probability (CP) consensus and their maximum posterior rankings (MAP).
+These are calculated by calling the function
+<code>compute_consensus_rho</code>. We demonstrate with the CP
+consensus:</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compute_rho_consensus</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> test_sample_rho, <span class="at">nmc =</span> N,</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">burnin =</span> <span class="dv">0</span>, <span class="at">C =</span> <span class="dv">1</span>, <span class="at">type =</span> <span class="st">&quot;CP&quot;</span>,</span>
@@ -356,7 +760,10 @@ div.csl-indent {
 ##  8       8 Item 5    0.911
 ##  9       9 Item 7    0.983
 ## 10      10 Item 10   1</code></pre>
-<p>Similarly, we can observe the posterior density and the posterior intervals for the scale parameter using the functions <code>plot_alpha_posterior</code> and <code>compute_posterior_intervals_alpha</code>.</p>
+<p>Similarly, we can observe the posterior density and the posterior
+intervals for the scale parameter using the functions
+<code>plot_alpha_posterior</code> and
+<code>compute_posterior_intervals_alpha</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>test_sample_alpha <span class="ot">&lt;-</span> smc_test<span class="sc">$</span>alpha_samples[, Time <span class="sc">+</span> <span class="dv">1</span>]</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_alpha_posterior</span>(</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">output =</span> test_sample_alpha, <span class="at">nmc =</span> N,</span>
@@ -377,19 +784,50 @@ div.csl-indent {
 <h3>Partial Rankings</h3>
 <div id="pseudolikelihood-sampler" class="section level4">
 <h4>Pseudolikelihood Sampler</h4>
-<p>In <span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span>, the augmentation scheme for partially observed rankings is done by using an independent sampler conditioned in the observed component of each ranking. The drawback of this approach is that it does not take into account of the any existing information, such as the current estimates of the consensus ranking and the scale parameter. We have an option to use an alternative augmentation kernel where, for each item, we use a univariate Mallows distribution to select each rank to an item based on the item’s rank in the estimated consensus ranking and the scale parameter. This approach is similar to the importance sampling approximation of the normalisation constant of the Bayesian Mallows model, full details can be found in <span class="citation"><a href="#ref-vitelli2018" role="doc-biblioref">Vitelli et al.</a> (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span>. This particular augmentation method only applies if we are using the footrule and Spearman distance metric.</p>
+<p>In <span class="citation">Vitelli et al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span>, the augmentation scheme for
+partially observed rankings is done by using an independent sampler
+conditioned in the observed component of each ranking. The drawback of
+this approach is that it does not take into account of the any existing
+information, such as the current estimates of the consensus ranking and
+the scale parameter. We have an option to use an alternative
+augmentation kernel where, for each item, we use a univariate Mallows
+distribution to select each rank to an item based on the item’s rank in
+the estimated consensus ranking and the scale parameter. This approach
+is similar to the importance sampling approximation of the normalisation
+constant of the Bayesian Mallows model, full details can be found in
+<span class="citation">Vitelli et al. (<a href="#ref-vitelli2018" role="doc-biblioref">2018</a>)</span>. This particular augmentation
+method only applies if we are using the footrule and Spearman distance
+metric.</p>
 </div>
 <div id="new-assessors-with-partial-rankings" class="section level4">
 <h4>New Assessors with Partial Rankings</h4>
-<p>We augment the missing item ranks in each <span class="math inline">\(\mathbf{R}\)</span> to create a complete auxiliary ranking <span class="math inline">\(\tilde{\mathbf{R}}\)</span> in order to perform the remaining steps of the SMC algorithm. We reweight the particles such that are representative of the underlying distribution of the <span class="math inline">\(|M_t|\)</span> augmented rankings. The particle weights are recalculated as <span class="math display">\[\begin{align*}
-        {w}^{(i)}_t(\boldsymbol{\theta}^{(i)}_{t-1}, \boldsymbol{\theta}^{(i)}_{t})
-            &amp;= (Z_m(\alpha^{(i)}_{t-1}))^{-(|M_t|-|M_{t-1}|)}\exp \Bigg\{ - \frac{\alpha^{(i)}_{t-1}}{m} \sum_{j= |M_{t-1}|+1}^{|M_t|} d(\tilde{\mathbf{R}}^{(i)}_j, \boldsymbol{\rho}^{(i)}_{t-1}   )   \Bigg\} \\
-            &amp; \times \prod_{j = |M_{t-1}|+1}^{|M_t|} q(\tilde{\mathbf{R}}^{(i)}_j | \mathbf{R}_j, \boldsymbol{\rho}_{t-1}^{(i)}, \alpha_{t-1}^{(i)} ),
-    \end{align*}\]</span> where <span class="math inline">\(\alpha^{(i)}_{t-1}\)</span> and <span class="math inline">\(\boldsymbol{\rho}^{(i)}_{t-1}, \ i=1,\dots,N\)</span> are the current estimated parameter values of the Mallows posterior before we reweight. The distribution <span class="math inline">\(q()\)</span> represents the probability of creating an augmented ranking <span class="math inline">\(\tilde{\mathbf{R}}\)</span> given the observed ranking <span class="math inline">\(\mathbf{R}\)</span> and the current estimated parameters of the posterior.</p>
+<p>We augment the missing item ranks in each <span class="math inline">\(\mathbf{R}\)</span> to create a complete auxiliary
+ranking <span class="math inline">\(\tilde{\mathbf{R}}\)</span> in order
+to perform the remaining steps of the SMC algorithm. We reweight the
+particles such that are representative of the underlying distribution of
+the <span class="math inline">\(|M_t|\)</span> augmented rankings. The
+particle weights are recalculated as <span class="math display">\[\begin{align*}
+        {w}^{(i)}_t(\boldsymbol{\theta}^{(i)}_{t-1},
+\boldsymbol{\theta}^{(i)}_{t})
+            &amp;= (Z_m(\alpha^{(i)}_{t-1}))^{-(|M_t|-|M_{t-1}|)}\exp
+\Bigg\{ - \frac{\alpha^{(i)}_{t-1}}{m} \sum_{j= |M_{t-1}|+1}^{|M_t|}
+d(\tilde{\mathbf{R}}^{(i)}_j,
+\boldsymbol{\rho}^{(i)}_{t-1}   )   \Bigg\} \\
+            &amp; \times \prod_{j = |M_{t-1}|+1}^{|M_t|}
+q(\tilde{\mathbf{R}}^{(i)}_j | \mathbf{R}_j,
+\boldsymbol{\rho}_{t-1}^{(i)}, \alpha_{t-1}^{(i)} ),
+    \end{align*}\]</span> where <span class="math inline">\(\alpha^{(i)}_{t-1}\)</span> and <span class="math inline">\(\boldsymbol{\rho}^{(i)}_{t-1}, \
+i=1,\dots,N\)</span> are the current estimated parameter values of the
+Mallows posterior before we reweight. The distribution <span class="math inline">\(q()\)</span> represents the probability of
+creating an augmented ranking <span class="math inline">\(\tilde{\mathbf{R}}\)</span> given the observed
+ranking <span class="math inline">\(\mathbf{R}\)</span> and the current
+estimated parameters of the posterior.</p>
 </div>
 <div id="demonstration-1" class="section level4">
 <h4>Demonstration</h4>
-<p>For this demonstration we shall assume that we can only observe the top-5 ranked items from each user in the first 100 rows of the <code>sushi_rankings</code> dataset.</p>
+<p>For this demonstration we shall assume that we can only observe the
+top-5 ranked items from each user in the first 100 rows of the
+<code>sushi_rankings</code> dataset.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>data_partial <span class="ot">&lt;-</span> sushi_rankings[<span class="dv">1</span><span class="sc">:</span><span class="dv">100</span>, ]</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>data_partial[data_partial <span class="sc">&gt;</span> <span class="dv">5</span>] <span class="ot">&lt;-</span> <span class="cn">NA</span></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_partial)</span></code></pre></div>
@@ -407,7 +845,13 @@ div.csl-indent {
 ## [4,]            NA
 ## [5,]            NA
 ## [6,]             3</code></pre>
-<p>We can call the function <code>smc_mallows_new_user_partial</code> to run the SMC algorithm for partial ranking data. The variable <code>aug_method</code> allows you to choose which data augmentation method to use on the partial ranking data. The option <code>&quot;pseudolikelihood&quot;</code> is only compatible with when selecting the distance metric as either <code>&quot;footrule&quot;</code> or <code>&quot;spearman&quot;</code>.</p>
+<p>We can call the function <code>smc_mallows_new_user_partial</code> to
+run the SMC algorithm for partial ranking data. The variable
+<code>aug_method</code> allows you to choose which data augmentation
+method to use on the partial ranking data. The option
+<code>&quot;pseudolikelihood&quot;</code> is only compatible with when selecting
+the distance metric as either <code>&quot;footrule&quot;</code> or
+<code>&quot;spearman&quot;</code>.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>aug_method <span class="ot">&lt;-</span> <span class="st">&quot;pseudolikelihood&quot;</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>metric <span class="ot">&lt;-</span> <span class="st">&quot;cayley&quot;</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># example of selecting the incorrect combination of metric and aug_method</span></span>
@@ -427,7 +871,8 @@ div.csl-indent {
 <span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;Error in smc_mallows_new_users_partial(R_obs = data_partial, n_items = n_items,</span></span>
 <span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;: Combined choice of metric and aug_method is incompatible</span></span></code></pre></div>
-<p>This time we call the function again but this time we provide a valid combination of the augmentation method and the distance metric.</p>
+<p>This time we call the function again but this time we provide a valid
+combination of the augmentation method and the distance metric.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># aug_method = &quot;random&quot;</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>aug_method <span class="ot">&lt;-</span> <span class="st">&quot;pseudolikelihood&quot;</span></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>metric <span class="ot">&lt;-</span> <span class="st">&quot;footrule&quot;</span></span>
@@ -445,7 +890,16 @@ div.csl-indent {
 <span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha_max =</span> <span class="fl">1e6</span>,</span>
 <span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">aug_method =</span> aug_method</span>
 <span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>The variable <code>smc_test_partial</code> contains a list with three dimensional matrix of size <code>N</code> by <code>n_items</code> by <code>Time+1</code>, named <code>rho_samples</code>, and a <code>N</code> by <code>Time+1</code> matrix called <code>alpha_samples</code>. The analysis performed in the previous demonstration can be applied to this scenario. Here, we can observe the posterior probabilities for a selection of items in <span class="math inline">\(\boldsymbol{\rho}\)</span> and posterior density for <span class="math inline">\(\alpha\)</span> as part of this demonstration, but we can use other post processing functions to analyse the output.</p>
+<p>The variable <code>smc_test_partial</code> contains a list with three
+dimensional matrix of size <code>N</code> by <code>n_items</code> by
+<code>Time+1</code>, named <code>rho_samples</code>, and a
+<code>N</code> by <code>Time+1</code> matrix called
+<code>alpha_samples</code>. The analysis performed in the previous
+demonstration can be applied to this scenario. Here, we can observe the
+posterior probabilities for a selection of items in <span class="math inline">\(\boldsymbol{\rho}\)</span> and posterior density
+for <span class="math inline">\(\alpha\)</span> as part of this
+demonstration, but we can use other post processing functions to analyse
+the output.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>partial_test_sample_rho <span class="ot">&lt;-</span> smc_partial_test<span class="sc">$</span>rho_samples[, , Time <span class="sc">+</span> <span class="dv">1</span>]</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>partial_test_sample_alpha <span class="ot">&lt;-</span> smc_partial_test<span class="sc">$</span>alpha_samples[, Time <span class="sc">+</span> <span class="dv">1</span>]</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_rho_posterior</span>(</span>
@@ -462,10 +916,39 @@ div.csl-indent {
 </div>
 <div id="updated-partial-rankings" class="section level3">
 <h3>Updated partial rankings</h3>
-<p>We can view this scenario as a observing an updated partial ranking from an known individual, but a previously latent ranking for an unranked items becomes known. For example, an individual may provided a partial ranking for 6 items <span class="math inline">\((1,2,3,\texttt{NA},\texttt{NA},\texttt{NA})\)</span> and in the SMC algorithm we might have obtained an augmented ranking <span class="math inline">\((1,2,3,5,6,4)\)</span>. However, later on the same individual may have provided more information about their ranking, e.g., <span class="math inline">\((1,2,3,4,\texttt{NA},\texttt{NA})\)</span>, and this ranking is no longer consistent with the augmented ranking. This causes a problem where we have an augmented complete ranking through SMC, conditioned on the original observed partial ranking, that happens to be no longer consistent with the new observed partial ranking. This means that our algorithm has an additional step before the reweighting stage. In order to reweight the particles correctly as a representative sample of the current posterior, we view the new information arriving into the system as an existing individual (and their augmented ranking) leaving the system completely and then re-entering as a new partial ranking with its extra information. For each individual leaving and re-entering the system, we have to make two weight adjustments to account for these actions.</p>
+<p>We can view this scenario as a observing an updated partial ranking
+from an known individual, but a previously latent ranking for an
+unranked items becomes known. For example, an individual may provided a
+partial ranking for 6 items <span class="math inline">\((1,2,3,\texttt{NA},\texttt{NA},\texttt{NA})\)</span>
+and in the SMC algorithm we might have obtained an augmented ranking
+<span class="math inline">\((1,2,3,5,6,4)\)</span>. However, later on
+the same individual may have provided more information about their
+ranking, e.g., <span class="math inline">\((1,2,3,4,\texttt{NA},\texttt{NA})\)</span>, and
+this ranking is no longer consistent with the augmented ranking. This
+causes a problem where we have an augmented complete ranking through
+SMC, conditioned on the original observed partial ranking, that happens
+to be no longer consistent with the new observed partial ranking. This
+means that our algorithm has an additional step before the reweighting
+stage. In order to reweight the particles correctly as a representative
+sample of the current posterior, we view the new information arriving
+into the system as an existing individual (and their augmented ranking)
+leaving the system completely and then re-entering as a new partial
+ranking with its extra information. For each individual leaving and
+re-entering the system, we have to make two weight adjustments to
+account for these actions.</p>
 <div id="demonstration-2" class="section level4">
 <h4>Demonstration</h4>
-<p>To illustrate how to perform SMC for updated partial rankings, we will modify a much smaller dataset called <code>potato_visual</code>. This dataset, which is described in <span class="citation"><a href="#ref-liu2019" role="doc-biblioref">Liu et al.</a> (<a href="#ref-liu2019" role="doc-biblioref">2019</a>)</span> and is provided in the <code>BayesMallows</code> R package, represents the rankings given by 12 assessors on 20 potatoes based on how heavy each potato appeared to be given their visual appearance. We create several partial subsets of the complete dataset by removing the lowest ranked item from each assessor from each previous subset, so that we achieve several partial datasets which view the top 10, top 11,… top 19 highest ranked items as well as the complete set of rankings.</p>
+<p>To illustrate how to perform SMC for updated partial rankings, we
+will modify a much smaller dataset called <code>potato_visual</code>.
+This dataset, which is described in <span class="citation">Liu et al.
+(<a href="#ref-liu2019" role="doc-biblioref">2019</a>)</span> and is
+provided in the <code>BayesMallows</code> R package, represents the
+rankings given by 12 assessors on 20 potatoes based on how heavy each
+potato appeared to be given their visual appearance. We create several
+partial subsets of the complete dataset by removing the lowest ranked
+item from each assessor from each previous subset, so that we achieve
+several partial datasets which view the top 10, top 11,… top 19 highest
+ranked items as well as the complete set of rankings.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>example_dataset <span class="ot">&lt;-</span> potato_visual</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>n_users <span class="ot">&lt;-</span> <span class="dv">12</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>n_items <span class="ot">&lt;-</span> <span class="dv">20</span></span>
@@ -481,7 +964,12 @@ div.csl-indent {
 <span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="co"># set as new time stamp</span></span>
 <span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>  test_dataset[, , ((n_items <span class="sc">/</span> <span class="dv">2</span> <span class="sc">+</span> <span class="dv">1</span>) <span class="sc">-</span> tt)] <span class="ot">&lt;-</span> example_dataset</span>
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
-<p>This means that we now have a 3D array containing 10 partial datasets and the one complete dataset. The third dimension of the array represents artificial time. We can view the updated partial rankings scenario as viewing several 2D slices of the observed dataset sequentially. So you can see, for example, that at the 5th time point, we observe the top-14 items from <code>potato_visual</code>.</p>
+<p>This means that we now have a 3D array containing 10 partial datasets
+and the one complete dataset. The third dimension of the array
+represents artificial time. We can view the updated partial rankings
+scenario as viewing several 2D slices of the observed dataset
+sequentially. So you can see, for example, that at the 5th time point,
+we observe the top-14 items from <code>potato_visual</code>.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>test_dataset[, , <span class="dv">5</span>]</span></code></pre></div>
 <pre><code>##       [,1] [,2] [,3] [,4] [,5] [,6] [,7] [,8] [,9] [,10] [,11] [,12] [,13]
 ##  [1,]   10   NA   NA   NA    6   NA    4   NA    3     5    12     1     2
@@ -509,7 +997,9 @@ div.csl-indent {
 ## [10,]     6    NA     8     4    13    12    14
 ## [11,]     6    NA    10     4    14     8     9
 ## [12,]     7    NA     6     5    13    10    11</code></pre>
-<p>We can now run an experiment with the altered <code>potato_visual</code> dataset by calling the function <code>smc_mallows_new_item_rank</code>.</p>
+<p>We can now run an experiment with the altered
+<code>potato_visual</code> dataset by calling the function
+<code>smc_mallows_new_item_rank</code>.</p>
 <div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Recalculate the estimate of the partition function for 20 items</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>logz_estimate <span class="ot">&lt;-</span> <span class="fu">estimate_partition_function</span>(</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">method =</span> <span class="st">&quot;importance_sampling&quot;</span>,</span>
@@ -534,7 +1024,13 @@ div.csl-indent {
 <span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha_max =</span> <span class="fl">1e6</span>,</span>
 <span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">aug_method =</span> aug_method</span>
 <span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
-<p>Unlike the two previous demonstrations, the final slice of the output occurs at <code>Time</code> instead of <code>Time+1</code>. This is because we initialised the algorithm with the first slice of the <code>test_dataset</code> rather than initialising with no observed data. We observe the posterior probabilities for items in <span class="math inline">\(\boldsymbol{\rho}\)</span> and posterior density for <span class="math inline">\(\alpha\)</span> by using the same post-processing functions as before.</p>
+<p>Unlike the two previous demonstrations, the final slice of the output
+occurs at <code>Time</code> instead of <code>Time+1</code>. This is
+because we initialised the algorithm with the first slice of the
+<code>test_dataset</code> rather than initialising with no observed
+data. We observe the posterior probabilities for items in <span class="math inline">\(\boldsymbol{\rho}\)</span> and posterior density
+for <span class="math inline">\(\alpha\)</span> by using the same
+post-processing functions as before.</p>
 <div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>updated_partial_test_sample_rho <span class="ot">&lt;-</span> smc_test_updated_partial<span class="sc">$</span>rho_samples[, , Time]</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>updated_partial_test_sample_alpha <span class="ot">&lt;-</span> smc_test_updated_partial<span class="sc">$</span>alpha_samples[, Time]</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">plot_rho_posterior</span>(<span class="at">output =</span> updated_partial_test_sample_rho, <span class="at">nmc =</span> N, <span class="at">burnin =</span> <span class="dv">0</span>, <span class="at">C =</span> <span class="dv">1</span>)</span></code></pre></div>
@@ -548,37 +1044,60 @@ div.csl-indent {
 <h2 class="unnumbered">References</h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-berzuini2001resample" class="csl-entry">
-Berzuini, Carlo, and Walter Gilks. 2001. <span>“RESAMPLE-MOVE Filtering with Cross-Model Jumps.”</span> In <em>Sequential Monte Carlo Methods in Practice</em>, 117–38. Springer.
+Berzuini, Carlo, and Walter Gilks. 2001. <span>“RESAMPLE-MOVE Filtering
+with Cross-Model Jumps.”</span> In <em>Sequential Monte Carlo Methods in
+Practice</em>, 117–38. Springer.
 </div>
 <div id="ref-berzuini2003particle" class="csl-entry">
-Berzuini, Carlo, and Walters R Gilks. 2003. <span>“Particle Filtering Methods for Dynamic and Static Bayesian Problems.”</span> <em>OXFORD STATISTICAL SCIENCE SERIES</em> 1 (27): 207–27.
+Berzuini, Carlo, and Walters R Gilks. 2003. <span>“Particle Filtering
+Methods for Dynamic and Static Bayesian Problems.”</span> <em>OXFORD
+STATISTICAL SCIENCE SERIES</em> 1 (27): 207–27.
 </div>
 <div id="ref-chopin2002sequential" class="csl-entry">
-Chopin, Nicolas. 2002. <span>“A Sequential Particle Filter Method for Static Models.”</span> <em>Biometrika</em> 89 (3): 539–52.
+Chopin, Nicolas. 2002. <span>“A Sequential Particle Filter Method for
+Static Models.”</span> <em>Biometrika</em> 89 (3): 539–52.
 </div>
 <div id="ref-del2006sequential" class="csl-entry">
-Del Moral, Pierre, Arnaud Doucet, and Ajay Jasra. 2006. <span>“Sequential Monte Carlo Samplers.”</span> <em>Journal of the Royal Statistical Society: Series B (Statistical Methodology)</em> 68 (3): 411–36.
+Del Moral, Pierre, Arnaud Doucet, and Ajay Jasra. 2006.
+<span>“Sequential Monte Carlo Samplers.”</span> <em>Journal of the Royal
+Statistical Society: Series B (Statistical Methodology)</em> 68 (3):
+411–36.
 </div>
 <div id="ref-diaconis1988" class="csl-entry">
-Diaconis, Persi. 1988. <span>“Group Representations in Probability and Statistics.”</span> <em>Lecture Notes-Monograph Series</em> 11: i–192.
+Diaconis, Persi. 1988. <span>“Group Representations in Probability and
+Statistics.”</span> <em>Lecture Notes-Monograph Series</em> 11: i–192.
 </div>
 <div id="ref-doucet2009tutorial" class="csl-entry">
-Doucet, Arnaud, and Adam M Johansen. 2009. <span>“A Tutorial on Particle Filtering and Smoothing: Fifteen Years Later.”</span> <em>Handbook of Nonlinear Filtering</em> 12 (656-704): 3.
+Doucet, Arnaud, and Adam M Johansen. 2009. <span>“A Tutorial on Particle
+Filtering and Smoothing: Fifteen Years Later.”</span> <em>Handbook of
+Nonlinear Filtering</em> 12 (656-704): 3.
 </div>
 <div id="ref-kamishima2003nantonac" class="csl-entry">
-Kamishima, Toshihiro. 2003. <span>“Nantonac Collaborative Filtering: Recommendation Based on Order Responses.”</span> In <em>Proceedings of the Ninth ACM SIGKDD International Conference on Knowledge Discovery and Data Mining</em>, 583–88.
+Kamishima, Toshihiro. 2003. <span>“Nantonac Collaborative Filtering:
+Recommendation Based on Order Responses.”</span> In <em>Proceedings of
+the Ninth ACM SIGKDD International Conference on Knowledge Discovery and
+Data Mining</em>, 583–88.
 </div>
 <div id="ref-liu2019" class="csl-entry">
-Liu, Q, M Crispino, I Scheel, V Vitelli, and A Frigessi. 2019. <span>“Model-Based Learning from Preference Data.”</span> <em>Annual Review of Statistics and Its Application</em> 6 (1). <a href="https://doi.org/10.1146/annurev-statistics-031017-100213">https://doi.org/10.1146/annurev-statistics-031017-100213</a>.
+Liu, Q, M Crispino, I Scheel, V Vitelli, and A Frigessi. 2019.
+<span>“Model-Based Learning from Preference Data.”</span> <em>Annual
+Review of Statistics and Its Application</em> 6 (1). <a href="https://doi.org/10.1146/annurev-statistics-031017-100213">https://doi.org/10.1146/annurev-statistics-031017-100213</a>.
 </div>
 <div id="ref-mallows1957" class="csl-entry">
-Mallows, C. L. 1957. <span>“Non-Null Ranking Models. <span>I</span>.”</span> <em>Biometrika</em> 44 (1/2): 114–30.
+Mallows, C. L. 1957. <span>“Non-Null Ranking Models.
+<span>I</span>.”</span> <em>Biometrika</em> 44 (1/2): 114–30.
 </div>
 <div id="ref-sorensen2020" class="csl-entry">
-Sørensen, Øystein, Marta Crispino, Qinghua Liu, and Valeria Vitelli. 2020. <span>“<span>BayesMallows</span>: <span>An R Package</span> for the <span>Bayesian Mallows Model</span>.”</span> <em>The R Journal</em> 12 (1): 324–42. <a href="https://doi.org/10.32614/RJ-2020-026">https://doi.org/10.32614/RJ-2020-026</a>.
+Sørensen, Øystein, Marta Crispino, Qinghua Liu, and Valeria Vitelli.
+2020. <span>“<span>BayesMallows</span>: <span>An R Package</span> for
+the <span>Bayesian Mallows Model</span>.”</span> <em>The R Journal</em>
+12 (1): 324–42. <a href="https://doi.org/10.32614/RJ-2020-026">https://doi.org/10.32614/RJ-2020-026</a>.
 </div>
 <div id="ref-vitelli2018" class="csl-entry">
-Vitelli, V., Ø. Sørensen, M. Crispino, E. Arjas, and A. Frigessi. 2018. <span>“Probabilistic Preference Learning with the Mallows Rank Model.”</span> <em>Journal of Machine Learning Research</em> 18 (1): 1–49. <a href="https://jmlr.org/papers/v18/15-481.html">https://jmlr.org/papers/v18/15-481.html</a>.
+Vitelli, V., Ø. Sørensen, M. Crispino, E. Arjas, and A. Frigessi. 2018.
+<span>“Probabilistic Preference Learning with the Mallows Rank
+Model.”</span> <em>Journal of Machine Learning Research</em> 18 (1):
+1–49. <a href="https://jmlr.org/papers/v18/15-481.html">https://jmlr.org/papers/v18/15-481.html</a>.
 </div>
 </div>
 </div>

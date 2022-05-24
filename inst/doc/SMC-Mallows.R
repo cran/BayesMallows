@@ -3,8 +3,6 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## ----sushi_rankings_demo1, message=FALSE, warning=FALSE-----------------------
 library(BayesMallows)
-library(dplyr)
-library(ggplot2)
 
 ## ----sushi_rankings_demo------------------------------------------------------
 head(sushi_rankings)
@@ -29,8 +27,8 @@ data <- sushi_rankings[1:100, ]
 leap_size <- floor(n_items / 5)
 N <- 1000
 Time <- 20
-smc_test <- smc_mallows_new_users_complete(
-  R_obs = data, n_items = n_items,
+smc_test <- smc_mallows_new_users(
+  R_obs = data, type = "complete", n_items = n_items,
   metric = metric, leap_size = leap_size,
   N = N, Time = Time,
   logz_estimate = logz_estimate,
@@ -84,8 +82,9 @@ head(data_partial)
 #  aug_method <- "pseudolikelihood"
 #  metric <- "cayley"
 #  # example of selecting the incorrect combination of metric and aug_method
-#  smc_partial_test <- smc_mallows_new_users_partial(
+#  smc_partial_test <- smc_mallows_new_users(
 #    R_obs = data_partial,
+#    type = "partial",
 #    n_items = n_items,
 #    metric = metric,
 #    leap_size = leap_size, N = N,
@@ -98,7 +97,7 @@ head(data_partial)
 #    alpha_max = 1e6,
 #    aug_method = aug_method
 #  )
-#  #>Error in smc_mallows_new_users_partial(R_obs = data_partial, n_items = n_items,
+#  #>Error in smc_mallows_new_users(R_obs = data_partial, type = "partial",
 #  #>: Combined choice of metric and aug_method is incompatible
 
 ## ----set_seed2, message=FALSE, warning=FALSE, include=FALSE-------------------
@@ -108,8 +107,9 @@ set.seed(994)
 # aug_method = "random"
 aug_method <- "pseudolikelihood"
 metric <- "footrule"
-smc_partial_test <- smc_mallows_new_users_partial(
+smc_partial_test <- smc_mallows_new_users(
   R_obs = data_partial,
+  type = "partial",
   n_items = n_items,
   metric = metric,
   leap_size = leap_size, N = N,

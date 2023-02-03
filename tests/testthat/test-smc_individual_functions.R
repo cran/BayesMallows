@@ -170,27 +170,26 @@ logz_estimate <- estimate_partition_function(
 set.seed(101)
 test_1_a <- metropolis_hastings_alpha_old(alpha, n_items, rankings, metric, rho, logz_estimate)
 test_1_b <- metropolis_hastings_alpha(
-  alpha, n_items, rankings, metric, rho, logz_estimate,
-  alpha_prop_sd = 0.5,
-  lambda = 0.1, alpha_max = 20
+  alpha, n_items, rankings, rho, logz_estimate, alpha_prop_sd = 0.5,
+  lambda = 0.1, alpha_max = 20, metric
 )
 set.seed(101)
 test_2_a <- metropolis_hastings_alpha_old(
   alpha, n_items, rankings, metric, rho, logz_estimate
 )
 test_2_b <- metropolis_hastings_alpha(
-  alpha, n_items, rankings, metric, rho, logz_estimate,
-  alpha_prop_sd = 0.15, lambda = 0.1, alpha_max = 20
+  alpha, n_items, rankings, rho, logz_estimate, alpha_prop_sd = 0.15,
+  lambda = 0.1, alpha_max = 20, metric
 )
 set.seed(101)
 test_3_b <- metropolis_hastings_alpha(
-  alpha, n_items, rankings, metric, rho, logz_estimate,
-  alpha_prop_sd = 0.5, lambda = 0.15, alpha_max = 20
+  alpha, n_items, rankings, rho, logz_estimate, alpha_prop_sd = 0.5,
+  lambda = 0.15, alpha_max = 20, metric
 )
 set.seed(101)
 test_4_b <- metropolis_hastings_alpha(
-  alpha, n_items, rankings, metric, rho, logz_estimate,
-  alpha_prop_sd = 0.15, lambda = 0.15, alpha_max = 20
+  alpha, n_items, rankings, rho, logz_estimate, alpha_prop_sd = 0.15,
+  lambda = 0.15, alpha_max = 20, metric
 )
 
 test_that("metropolis_hastings_alpha() works as expected", {
@@ -203,18 +202,18 @@ test_that("metropolis_hastings_alpha() works as expected", {
 })
 
 
-test_that("leap_and_shift_probs does not propose current ranking",{
+test_that("leap_and_shift_probs does not propose current ranking", {
   set.seed(12)
-  count <- Reduce(`+`, lapply(list(1:4, 1:10), function(rho){
-    n_items = length(rho)
+  count <- Reduce(`+`, lapply(list(1:4, 1:10), function(rho) {
+    n_items <- length(rho)
     count <- 0
-    for(i in 1:20){
+    for (i in 1:20) {
       val <- leap_and_shift_probs(rho, 1, n_items)
-      if(all(val$rho_prime == rho)) {
+      if (all(val$rho_prime == rho)) {
         count <- count + 1
       }
       val <- leap_and_shift_probs(rho, 2, n_items)
-      if(all(val$rho_prime == rho)) {
+      if (all(val$rho_prime == rho)) {
         count <- count + 1
       }
     }

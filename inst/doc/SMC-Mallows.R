@@ -1,7 +1,5 @@
 ## ----setup, include=FALSE-----------------------------------------------------
 knitr::opts_chunk$set(echo = TRUE)
-
-## ----sushi_rankings_demo1, message=FALSE, warning=FALSE-----------------------
 library(BayesMallows)
 
 ## ----sushi_rankings_demo------------------------------------------------------
@@ -40,12 +38,7 @@ smc_test <- smc_mallows_new_users(
 )
 
 ## ----smc_complete_analysis_heatplot, message=FALSE, warning=FALSE-------------
-test_sample_rho <- smc_test$rho_samples[, , Time + 1]
-plot_rho_posterior(
-  output = test_sample_rho,
-  nmc = N, burnin = 0, C = 1,
-  colnames = colnames(sushi_rankings)
-)
+plot(smc_test, colnames = colnames(sushi_rankings), parameter = "rho")
 
 ## ----posterior_intervals_rho, message=FALSE, warning=FALSE--------------------
 test_sample_rho <- smc_test$rho_samples[, , Time + 1]
@@ -63,11 +56,8 @@ compute_rho_consensus(
 )
 
 ## ----smc_complete_alpha_analysis, message=FALSE, warning=FALSE----------------
+plot(smc_test, nmc = N, burnin = 0, parameter = "alpha")
 test_sample_alpha <- smc_test$alpha_samples[, Time + 1]
-plot_alpha_posterior(
-  output = test_sample_alpha, nmc = N,
-  burnin = 0
-)
 compute_posterior_intervals_alpha(
   output = test_sample_alpha,
   nmc = N, burnin = 0, verbose = FALSE
@@ -104,7 +94,6 @@ head(data_partial)
 set.seed(994)
 
 ## ----smc_partial_test---------------------------------------------------------
-# aug_method = "random"
 aug_method <- "pseudolikelihood"
 metric <- "footrule"
 smc_partial_test <- smc_mallows_new_users(
@@ -124,16 +113,8 @@ smc_partial_test <- smc_mallows_new_users(
 )
 
 ## ----smc_partial_analysis, message=FALSE, warning=FALSE-----------------------
-partial_test_sample_rho <- smc_partial_test$rho_samples[, , Time + 1]
-partial_test_sample_alpha <- smc_partial_test$alpha_samples[, Time + 1]
-plot_rho_posterior(
-  output = partial_test_sample_rho, nmc = N,
-  burnin = 0, C = 1, colnames = colnames(sushi_rankings)
-)
-plot_alpha_posterior(
-  output = partial_test_sample_alpha, nmc = N,
-  burnin = 0
-)
+plot(smc_partial_test, colnames = colnames(sushi_rankings), parameter = "rho")
+plot(smc_partial_test, nmc = N, burnin = 0, parameter = "alpha")
 
 ## ----smc_item_rank_set_up, message=FALSE, warning=FALSE-----------------------
 example_dataset <- potato_visual
@@ -185,8 +166,6 @@ smc_test_updated_partial <- smc_mallows_new_item_rank(
 )
 
 ## ----smc_updated_partial_analysis, message=FALSE, warning=FALSE---------------
-updated_partial_test_sample_rho <- smc_test_updated_partial$rho_samples[, , Time]
-updated_partial_test_sample_alpha <- smc_test_updated_partial$alpha_samples[, Time]
-plot_rho_posterior(output = updated_partial_test_sample_rho, nmc = N, burnin = 0, C = 1)
-plot_alpha_posterior(output = updated_partial_test_sample_alpha, nmc = N, burnin = 0)
+plot(smc_test_updated_partial, parameter = "rho")
+plot(smc_test_updated_partial, parameter = "alpha")
 

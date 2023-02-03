@@ -13,37 +13,21 @@ vignette: >
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-```
-
-This vignette describes the extension to the `BayesMallows` R package called `SMC-Mallows`. This uses Sequential Monte Carlo (SMC) algorithms to provide updated approximations to the posterior distribution of a single Mallows model. We consider scenarios where we receive sequential information in the form of complete rankings, partial rankings and updated rankings from existing individuals who have previously provided a (partial) ranking. We use an alternative data augmentation method, called the pseudolikelihood approach, when we are using the footrule and Spearman distance functions instead of using an independent sampler. The extension currently uses functions, similar to the `BayesMallows` R package, to visualise and analyse the posterior distributions.
-
-
-## Overview of Extension
-
-### Set-up
-
-We begin by loading the following package:
-
-```{r sushi_rankings_demo1, message=FALSE, warning=FALSE}
 library(BayesMallows)
 ```
 
+This vignette describes the `SMC-Mallows` functions of the package. These use Sequential Monte Carlo (SMC) algorithms to provide updated approximations to the posterior distribution of a single Mallows model. We consider scenarios where we receive sequential information in the form of complete rankings, partial rankings and updated rankings from existing individuals who have previously provided a (partial) ranking. We use an alternative data augmentation method, called the pseudolikelihood approach, when we are using the footrule and Spearman distance functions instead of using an independent sampler. `SMC-Mallow` uses functions similar to their base MCMC counterparts in the `BayesMallows` package, to visualise and analyse the posterior distributions.
 
-### Functions
-
-A list is provided with the most commonly used functions in this extension of the R package.
+### SMC-Mallows functions
 
 | Function Name                | Description |
 |:-----------------------------|:--------------------------------------------|
 | `smc_mallows_new_users` |  Runs the SMC algorithm for case where we observe full rankings as new observational data. |
 | `smc_mallows_new_item_rank` | Runs the SMC algorithm for case where we observe updated partial rankings as from existing users. |
-| `plot_rho_posterior`| Plots posterior density of $\boldsymbol{\rho}$ for a selection of items.  |
+| `plot`| Plots posterior density of $\boldsymbol{\rho}$ or $\alpha$ for a selection of items. |
 | `compute_posterior_intervals_rho` | Computes the Bayesian posterior intervals for $\boldsymbol{\rho}$.|
 | `compute_consensus_rho`| Computes the CP estimate or MAP estimate of the latent ranks. |
-| `plot_alpha_posterior` | Plots the posterior density of $\alpha$.|
 | `compute_posterior_intervals_alpha` | Computes the Bayesian posterior intervals for $\alpha$.|
-
-
 
 
 ## Introduction
@@ -90,7 +74,7 @@ In the final stage, we move the particles using an MCMC kernel within SMC after 
 
 ## SMC-Mallows User Guide
 
-The `SMC-Mallows` extension contains functions which contain algorithms to perform the Resample-Move SMC framework of @berzuini2001resample using a single Mallows model. Each algorithm begins by drawing $N$ particles using the priors for $\boldsymbol{\rho}$ and $\alpha$ or by using specified initial values. Each particle is also assigned equal weight so at the start of the SMC algorithm we have $\{\boldsymbol{\theta}^{(i)}_0 = (\boldsymbol{\rho}_0^{(i)}, \alpha_0^{(i)}), w^{(i)} \}_{i=1}^{N}$ as the set of particles. Next, we observe some ranking data, $D_t$, and we calculate the updated weights of the particles with respect to the new observations and their contribution to the current estimated posterior distribution before reweighting and multinomial resampling. Finally, we perturb the particles using the Metropolis-Hastings based MCMC kernel and we use the proposal distributions described in @vitelli2018 for sampling values of $\boldsymbol{\rho}$ and $\alpha$.
+The `SMC-Mallows` functions contain algorithms to perform the Resample-Move SMC framework of @berzuini2001resample using a single Mallows model. Each algorithm begins by drawing $N$ particles using the priors for $\boldsymbol{\rho}$ and $\alpha$ or by using specified initial values. Each particle is also assigned equal weight so at the start of the SMC algorithm we have $\{\boldsymbol{\theta}^{(i)}_0 = (\boldsymbol{\rho}_0^{(i)}, \alpha_0^{(i)}), w^{(i)} \}_{i=1}^{N}$ as the set of particles. Next, we observe some ranking data, $D_t$, and we calculate the updated weights of the particles with respect to the new observations and their contribution to the current estimated posterior distribution before reweighting and multinomial resampling. Finally, we perturb the particles using the Metropolis-Hastings based MCMC kernel and we use the proposal distributions described in @vitelli2018 for sampling values of $\boldsymbol{\rho}$ and $\alpha$.
 
 
 ### Complete Rankings
@@ -108,7 +92,7 @@ where $\alpha^{(i)}_{t-1}$ and $\boldsymbol{\rho}^{(i)}_{t-1}, \ i=1,\dots,N$ ar
 
 #### Demonstration
 
-We are interested in updating the parameter estimates of the Bayesian Mallows model based on the existing ranking data and new observations. We demonstrate the `SMC-Mallows` extension using the `sushi_rankings` dataset [@kamishima2003nantonac], which contains 5000 rankings for 10 sushi dishes.
+We are interested in updating the parameter estimates of the Bayesian Mallows model based on the existing ranking data and new observations. We demonstrate the `SMC-Mallows` functions using the `sushi_rankings` dataset [@kamishima2003nantonac], which contains 5000 rankings for 10 sushi dishes.
 
 ```{r sushi_rankings_demo}
 head(sushi_rankings)
@@ -152,18 +136,13 @@ smc_test <- smc_mallows_new_users(
 
 The example `smc_test` returns a list variable of the particles values for $\boldsymbol{\rho}$ and $\alpha$ at each time step, so we can observe the posterior as it evolves. Specifically the list contains a three dimensional matrix of size `N` by `n_items` by `Time+1`, named `rho_samples`,  and an `N` by `Time+1` matrix called `alpha_samples`. These matrices can be studied using some post-processing functions for visualising and analysing the posterior. It is also possible to make comparative results using the MCMC algorithm and the SMC algorithm. Unlike MCMC we cannot observe the trace plots and we do not need to specify a non-zero value for the burn-in. The indexing in R means that we have to view the `Time+1` slice of the output in order to view the posterior once all 100 rankings have been observed.
 
-Here, we can observe the posterior probabilities of $\boldsymbol{\rho}$ for a selection of items can be observed by calling the function `plot_rho_posterior`.
+Here, we can observe the posterior probabilities of $\boldsymbol{\rho}$ for a selection of items can be observed by calling the function `plot()`.
 
 ```{r smc_complete_analysis_heatplot, message=FALSE, warning=FALSE}
-test_sample_rho <- smc_test$rho_samples[, , Time + 1]
-plot_rho_posterior(
-  output = test_sample_rho,
-  nmc = N, burnin = 0, C = 1,
-  colnames = colnames(sushi_rankings)
-)
+plot(smc_test, colnames = colnames(sushi_rankings), parameter = "rho")
 ```
 
-The posterior distributions of $\boldsymbol{\rho}$ and $\alpha$ can be studied with some of the the analysis tools provided by the extension. The posterior intervals for the consensus ranking of each sushi item are obtained by calling `compute_posterior_intervals_rho`.
+The posterior distributions of $\boldsymbol{\rho}$ and $\alpha$ can be studied with some of the the analysis tools provided by `SMC-Mallows`. The posterior intervals for the consensus ranking of each sushi item are obtained by calling `compute_posterior_intervals_rho`.
 
 ```{r posterior_intervals_rho, message=FALSE, warning=FALSE}
 test_sample_rho <- smc_test$rho_samples[, , Time + 1]
@@ -184,14 +163,11 @@ compute_rho_consensus(
 )
 ```
 
-Similarly, we can observe the posterior density and the posterior intervals for the scale parameter using the functions `plot_alpha_posterior` and `compute_posterior_intervals_alpha`.
+Similarly, we can observe the posterior density and the posterior intervals for the scale parameter using the functions `plot()` and `compute_posterior_intervals_alpha`.
 
 ```{r smc_complete_alpha_analysis, message=FALSE, warning=FALSE}
+plot(smc_test, nmc = N, burnin = 0, parameter = "alpha")
 test_sample_alpha <- smc_test$alpha_samples[, Time + 1]
-plot_alpha_posterior(
-  output = test_sample_alpha, nmc = N,
-  burnin = 0
-)
 compute_posterior_intervals_alpha(
   output = test_sample_alpha,
   nmc = N, burnin = 0, verbose = FALSE
@@ -248,7 +224,7 @@ smc_partial_test <- smc_mallows_new_users(
   alpha_max = 1e6,
   aug_method = aug_method
 )
-#>Error in smc_mallows_new_users(R_obs = data_partial, type = "partial", 
+#>Error in smc_mallows_new_users(R_obs = data_partial, type = "partial",
 #>: Combined choice of metric and aug_method is incompatible
 ```
 
@@ -259,7 +235,6 @@ set.seed(994)
 
 
 ```{r smc_partial_test}
-# aug_method = "random"
 aug_method <- "pseudolikelihood"
 metric <- "footrule"
 smc_partial_test <- smc_mallows_new_users(
@@ -284,16 +259,8 @@ The variable `smc_test_partial` contains a list with three dimensional matrix of
 
 
 ```{r smc_partial_analysis, message=FALSE, warning=FALSE}
-partial_test_sample_rho <- smc_partial_test$rho_samples[, , Time + 1]
-partial_test_sample_alpha <- smc_partial_test$alpha_samples[, Time + 1]
-plot_rho_posterior(
-  output = partial_test_sample_rho, nmc = N,
-  burnin = 0, C = 1, colnames = colnames(sushi_rankings)
-)
-plot_alpha_posterior(
-  output = partial_test_sample_alpha, nmc = N,
-  burnin = 0
-)
+plot(smc_partial_test, colnames = colnames(sushi_rankings), parameter = "rho")
+plot(smc_partial_test, nmc = N, burnin = 0, parameter = "alpha")
 ```
 
 
@@ -367,13 +334,8 @@ smc_test_updated_partial <- smc_mallows_new_item_rank(
 Unlike the two previous demonstrations, the final slice of the output occurs at `Time` instead of `Time+1`. This is because we initialised the algorithm with the first slice of the `test_dataset` rather than initialising with no observed data. We observe the posterior probabilities for items in $\boldsymbol{\rho}$ and posterior density for $\alpha$ by using the same post-processing functions as before.
 
 ```{r smc_updated_partial_analysis, message=FALSE, warning=FALSE}
-updated_partial_test_sample_rho <- smc_test_updated_partial$rho_samples[, , Time]
-updated_partial_test_sample_alpha <- smc_test_updated_partial$alpha_samples[, Time]
-plot_rho_posterior(output = updated_partial_test_sample_rho, nmc = N, burnin = 0, C = 1)
-plot_alpha_posterior(output = updated_partial_test_sample_alpha, nmc = N, burnin = 0)
+plot(smc_test_updated_partial, parameter = "rho")
+plot(smc_test_updated_partial, parameter = "alpha")
 ```
-
-
-
 
 ## References

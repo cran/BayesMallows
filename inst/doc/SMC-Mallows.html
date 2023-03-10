@@ -859,9 +859,7 @@ selecting the distance metric as either <code>&quot;footrule&quot;</code> or
 <span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">lambda =</span> <span class="fl">0.15</span>,</span>
 <span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">alpha_max =</span> <span class="fl">1e6</span>,</span>
 <span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>  <span class="at">aug_method =</span> aug_method</span>
-<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;Error in smc_mallows_new_users(R_obs = data_partial, type = &quot;partial&quot;,</span></span>
-<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;: Combined choice of metric and aug_method is incompatible</span></span></code></pre></div>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
 <p>This time we call the function again but this time we provide a valid
 combination of the augmentation method and the distance metric.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>aug_method <span class="ot">&lt;-</span> <span class="st">&quot;pseudolikelihood&quot;</span></span>

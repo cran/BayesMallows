@@ -1,13 +1,13 @@
-c0d2aec1f20799b726df3d2f0f51b377 *DESCRIPTION
-46ebd35100002fa00a8cb2561ff61b85 *NAMESPACE
-3b9a9e02d945db1887582024c3a650e3 *NEWS.md
-ce2b225e756bbdbddfba43b5a39afcb1 *R/BayesMallows.R
+fdadf6695c0d7a50bf69d7b8902905a6 *DESCRIPTION
+21b101159a05c3f95825965d86d02bc6 *NAMESPACE
+255d413135114c33e4e5da5ca353440d *NEWS.md
+da95a3e8f94fe6d156eea90f73539242 *R/BayesMallows.R
 8b826679a53488a35b3bdbadf9879139 *R/RcppExports.R
 d59bab649b0928a445ae3bd5830365f0 *R/all_topological_sorts.R
 3dfa7c9c3bded1992631361b0e44e96f *R/assess_convergence.R
 e3d16f7f1a8ccc1fa32e6ac9b36fba5f *R/assign_cluster.R
 d407050661e802ef0f4abf08e03c5b8b *R/catch-routine-registration.R
-366b1bfca603b3796c362599db9db5d2 *R/compute_consensus.R
+469209aef54c0fff0e01fd6fc215b547 *R/compute_consensus.R
 5fc212248af316dd6bc3f72bb2ef7d5d *R/compute_mallows.R
 76772d3c242f0a9517e5c310a91a4fd7 *R/compute_mallows_mixtures.R
 41aa53defa65dcd1ae783c15582690f0 *R/compute_posterior_intervals.R
@@ -38,8 +38,8 @@ ff68054c042395d926e313ab1b823a3e *R/sample_mallows.R
 6f67b1658998f1538169ed97ccfe1f94 *R/smc_post_processing_functions.R
 11208bb5dc94b7a3172e90760e24fa67 *R/sysdata.rda
 016156e8d0775cde43d7e259dc237708 *R/tidy_mcmc.R
-b83ddb33bd460614716b648305bb6334 *build/partial.rdb
-a2164f14b7041a17f7c63f2d2fec1da5 *build/vignette.rds
+c83a32980781189e0acb8eb279a39f1e *build/partial.rdb
+9cd47348f32e405990b0510a51063920 *build/vignette.rds
 a0f101d2398611b83476423acd528939 *data/beach_preferences.rda
 e683e0c5e622f58703589233cf01c5c3 *data/data_10_6_smc.rda
 c97e9742aa71853d40cf2ff40424a990 *data/potato_true_ranking.rda
@@ -52,7 +52,7 @@ a36735c2425fb1cb3fc06f37db9e707b *data/potato_visual.rda
 24b2c3b7cc9404019b4e21a32c7ba9ca *inst/doc/BayesMallows.pdf.asis
 9de2ce8fc7aab64a32983cba2e51d7bf *inst/doc/SMC-Mallows.R
 344b1dc50e287d359c39fe2149b3ed0a *inst/doc/SMC-Mallows.Rmd
-bfa26bc5b55c078c3a1ec0d3db9f4f50 *inst/doc/SMC-Mallows.html
+fff3bf955ab40219e2c11004d2d24b38 *inst/doc/SMC-Mallows.html
 d1d737f31a13ae613fd67e39ea8b35b9 *inst/examples/compute_consensus_example.R
 62e47cd323ca0e3ee7075e7638bf931a *inst/examples/compute_mallows_example.R
 7f157dc98aa4fbd5e1c8f75fdfcd2c19 *inst/examples/compute_mallows_mixtures_example.R
@@ -75,7 +75,7 @@ ba785cd18c8378c997dff5ca7be8c836 *inst/examples/plot_top_k_example.R
 0e17c1398cf6cc817af71f97294be7ca *inst/examples/sample_mallows_example.R
 55c028e3bdb7708b13adb050e6d31243 *inst/examples/smc_mallows_new_users_complete_example.R
 3b55516fffad8b66ed8e0e03526de9d2 *inst/examples/smc_post_processing_functions_example.R
-750631b7bdb887fe81b333ec6be66fb8 *man/BayesMallows.Rd
+19c2815fd8d547d59daa1a097da55238 *man/BayesMallows.Rd
 f9b784ad8612acfb96d081da6b87a2be *man/assess_convergence.Rd
 7bab1513a60cd2c63df87be541498e5e *man/assign_cluster.Rd
 d4e2bff86eb671bee4cbb000d17251d6 *man/asymptotic_partition_function.Rd
@@ -84,7 +84,7 @@ f01e393935bb968725533025ac8c1e45 *man/calculate_backward_probability.Rd
 76cd843d3c68c68151e39ed9e107bb3f *man/calculate_forward_probability.Rd
 bc8c9f3c335b2d55038a2282485891d7 *man/compute_consensus.BayesMallows.Rd
 9fefffc1b36d5c87a58c3ee8b555555e *man/compute_consensus.Rd
-6d01894a04c3134f8f5508454d31df33 *man/compute_consensus.consensus_SMCMallows.Rd
+b949d18345928c8a2441b032fe5882dd *man/compute_consensus.consensus_SMCMallows.Rd
 c95fdc8137175d9ae481672397404101 *man/compute_importance_sampling_estimate.Rd
 c0756919958c3d0e55084a39e1010cd7 *man/compute_mallows.Rd
 1318f9ab20509e3f6e3364748b7cb4a5 *man/compute_mallows_mixtures.Rd
@@ -141,7 +141,7 @@ ef697039c1acd8e2184b630878404698 *man/sushi_rankings.Rd
 5b96d68b67efc44f6443c1563b9a0dd2 *man/validate_permutation.Rd
 9edbf44fbcaa6825ba92471ed86fa3ec *src/Makevars
 bb4db34169faf8ea741689997a4e9ea3 *src/Makevars.win
-b4229a9da981d8d481be86e35bff3915 *src/RcppExports.cpp
+46f7b7cd2a23f5af28944f3dafe0c7e9 *src/RcppExports.cpp
 12fda63e63b4d2c70ffc681cee7299d6 *src/distances.cpp
 13d941ddc563e874b63d3eb31f1d2340 *src/distances.h
 55e5af14f7e67494b5ab33d13a1d2630 *src/importance_sampling.cpp
@@ -160,7 +160,7 @@ e67bcaab5772244feb2678726a4602e2 *src/parameterupdates.h
 80cbbd9263d79544e71ff8dbf957f701 *src/partitionfuns.cpp
 b45922a008e1d6cf8895741fcc54fa19 *src/partitionfuns.h
 d4ba1df7e72de73179b0a585808bead0 *src/rmallows.cpp
-70144f020aa6020aabc98b4a9ddc9174 *src/run_mcmc.cpp
+e3564be66f5035d39ee4f7ca42220b6e *src/run_mcmc.cpp
 f2764b763c5f7afb5ce7b8c26f38cc0c *src/sample.cpp
 3fbabcd52fe1e057b99023b6b652bda8 *src/sample.h
 64f974d1631192dc438b49160fdd2f92 *src/setdiff.h

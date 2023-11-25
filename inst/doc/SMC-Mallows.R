@@ -35,27 +35,14 @@ smc_test <- smc_mallows_new_users(
 plot(smc_test, colnames = colnames(sushi_rankings), parameter = "rho")
 
 ## ----posterior_intervals_rho, message=FALSE, warning=FALSE--------------------
-test_sample_rho <- smc_test$rho_samples[, , Time + 1]
-compute_posterior_intervals_rho(
-  output = test_sample_rho,
-  nmc = N, burnin = 0,
-  verbose = FALSE
-)
+compute_posterior_intervals(smc_test, parameter = "rho")
 
-## ----consensus_ranking_estimates, message=FALSE, warning=FALSE----------------
-compute_rho_consensus(
-  output = test_sample_rho, nmc = N,
-  burnin = 0, C = 1, type = "CP",
-  verbose = FALSE
-)
+## -----------------------------------------------------------------------------
+compute_consensus(smc_test)
 
 ## ----smc_complete_alpha_analysis, message=FALSE, warning=FALSE----------------
 plot(smc_test, nmc = N, burnin = 0, parameter = "alpha")
-test_sample_alpha <- smc_test$alpha_samples[, Time + 1]
-compute_posterior_intervals_alpha(
-  output = test_sample_alpha,
-  nmc = N, burnin = 0, verbose = FALSE
-)
+compute_posterior_intervals(smc_test, parameter = "alpha")
 
 ## ----smc_partial_set_up-------------------------------------------------------
 data_partial <- sushi_rankings[1:100, ]

@@ -13,7 +13,7 @@ NULL
 #' Check if a vector is a permutation
 #' @param vec a vector
 #' @return TRUE if vec is a permutation
-#' @keywords internal
+#' @noRd
 validate_permutation <- function(vec) {
   if (!any(is.na(vec))) {
     return(all(sort(vec) == seq_along(vec)))
@@ -24,10 +24,6 @@ validate_permutation <- function(vec) {
       all(vec[!is.na(vec)] >= 1) && !any(duplicated(vec[!is.na(vec)])))
   }
 }
-
-# Function for getting an x axis without decimals.
-# Modified from https://stackoverflow.com/questions/21061653/creating-a-density-histogram-in-ggplot2
-scalefun <- function(x) sprintf("%d", as.integer(x))
 
 #' Prepare partition functions
 #'
@@ -43,6 +39,7 @@ scalefun <- function(x) sprintf("%d", as.integer(x))
 #' estimates.
 #'
 #' @export
+#' @family preprocessing
 #'
 prepare_partition_function <- function(logz_estimate = NULL, metric, n_items) {
   # First, has the user supplied an estimate?

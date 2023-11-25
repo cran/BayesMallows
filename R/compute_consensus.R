@@ -5,48 +5,52 @@
 #' consensus is given for each mixture. Consensus of augmented ranks
 #' can also be computed
 #' for each assessor, by setting \code{parameter = "Rtilde"}.
-#' @param model_fit An object returned from \code{\link{compute_mallows}}.
+#' @param model_fit A model fit.
 #' @param ... other arguments passed to methods.
 #' @references \insertAllCited{}
 #' @export
 #' @example /inst/examples/compute_consensus_example.R
+#'
+#' @family posterior quantities
+#'
 compute_consensus <- function(model_fit, ...) {
   UseMethod("compute_consensus")
 }
 
-.compute_cp_consensus <- function(model_fit, ...) {
-  UseMethod(".compute_cp_consensus")
-}
-
-.compute_map_consensus <- function(model_fit, ...) {
-  UseMethod(".compute_map_consensus")
-}
-
-
 #' @title Compute Consensus Ranking
-#' @inheritParams compute_consensus
+#'
+#' @param model_fit Object of type \code{BayesMallows} returned from
+#'   \code{\link{compute_mallows}}.
 #' @param type Character string specifying which consensus to compute. Either
-#' \code{"CP"} or \code{"MAP"}. Defaults to \code{"CP"}.
-#' @param burnin A numeric value specifying the number of iterations
-#' to discard as burn-in. Defaults to \code{model_fit$burnin}, and must be
-#' provided if \code{model_fit$burnin} does not exist. See \code{\link{assess_convergence}}.
-#' @param parameter Character string defining the parameter for which to compute the
-#' consensus. Defaults to \code{"rho"}. Available options are \code{"rho"} and \code{"Rtilde"},
-#' with the latter giving consensus rankings for augmented ranks.
-#' @param assessors When \code{parameter = "rho"}, this integer vector is used to
-#' define the assessors for which to compute the augmented ranking. Defaults to
-#' \code{1L}, which yields augmented rankings for assessor 1.
+#'   \code{"CP"} or \code{"MAP"}. Defaults to \code{"CP"}.
+#' @param burnin A numeric value specifying the number of iterations to discard
+#'   as burn-in. Defaults to \code{model_fit$burnin}, and must be provided if
+#'   \code{model_fit$burnin} does not exist. See
+#'   \code{\link{assess_convergence}}.
+#' @param parameter Character string defining the parameter for which to compute
+#'   the consensus. Defaults to \code{"rho"}. Available options are \code{"rho"}
+#'   and \code{"Rtilde"}, with the latter giving consensus rankings for
+#'   augmented ranks.
+#' @param assessors When \code{parameter = "rho"}, this integer vector is used
+#'   to define the assessors for which to compute the augmented ranking.
+#' @param ... Other arguments passed on to other methods. Currently not used.
+#'   Defaults to \code{1L}, which yields augmented rankings for assessor 1.
 #' @export
-compute_consensus.BayesMallows <- function(model_fit, type = "CP", burnin = model_fit$burnin, parameter = "rho",
-                                           assessors = 1L, ...) {
+#' @family posterior quantities
+compute_consensus.BayesMallows <- function(
+    model_fit, type = "CP", burnin = model_fit$burnin, parameter = "rho",
+    assessors = 1L, ...) {
   if (is.null(burnin)) {
     stop("Please specify the burnin.")
   }
   stopifnot(burnin < model_fit$nmc)
 
+  type <- match.arg(type, c("CP", "MAP"))
+
   stopifnot(inherits(model_fit, "BayesMallows"))
 
-  if (parameter == "Rtilde" && !inherits(model_fit$augmented_data, "data.frame")) {
+  if (parameter == "Rtilde" &&
+    !inherits(model_fit$augmented_data, "data.frame")) {
     stop("For augmented ranks, please refit model with option 'save_aug = TRUE'.")
   }
 
@@ -64,12 +68,10 @@ compute_consensus.BayesMallows <- function(model_fit, type = "CP", burnin = mode
     # the model object
     stopifnot(model_fit$n_clusters * model_fit$n_items == n_rows)
 
-    class(df) <- c("consensus_BayesMallows", "data.frame")
-
-    df <- if (type == "CP") {
-      .compute_cp_consensus(df)
+    if (type == "CP") {
+      df <- cpc_bm(df)
     } else if (type == "MAP") {
-      .compute_map_consensus(df)
+      df <- cpm_bm(df)
     }
   } else if (parameter == "Rtilde") {
     # Filter out the pre-burnin iterations and get the right assessors
@@ -91,14 +93,19 @@ compute_consensus.BayesMallows <- function(model_fit, type = "CP", burnin = mode
     class(df) <- c("consensus_BayesMallows", "tbl_df", "tbl", "data.frame")
 
     df <- if (type == "CP") {
-      .compute_cp_consensus(df)
+      df <- cpc_bm(df)
     } else if (type == "MAP") {
-      .compute_map_consensus(df)
+      df <- cpm_bm(df)
     }
 
     if ("cluster" %in% names(df)) {
       names(df)[names(df) == "cluster"] <- "assessor"
     }
+  }
+
+  # If there is only one cluster, we drop the cluster column
+  if (length(unique(df$cluster)) == 1) {
+    df$cluster <- NULL
   }
 
   row.names(df) <- NULL
@@ -107,82 +114,88 @@ compute_consensus.BayesMallows <- function(model_fit, type = "CP", burnin = mode
 
 #' Compute Consensus Ranking
 #'
-#' Compute the consensus ranking using either cumulative probability (CP) or maximum a posteriori (MAP) consensus
-#' \insertCite{vitelli2018}{BayesMallows}. For mixture models, the
-#' consensus is given for each mixture.
+#' Compute the consensus ranking using either cumulative probability (CP) or
+#' maximum a posteriori (MAP) consensus \insertCite{vitelli2018}{BayesMallows}.
+#' For mixture models, the consensus is given for each mixture.
 #'
-#' @param model_fit An object returned from \code{\link{compute_mallows}}.
+#' @param model_fit An object of class \code{SMCMallows}, returned from
+#'   \code{\link{smc_mallows_new_item_rank}} or
+#'   \code{\link{smc_mallows_new_users}}.
 #'
 #' @param type Character string specifying which consensus to compute. Either
-#' \code{"CP"} or \code{"MAP"}. Defaults to \code{"CP"}.
+#'   \code{"CP"} or \code{"MAP"}. Defaults to \code{"CP"}.
 #'
-#' @param burnin A numeric value specifying the number of iterations
-#' to discard as burn-in. Defaults to \code{model_fit$burnin}, and must be
-#' provided if \code{model_fit$burnin} does not exist. See \code{\link{assess_convergence}}.
 #'
-#' @param ... other arguments passed to methods.
+#' @param ... Other optional arguments passed to methods. Currently not used.
 #'
-#' @author Anja Stein
 #' @export
+#' @family posterior quantities
 #'
-compute_consensus.consensus_SMCMallows <- function(model_fit, type, burnin, ...) {
+#' @example inst/examples/smc_post_processing_functions_example.R
+compute_consensus.SMCMallows <- function(model_fit, type = "CP", ...) {
+  type <- match.arg(type, c("CP", "MAP"))
+
   if (type == "CP") {
-    .compute_cp_consensus(model_fit, burnin = burnin, ...)
+    df <- smc_processing(model_fit$rho_samples[, , dim(model_fit$rho_samples)[[3]]])
+    df$cluster <- "Cluster 1"
+    n_rows <- length(unique(interaction(df$item, df$cluster)))
+    df$iteration <- seq_len(nrow(df))
+
+    # Check that there are rows.
+    stopifnot(n_rows > 0)
+
+    df <- aggregate_cp_consensus(df)
+    df <- find_cpc(df)
+    df$cluster <- NULL
   } else if (type == "MAP") {
-    .compute_map_consensus(model_fit, burnin = burnin, ...)
-  }
-}
+    df <-
+      as.data.frame(model_fit$rho_samples[, , dim(model_fit$rho_samples)[[3]]])
+    colnames(df) <- paste("Item", seq_len(ncol(df)))
+    n_items <- ncol(df)
+    iterations <- seq_len(nrow(df))
+    df <- smc_processing(df)
+    df$iteration <- rep(iterations, n_items)
 
-.compute_cp_consensus.consensus_BayesMallows <- function(model_fit, ...) {
-  # Count per item, cluster, and value
-  model_fit <- aggregate_cp_consensus(model_fit)
-  # Find the CP consensus per cluster, using the find_cpc function
-  model_fit <- find_cpc(model_fit)
+    df$cluster <- "Cluster 1"
+    n_rows <- length(unique(interaction(df$item, df$cluster)))
 
-  model_fit <- model_fit[order(model_fit$cluster, model_fit$ranking), ]
+    # Check that there are rows.
+    stopifnot(n_rows > 0)
 
-  # If there is only one cluster, we drop the cluster column
-  if (length(unique(model_fit$cluster)) == 1) {
-    model_fit$cluster <- NULL
-  }
+    # Spread to get items along columns
+    df <- stats::reshape(
+      data = as.data.frame(df),
+      direction = "wide",
+      idvar = c("iteration", "cluster"),
+      timevar = "item",
+      varying = list(unique(df$item))
+    )
+    attr(df, "reshapeWide") <- NULL # maintain identity to spread() output
 
-  return(model_fit)
-}
+    df <- aggregate_map_consensus(df, max(iterations))
 
-.compute_cp_consensus.consensus_SMCMallows <- function(model_fit, burnin, ...) {
-  if (is.null(burnin)) {
-    stop("Please specify the burnin.")
-  }
+    # Now collect one set of ranks per cluster
+    df <- stats::reshape(
+      as.data.frame(df),
+      direction = "long",
+      varying = setdiff(names(df), c("cluster", "probability")),
+      new.row.names = seq_len(prod(dim(df))),
+      v.names = "map_ranking",
+      timevar = "item",
+      times = setdiff(names(df), c("cluster", "probability"))
+    )
+    df$id <- NULL
 
-  stopifnot(burnin < model_fit$nmc)
+    attr(x = df, "reshapeLong") <- NULL # preserves identity to gather() output
 
-  # Filter out the pre-burnin iterations
-  if (burnin != 0) {
-    df <- model_fit[model_fit$iteration > burnin, , drop = FALSE]
-  } else {
-    df <- model_fit
-  }
-
-  # Find the problem dimensions
-  n_rows <- length(unique(interaction(df$item, df$cluster)))
-
-  # Check that there are rows.
-  stopifnot(n_rows > 0)
-
-  # Check that the number of rows are consistent with the information in
-  # the model object
-  stopifnot(model_fit$n_clusters * model_fit$n_items == n_rows)
-
-  df <- aggregate_cp_consensus(df)
-  df <- find_cpc(df)
-
-  # If there is only one cluster, we drop the cluster column
-  if (model_fit$n_clusters[1] == 1) {
+    # Sort according to cluster and ranking
+    df <- df[order(df$cluster, df$map_ranking), , drop = FALSE]
     df$cluster <- NULL
   }
-
-  return(df)
+  rownames(df) <- NULL
+  df
 }
+
 
 # Internal function for finding CP consensus.
 find_cpc <- function(group_df, group_var = "cluster") {
@@ -226,102 +239,6 @@ find_cpc <- function(group_df, group_var = "cluster") {
   return(result)
 }
 
-.compute_map_consensus.consensus_BayesMallows <- function(model_fit, ...) {
-  # Store the total number of iterations after burnin
-  n_samples <- length(unique(model_fit$iteration))
-
-  # Reshape to get items along columns
-  model_fit <- stats::reshape(as.data.frame(model_fit),
-    direction = "wide",
-    idvar = c("cluster", "iteration"),
-    timevar = "item"
-  )
-  names(model_fit) <- gsub("^value\\.", "", names(model_fit))
-
-  model_fit <- aggregate_map_consensus(model_fit, n_samples)
-
-  # Now collect one set of ranks per cluster
-  model_fit$id <- seq_len(nrow(model_fit))
-  model_fit <- stats::reshape(as.data.frame(model_fit),
-    direction = "long",
-    varying = setdiff(names(model_fit), c("cluster", "probability", "id")),
-    v.names = "map_ranking",
-    timevar = "item",
-    idvar = c("cluster", "probability", "id"),
-    times = setdiff(names(model_fit), c("cluster", "probability", "id"))
-  )
-  rownames(model_fit) <- NULL
-  model_fit$id <- NULL
-
-  # Sort according to cluster and ranking
-  model_fit <- model_fit[order(model_fit$cluster, model_fit$map_ranking), , drop = FALSE]
-
-  if (length(unique(model_fit$cluster)) == 1) {
-    model_fit$cluster <- NULL
-  }
-
-  return(model_fit)
-}
-
-# AS: added one extra line of code to resolve of the issues in #118 with plotting too many rows in compute_rho_consensus
-.compute_map_consensus.consensus_SMCMallows <- function(model_fit, burnin = model_fit$burnin, ...) {
-  if (is.null(burnin)) {
-    stop("Please specify the burnin.")
-  }
-
-  if (burnin != 0) {
-    df <- model_fit[model_fit$iteration > burnin, , drop = FALSE]
-  } else {
-    df <- model_fit
-  }
-
-  # Store the total number of iterations after burnin
-  n_samples <- length(unique(df$iteration))
-
-  #-----------------------------------------------------------
-  # AS: remove the column n_clusters, parameter
-  df <- within(df, {
-    n_clusters <- NULL
-    parameter <- NULL
-  })
-  #------------------------------------------------------------
-
-  # Spread to get items along columns
-  df <- stats::reshape(
-    data = as.data.frame(df),
-    direction = "wide",
-    idvar = c("iteration", "cluster"),
-    timevar = "item",
-    varying = list(unique(df$item))
-  )
-  attr(df, "reshapeWide") <- NULL # maintain identity to spread() output
-
-  df <- aggregate_map_consensus(df, n_samples)
-
-  # Now collect one set of ranks per cluster
-  df <- stats::reshape(
-    as.data.frame(df),
-    direction = "long",
-    varying = setdiff(names(df), c("cluster", "probability")),
-    new.row.names = seq_len(prod(dim(df))),
-    v.names = "map_ranking",
-    timevar = "item",
-    times = setdiff(names(df), c("cluster", "probability"))
-  )
-  df$id <- NULL
-
-  attr(x = df, "reshapeLong") <- NULL # preserves identity to gather() output
-
-  # Sort according to cluster and ranking
-  df <- df[order(df$cluster, df$map_ranking), , drop = FALSE]
-
-  if (model_fit$n_clusters[1] == 1) {
-    df$cluster <- NULL
-  }
-
-  return(df)
-}
-
 aggregate_cp_consensus <- function(df) {
   # Convert items and cluster to character, since factor levels are not needed in this case
   df$item <- as.character(df$item)
@@ -359,4 +276,49 @@ aggregate_map_consensus <- function(df, n_samples) {
   df$probability <- df$n / n_samples
   df$n_max <- df$n <- NULL
   df
+}
+
+cpc_bm <- function(df) {
+  # Count per item, cluster, and value
+  df <- aggregate_cp_consensus(df)
+  # Find the CP consensus per cluster, using the find_cpc function
+  df <- find_cpc(df)
+
+  df <- df[order(df$cluster, df$ranking), ]
+  df
+}
+
+cpm_bm <- function(df) {
+  # Store the total number of iterations after burnin
+  n_samples <- length(unique(df$iteration))
+
+  # Reshape to get items along columns
+  df <- stats::reshape(as.data.frame(df),
+    direction = "wide",
+    idvar = c("chain", "cluster", "iteration"),
+    timevar = "item"
+  )
+  df$chain <- NULL
+  names(df) <- gsub("^value\\.", "", names(df))
+
+  df <- aggregate_map_consensus(df, n_samples)
+
+  # Now collect one set of ranks per cluster
+  df$id <- seq_len(nrow(df))
+  df <- stats::reshape(as.data.frame(df),
+    direction = "long",
+    varying = setdiff(names(df), c("cluster", "probability", "id")),
+    v.names = "map_ranking",
+    timevar = "item",
+    idvar = c("cluster", "probability", "id"),
+    times = setdiff(names(df), c("cluster", "probability", "id"))
+  )
+  rownames(df) <- NULL
+  df$id <- NULL
+
+  # Sort according to cluster and ranking
+  df <- df[order(df$cluster, df$map_ranking),
+    c("cluster", "map_ranking", "item", "probability"),
+    drop = FALSE
+  ]
 }

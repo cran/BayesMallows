@@ -61,7 +61,7 @@ plot(model_fit)
   # We can run a mixture of Mallows models, using the n_clusters argument
   # We use the sushi example data. See the documentation of compute_mallows for a more elaborate
   # example
-  model_fit <- compute_mallows(sushi_rankings, n_clusters = 5, save_clus = TRUE)
+  model_fit <- compute_mallows(sushi_rankings, n_clusters = 5)
   model_fit$burnin <- 1000
   # We can then plot the posterior distributions of the cluster probabilities
   plot(model_fit, parameter = "cluster_probs")
@@ -79,3 +79,21 @@ plot(model_fit)
 
 
 }
+\seealso{
+Other posterior quantities: 
+\code{\link{assign_cluster}()},
+\code{\link{compute_consensus.BayesMallows}()},
+\code{\link{compute_consensus.SMCMallows}()},
+\code{\link{compute_consensus}()},
+\code{\link{compute_posterior_intervals.BayesMallows}()},
+\code{\link{compute_posterior_intervals.SMCMallows}()},
+\code{\link{compute_posterior_intervals}()},
+\code{\link{heat_plot}()},
+\code{\link{plot.SMCMallows}()},
+\code{\link{plot_elbow}()},
+\code{\link{plot_top_k}()},
+\code{\link{predict_top_k}()},
+\code{\link{print.BayesMallowsMixtures}()},
+\code{\link{print.BayesMallows}()}
+}
+\concept{posterior quantities}

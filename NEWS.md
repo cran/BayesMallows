@@ -1,3 +1,28 @@
+# BayesMallows 1.5.0
+
+* Bug in augmentation with intransitive pairwise preferences has been fixed. 
+  (https://github.com/ocbe-uio/BayesMallows/issues/345)
+* Bug in plot.BayesMallows for posterior distribution with 'parameter = "rho"'
+  has been fixed. Thanks to Lorenzo Zuccato for points out the issue. 
+  (https://github.com/ocbe-uio/BayesMallows/issues/342)
+* Argument obs_freq to internal function rmallows() is removed, as it is not 
+  being used. Thanks to Lorenzo Zuccato for pointing this our 
+  (https://github.com/ocbe-uio/BayesMallows/issues/337).
+* Argument save_clus to compute_mallows() has been removed, as it was not used.
+* compute_mallows() now supports parallel chains, by providing a 'cl' argument.
+  See vignette "MCMC with Parallel Chains" for a tutorial.
+* compute_rho_consensus() for SMC Mallows has been deprecated in favor of 
+  compute_consensus().
+* compute_posterior_intervals_rho() and compute_posterior_intervals_alpha()
+  for SMC Mallows have been deprecated in factor of 
+  compute_posterior_intervals() with argument parameter = "rho" and
+  parameter = "alpha".
+* Documentation of functions are now grouped in families.
+* lik_db_mix() is now deprecated in favor of get_mallows_loglik()
+* Unusued argument removed from internal function augment_pairwise(). Thanks to
+  Lorenzo Zuccato for making us aware of this 
+  (https://github.com/ocbe-uio/BayesMallows/issues/313).
+
 # BayesMallows 1.4.0
 
 * Bug fix: psi argument to compute_mallows() and compute_mallows_mixtures(), 

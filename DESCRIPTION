@@ -1,14 +1,14 @@
 Package: BayesMallows
 Type: Package
 Title: Bayesian Preference Learning with the Mallows Rank Model
-Version: 1.5.0
+Version: 2.0.0
 Authors@R: c(person("Oystein", "Sorensen",
                     email = "oystein.sorensen.1985@gmail.com",
                     role = c("aut", "cre"),
                     comment = c(ORCID = "0000-0003-0724-3542")),
             person("Waldir", "Leoncio",
                     email = "w.l.netto@medisin.uio.no",
-                    role = c("ctr")),
+                    role = c("aut")),
             person("Valeria", "Vitelli",
                     role = c("aut"),
                     email = "valeria.vitelli@medisin.uio.no",
@@ -51,16 +51,17 @@ RoxygenNote: 7.2.3
 Depends: R (>= 3.5.0)
 Imports: Rcpp (>= 1.0.0), ggplot2 (>= 3.1.0), Rdpack (>= 1.0), igraph
         (>= 1.2.5), sets (>= 1.0-18), relations (>= 0.6-8), rlang (>=
-        0.3.1), HDInterval (>= 0.2.0), cowplot (>= 1.0.0), methods
+        0.3.1)
 LinkingTo: Rcpp, RcppArmadillo, testthat
-Suggests: R.rsp, xml2, knitr, testthat (>= 3.0.0), label.switching (>=
-        1.7), rmarkdown, covr, parallel (>= 3.5.1)
-VignetteBuilder: R.rsp, knitr
+Suggests: knitr, testthat (>= 3.0.0), label.switching (>= 1.7),
+        rmarkdown, covr, parallel (>= 3.5.1)
+VignetteBuilder: knitr, rmarkdown
 RdMacros: Rdpack
+Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2023-11-25 12:37:25 UTC; oyss
+Packaged: 2024-01-15 09:32:30 UTC; oyss
 Author: Oystein Sorensen [aut, cre] (<https://orcid.org/0000-0003-0724-3542>),
-  Waldir Leoncio [ctr],
+  Waldir Leoncio [aut],
   Valeria Vitelli [aut] (<https://orcid.org/0000-0002-6746-0453>),
   Marta Crispino [aut],
   Qinghua Liu [aut],
@@ -68,4 +69,4 @@ Author: Oystein Sorensen [aut, cre] (<https://orcid.org/0000-0003-0724-3542>),
   Luca Tardella [aut],
   Anja Stein [aut]
 Repository: CRAN
-Date/Publication: 2023-11-25 13:00:02 UTC
+Date/Publication: 2024-01-15 10:10:02 UTC

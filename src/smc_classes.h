@@ -1,6 +1,8 @@
 #pragma once
 
+#include <string>
 #include "classes.h"
+#include "resampler.h"
 
 struct Particle {
   Particle(double alpha, const arma::vec& rho, const arma::mat& augmented_data,
@@ -14,18 +16,29 @@ struct Particle {
   arma::vec log_aug_prob;
   arma::uvec consistent;
   arma::vec previous_distance;
+  double alpha_acceptance{};
+  double rho_acceptance{};
+  double aug_acceptance{};
+  int aug_count{};
 };
 
 struct SMCData : Data {
-  SMCData(const Rcpp::List& data, const Rcpp::List& new_data);
-  void update_data(const Particle& p);
-  arma::mat new_rankings;
-  const unsigned int num_new_obs;
+  SMCData(const Rcpp::List& data);
+  void update(const Rcpp::List& new_data);
+  Rcpp::List wrapup();
+  arma::mat new_rankings{};
+  unsigned int num_new_obs{};
+  arma::uvec timepoint{};
+  arma::umat consistent{};
+  Rcpp::IntegerVector user_ids{};
+  Rcpp::IntegerVector updated_match{};
 };
 
 struct SMCParameters {
   SMCParameters(
-    const Rcpp::List& smc_options, const Rcpp::List& compute_options);
+    const Rcpp::List& model_options,
+    const Rcpp::List& smc_options,
+    const Rcpp::List& compute_options);
   ~SMCParameters() = default;
 
   void update_alpha(
@@ -33,44 +46,48 @@ struct SMCParameters {
       const SMCData& dat,
       const std::unique_ptr<PartitionFunction>& pfun,
       const std::unique_ptr<Distance>& distfun,
-      const Priors& priors);
+      const Priors& priors) const;
 
   void update_rho(
       Particle& p,
       const SMCData& dat,
       const std::unique_ptr<Distance>& distfun
-  );
+  ) const;
 
-  Rcpp::IntegerVector draw_resampling_index(const std::vector<Particle>& pvec);
-  void resample(std::vector<Particle>& pvec);
+  arma::ivec draw_resampling_index(
+      const std::vector<Particle>& pvec) const;
+  void resample(std::vector<Particle>& pvec) const;
 
   const unsigned int mcmc_steps;
+  const std::string metric;
+  const unsigned int n_particles;
 
 private:
+  const std::unique_ptr<RhoProposal> rho_proposal_function;
   const double alpha_prop_sd;
-  const unsigned int leap_size;
+  const std::unique_ptr<Resampler> resampler;
 };
 
 struct SMCAugmentation {
-  SMCAugmentation(SMCData& dat, const Rcpp::List& compute_options);
+  SMCAugmentation(
+    const Rcpp::List& smc_options,
+    const Rcpp::List& compute_options
+    );
   ~SMCAugmentation() = default;
 
   void reweight(
       std::vector<Particle>& pvec,
       const SMCData& dat,
       const std::unique_ptr<PartitionFunction>& pfun,
-      const std::unique_ptr<Distance>& distfun);
-
-  void augment_partial(
-      std::vector<Particle>& pvec,
-      const SMCData& dat);
+      const std::unique_ptr<Distance>& distfun) const;
 
   void update_missing_ranks(Particle& p, const SMCData& dat,
-      const std::unique_ptr<Distance>& distfun);
+      const std::unique_ptr<Distance>& distfun) const;
 
-  void resample(const arma::uvec& index, const SMCData& dat);
-  const arma::umat missing_indicator;
-
-  const std::string aug_method;
-  const std::string pseudo_aug_metric;
+private:
+  const std::unique_ptr<PartialProposal> partial_aug_prop;
+  const std::unique_ptr<PairwiseProposal> pairwise_aug_prop;
+  const unsigned int latent_sampling_lag;
+  std::vector<Particle> augment_partial(
+      const std::vector<Particle>& pvec, const SMCData& dat) const;
 };

@@ -1,17 +1,19 @@
+#include <utility>
 #include "classes.h"
-#include "leapandshift.h"
+#include "rank_proposal.h"
 #include "proposal_functions.h"
+#include "missing_data.h"
 using namespace arma;
 
 AlphaRatio make_new_alpha(
-    const double& alpha_old,
+    double alpha_old,
     const vec& rho_old,
-    const double& alpha_prop_sd,
+    double alpha_prop_sd,
     const std::unique_ptr<Distance>& distfun,
     const std::unique_ptr<PartitionFunction>& pfun,
     const arma::mat& rankings,
     const arma::vec& observation_frequency,
-    const double& n_items,
+    double n_items,
     const Priors& priors) {
 
   double alpha_proposal = R::rlnorm(std::log(alpha_old), alpha_prop_sd);
@@ -23,43 +25,36 @@ AlphaRatio make_new_alpha(
     priors.lambda * alpha_diff +
     sum(observation_frequency) *
     (pfun->logz(alpha_old) - pfun->logz(alpha_proposal)) +
-    std::log(alpha_proposal) - std::log(alpha_old);
+    priors.gamma * (std::log(alpha_proposal) - std::log(alpha_old));
 
   return AlphaRatio{alpha_proposal, ratio > std::log(R::unif_rand())};
 }
 
-vec make_new_rho(
+std::pair<vec, bool> make_new_rho(
     const vec& current_rho,
     const mat& rankings,
     double alpha_old,
-    int leap_size,
     const std::unique_ptr<Distance>& distfun,
+    const std::unique_ptr<RhoProposal>& prop,
     vec observation_frequency) {
 
-  vec rho_proposal;
-  uvec indices;
-  double prob_backward, prob_forward;
   int n_items = current_rho.n_elem;
-
-  leap_and_shift(
-    rho_proposal, indices, prob_backward, prob_forward,
-    current_rho, leap_size, distfun);
+  RankProposal rp = prop->propose(current_rho);
 
   double dist_new = arma::sum(
-    distfun->matdist(rankings.rows(indices), rho_proposal(indices)) % observation_frequency
+    distfun->matdist(rankings, rp.rankings, rp.mutated_items) %
+      observation_frequency
   );
   double dist_old = arma::sum(
-    distfun->matdist(rankings.rows(indices), current_rho(indices)) % observation_frequency
+    distfun->matdist(rankings, current_rho, rp.mutated_items) %
+      observation_frequency
   );
 
   double ratio = - alpha_old / n_items * (dist_new - dist_old) +
-    std::log(prob_backward) - std::log(prob_forward);
+    std::log(rp.prob_backward) - std::log(rp.prob_forward);
 
-  if(ratio > std::log(R::unif_rand())){
-    return(rho_proposal);
-  } else {
-    return(current_rho);
-  }
+  bool accept = ratio > std::log(R::unif_rand());
+  return std::pair<vec, bool>{rp.rankings, accept};
 }
 
 

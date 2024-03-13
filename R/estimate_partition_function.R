@@ -112,6 +112,22 @@ estimate_partition_function <- function(
   matrix(c(power, stats::lm(form, data = estimate)$coefficients), ncol = 2)
 }
 
+extract_pfun_values <- function(metric, n_items, pfun_estimate) {
+  tryCatch(
+    prepare_partition_function(metric, n_items),
+    error = function(e) {
+      if (is.null(pfun_estimate)) {
+        stop(
+          "Exact partition function not known. Please provide an ",
+          "estimate in argument pfun_estimate."
+        )
+      } else {
+        return(NULL)
+      }
+    }
+  )
+}
+
 prepare_partition_function <- function(metric, n_items) {
   if (metric %in% c("cayley", "hamming", "kendall")) {
     return(NULL)

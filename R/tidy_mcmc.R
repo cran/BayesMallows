@@ -1,14 +1,6 @@
 tidy_mcmc <- function(fits, data, model_options, compute_options) {
   fit <- list()
   fit$save_aug <- compute_options$save_aug
-
-  # Add names of item
-  if (!is.null(colnames(data$rankings))) {
-    items <- colnames(data$rankings)
-  } else {
-    items <- paste("Item", seq(from = 1, to = data$n_items, by = 1))
-  }
-
   rho_dims <- dim(fits[[1]]$rho)
   fit$rho_samples <- fits[[1]]$rho
   for (f in fits[-1]) {
@@ -17,7 +9,7 @@ tidy_mcmc <- function(fits, data, model_options, compute_options) {
 
   rhos <- lapply(seq_along(fits), function(i) fits[[i]]$rho)
   fit$rho <- do.call(rbind, lapply(seq_along(rhos), function(i) {
-    tidy_rho(rhos[[i]], i, compute_options$rho_thinning, items)
+    tidy_rho(rhos[[i]], i, compute_options$rho_thinning, data$items)
   }))
 
   alpha_dims <- dim(fits[[1]]$alpha)
@@ -32,7 +24,7 @@ tidy_mcmc <- function(fits, data, model_options, compute_options) {
 
   fit$cluster_assignment <- do.call(rbind, lapply(seq_along(fits), function(i) {
     tidy_cluster_assignment(
-      fits[[i]]$cluster_assignment, i, model_options$n_clusters, fits[[i]]$n_assessors,
+      fits[[i]]$cluster_assignment, i, model_options$n_clusters, data$n_assessors,
       compute_options$nmc
     )
   }))
@@ -51,7 +43,7 @@ tidy_mcmc <- function(fits, data, model_options, compute_options) {
 
   fit$augmented_data <- do.call(rbind, lapply(seq_along(fits), function(i) {
     tidy_augmented_data(
-      fits[[i]]$augmented_data, i, items,
+      fits[[i]]$augmented_data, i, data$items,
       compute_options$aug_thinning
     )
   }))
@@ -61,18 +53,17 @@ tidy_mcmc <- function(fits, data, model_options, compute_options) {
   }))
 
   fit$n_clusters <- model_options$n_clusters
-  fit$items <- items
-  fit$n_items <- data$n_items
-  fit$n_assessors <- fits[[1]]$n_assessors
+  fit$data <- data
+  fit$compute_options <- compute_options
 
-  fit$nmc <- compute_options$nmc
-  fit$metric <- model_options$metric
-  fit$burnin <- compute_options$burnin
+  fit$acceptance_ratios <- list(
+    alpha_acceptance = lapply(fits, function(x) x$alpha_acceptance),
+    rho_acceptance = lapply(fits, function(x) x$rho_acceptance),
+    aug_acceptance = lapply(fits, function(x) x$aug_acceptance)
+  )
 
   return(fit)
 }
-
-
 
 tidy_rho <- function(rho_mat, chain, rho_thinning, items) {
   # Tidy rho
@@ -138,8 +129,7 @@ tidy_alpha <- function(alpha_mat, chain, alpha_jump) {
 }
 
 tidy_cluster_assignment <- function(
-    cluster_assignment, chain, n_clusters,
-    n_assessors, nmc) {
+    cluster_assignment, chain, n_clusters, n_assessors, nmc) {
   if (n_clusters > 1) {
     cluster_dims <- dim(cluster_assignment)
     value <- paste("Cluster", cluster_assignment)

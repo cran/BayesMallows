@@ -1,5 +1,44 @@
+# BayesMallows 2.1.0
+
+* The SMC method update_mallows() now supports pairwise preferences, both new 
+  users providing pairwise preferences and existing users updating their
+  preferences.
+* Acceptance ratios are now tracked both in the Metropolis-Hastings algorithm
+  used by compute_mallows() and in the move step inside the sequential Monte 
+  Carlo algorithm used by update_mallows() and compute_mallows_sequentially(). 
+  Use the function get_acceptance_ratios() to access them.
+* BREAKING CHANGE: Burnin now has to be explicitly set using 
+  'burnin(model) <- value' if it is not already set in compute_options. This 
+  alleviates the need for a 'burnin' argument in the functions for assessing the
+  posterior distribution and it abstracts away the implementation from the user.
+  See '?burnin' and '?burnin<-' for details.
+* The swap proposal defined in Crispino et al., Annals of Applied Statistics 
+  (2019) is now an option for proposing the modal ranking rho. It can be 
+  defined by setting rho_proposal="swap" in set_compute_options(). The leap-and-
+  shift distribution is still the default.
+* Fixed a bug in heat_plot() when the model has been estimated with 
+  rho_thinning > 1, causing the probabilities to be unnormalized. Issue #381. 
+  Thanks to Marta Crispino for discovering the bug.
+* Added stratified, systematic, and residual resampling to the sequential 
+  Monte Carlo algorithm. These distributions should in general be preferred to
+  multinomial resampling, which was the only available option until now.
+* The move step of the SMC algorithm now allows a user-defined lag for the 
+  sampling of latent ranks, specified in the "latent_sampling_lag" argument
+  to set_smc_options().
+* Prior for precision parameter alpha is now a gamma distribution. Until now
+  an exponential distribution has been assumed. Since the exponential is a 
+  special case of the gamma with shape parameter equal to 1 (the default), this 
+  is not a breaking change. However, it adds flexibility when it comes to 
+  specifying the prior.
+* setup_rank_data() now accepts a single vector of rankings, silently converting 
+  a vector to matrix with a single row.
+* Sequential Monte Carlo algorithm can now start from a sample from the prior
+  distribution, see the sample_prior() function for an example.
+* Added support for parallelism under-the-hood with oneTBB.
+
 # BayesMallows 2.0.1
 
+* Edits to C++ code fixing memory leaks.
 * Edits to unit tests which caused issues on CRAN.
 
 # BayesMallows 2.0.0

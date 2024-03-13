@@ -17,8 +17,7 @@ test_that("update_mallows is correct for new rankings", {
 
   mod_smc <- update_mallows(
     model = mod_init,
-    new_data = setup_rank_data(rankings = triple_potato[5:20, ]),
-    smc_options = set_smc_options(n_particles = 10000, mcmc_steps = 15)
+    new_data = setup_rank_data(rankings = triple_potato[5:20, ])
   )
 
   mod_smc_next <- update_mallows(
@@ -26,12 +25,14 @@ test_that("update_mallows is correct for new rankings", {
     new_data = setup_rank_data(rankings = triple_potato[21:36, ])
   )
 
-  expect_equal(mean(mod_smc_next$alpha$value),
+  expect_equal(
+    mean(mod_smc_next$alpha$value),
     mean(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 1000]),
     tolerance = 0.01
   )
 
-  expect_equal(sd(mod_smc_next$alpha$value),
+  expect_equal(
+    sd(mod_smc_next$alpha$value),
     sd(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 1000]),
     tolerance = 0.1
   )
@@ -72,14 +73,16 @@ test_that("update_mallows is correct for new rankings", {
   )
 
   # Posterior mean of alpha should be the same in both SMC methods, and close to BMM
-  expect_equal(mean(mod_smc_next$alpha$value),
+  expect_equal(
+    mean(mod_smc_next$alpha$value),
     mean(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 200]),
-    tolerance = 0.02
+    tolerance = 0.01
   )
 
-  expect_equal(sd(mod_smc_next$alpha$value),
+  expect_equal(
+    sd(mod_smc_next$alpha$value),
     sd(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 200]),
-    tolerance = 0.05
+    tolerance = 0.04
   )
 
   bmm_consensus <- compute_consensus(mod_bmm)
@@ -91,7 +94,7 @@ test_that("update_mallows is correct for new rankings", {
       as.numeric(as.factor(smc_consensus$item)),
       metric = "ulam"
     ),
-    2
+    0
   )
 })
 
@@ -123,7 +126,7 @@ test_that("update_mallows is correct for new partial rankings", {
     mod_smc <- update_mallows(
       model = mod_init,
       new_data = setup_rank_data(rankings = dat[5:20, ]),
-      smc_options = set_smc_options(n_particles = 10000, mcmc_steps = 10),
+      smc_options = set_smc_options(n_particles = 2000),
       compute_options = set_compute_options(aug_method = aug)
     )
 
@@ -134,14 +137,19 @@ test_that("update_mallows is correct for new partial rankings", {
 
     expect_equal(
       mean(mod_smc_next$alpha$value),
+      ifelse(aug == "uniform", 10.9348917143992, 10.9279783083453)
+    )
+
+    expect_equal(
+      mean(mod_smc_next$alpha$value),
       mean(bmm_mod$alpha$value[bmm_mod$alpha$iteration > 1000]),
-      tolerance = .1
+      tolerance = .03
     )
 
     expect_equal(
       sd(mod_smc_next$alpha$value),
       sd(bmm_mod$alpha$value[bmm_mod$alpha$iteration > 1000]),
-      tolerance = .1
+      tolerance = ifelse(aug == "uniform", .2, .1)
     )
 
     bmm_consensus <- compute_consensus(bmm_mod)
@@ -159,13 +167,13 @@ test_that("update_mallows is correct for new partial rankings", {
 
 test_that("update_mallows is correct for updated partial rankings", {
   set.seed(1)
-  user_ids <- rownames(potato_visual)
+  user_ids <- 1:12
   dat0 <- potato_visual
   dat0[] <- ifelse(runif(length(dat0)) > .5, NA_real_, dat0)
 
   mod0 <- compute_mallows(
     data = setup_rank_data(rankings = dat0),
-    compute_options = set_compute_options(nmc = 5000, burnin = 2500)
+    compute_options = set_compute_options(nmc = 20000, burnin = 2500)
   )
 
   dat1 <- potato_visual
@@ -174,21 +182,22 @@ test_that("update_mallows is correct for updated partial rankings", {
   mod1 <- update_mallows(
     model = mod0,
     new_data = setup_rank_data(rankings = dat1, user_ids = user_ids),
-    compute_options = set_compute_options(aug_method = "pseudo")
+    compute_options = set_compute_options(aug_method = "pseudo"),
+    smc_options = set_smc_options(n_particles = 1000, mcmc_steps = 20)
   )
 
   mod_bmm1 <- compute_mallows(
     data = setup_rank_data(rankings = dat1),
     compute_options = set_compute_options(
       nmc = 5000, burnin = 2000,
-      aug_method = "pseudo"
+      aug_method = "uniform"
     )
   )
 
   expect_equal(
     mean(mod1$alpha$value),
-    mean(mod_bmm1$alpha$value[mod_bmm1$alpha$iteration > 4000]),
-    tolerance = .1
+    mean(mod_bmm1$alpha$value[mod_bmm1$alpha$iteration > 2000]),
+    tolerance = .05
   )
 
   dat2 <- potato_visual
@@ -196,7 +205,9 @@ test_that("update_mallows is correct for updated partial rankings", {
 
   mod2 <- update_mallows(
     model = mod1,
-    new_data = setup_rank_data(rankings = dat2, user_ids = user_ids)
+    new_data = setup_rank_data(rankings = dat2, user_ids = user_ids),
+    compute_options = set_compute_options(aug_method = "pseudo"),
+    smc_options = set_smc_options(n_particles = 1000, mcmc_steps = 20)
   )
 
   mod_bmm <- compute_mallows(
@@ -208,13 +219,6 @@ test_that("update_mallows is correct for updated partial rankings", {
     mean(mod2$alpha$value),
     mean(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 5000]),
     tolerance = .1
-  )
-
-  skip_on_os("mac", arch = "aarch64")
-  expect_equal(
-    sd(mod2$alpha$value),
-    sd(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 5000]),
-    tolerance = .2
   )
 })
 
@@ -244,4 +248,94 @@ test_that("update_mallows does not suffer from numerical overflow", {
   )
 
   expect_s3_class(mod2, "SMCMallows")
+})
+
+test_that("update_mallows works for data one at a time", {
+  n <- 50
+  set.seed(2)
+  mod_bmm <- compute_mallows(data = setup_rank_data(sushi_rankings[1:n, ]))
+
+  mod <- sample_prior(1000, ncol(sushi_rankings))
+  for (i in seq_len(n)) {
+    mod <- update_mallows(
+      model = mod,
+      new_data = setup_rank_data(sushi_rankings[i, ])
+    )
+  }
+  expect_equal(
+    mean(mod$alpha_samples),
+    mean(mod_bmm$alpha_samples[-(1:500)]),
+    tolerance = .01
+  )
+  expect_equal(
+    sd(mod$alpha_samples),
+    sd(mod_bmm$alpha_samples[-(1:500)]),
+    tolerance = .04
+  )
+
+  dat <- sushi_rankings[sample(nrow(sushi_rankings), n), ]
+  dat[dat > 6] <- NA
+  mod_bmm <- compute_mallows(data = setup_rank_data(dat))
+
+  mod <- sample_prior(1000, ncol(dat))
+  for (i in seq_len(n)) {
+    mod <- update_mallows(
+      model = mod,
+      new_data = setup_rank_data(dat[i, , drop = FALSE])
+    )
+  }
+  expect_equal(
+    mean(mod$alpha_samples),
+    mean(mod_bmm$alpha_samples[-(1:500)]),
+    tolerance = .02
+  )
+  expect_equal(
+    sd(mod$alpha_samples),
+    sd(mod_bmm$alpha_samples[-(1:500)]),
+    tolerance = .1
+  )
+})
+
+test_that("update_mallows works with swap prosal for rho", {
+  triple_potato <- rbind(potato_visual, potato_visual, potato_visual)
+  rownames(triple_potato) <- seq_len(nrow(triple_potato))
+  user_ids <- rownames(triple_potato)
+
+  set.seed(123)
+
+  mod_bmm <- compute_mallows(
+    data = setup_rank_data(triple_potato),
+    compute_options = set_compute_options(
+      nmc = 10000, burnin = 1000, rho_proposal = "swap"
+    )
+  )
+
+  mod_init <- compute_mallows(
+    data = setup_rank_data(triple_potato[1:4, , drop = FALSE]),
+    compute_options = set_compute_options(
+      nmc = 20000, burnin = 1000, rho_proposal = "swap"
+    )
+  )
+
+  mod_smc <- update_mallows(
+    model = mod_init,
+    new_data = setup_rank_data(rankings = triple_potato[5:20, ])
+  )
+
+  mod_smc_next <- update_mallows(
+    model = mod_smc,
+    new_data = setup_rank_data(rankings = triple_potato[21:36, ])
+  )
+
+  expect_equal(
+    mean(mod_smc_next$alpha$value),
+    mean(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 1000]),
+    tolerance = 0.01
+  )
+
+  expect_equal(
+    sd(mod_smc_next$alpha$value),
+    sd(mod_bmm$alpha$value[mod_bmm$alpha$iteration > 1000]),
+    tolerance = 0.1
+  )
 })

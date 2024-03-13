@@ -11,14 +11,17 @@ mod_init <- compute_mallows(
 
 # Convergence seems good after no more than 2000 iterations
 assess_convergence(mod_init)
-mod_init$burnin <- 2000
+burnin(mod_init) <- 2000
 
 # Next, assume we receive four more observations
 data_second_batch <- potato_visual[5:8, ]
 
 # We can now update the model using sequential Monte Carlo
 mod_second <- update_mallows(
-  model = mod_init, new_data = setup_rank_data(rankings = data_second_batch))
+  model = mod_init,
+  new_data = setup_rank_data(rankings = data_second_batch),
+  smc_options = set_smc_options(resampler = "systematic")
+  )
 
 # This model now has a collection of particles approximating the posterior
 # distribution after the first and second batch
@@ -52,7 +55,7 @@ potato_top_14 <- ifelse(potato_visual[1:10, ] > 14, NA_real_,
                         potato_visual[1:10, ])
 
 # We need the rownames as user IDs
-(user_ids <- rownames(potato_visual[1:10, ]))
+(user_ids <- 1:10)
 
 # First, users provide top-10 rankings
 mod_init <- compute_mallows(
@@ -61,12 +64,13 @@ mod_init <- compute_mallows(
 
 # Convergence seems fine. We set the burnin to 2000.
 assess_convergence(mod_init)
-mod_init$burnin <- 2000
+burnin(mod_init) <- 2000
 
 # Next assume the users update their rankings, so we have top-12 instead.
 mod1 <- update_mallows(
   model = mod_init,
-  new_data = setup_rank_data(rankings = potato_top_12, user_ids = user_ids)
+  new_data = setup_rank_data(rankings = potato_top_12, user_ids = user_ids),
+  smc_options = set_smc_options(resampler = "stratified")
 )
 
 plot(mod1)
@@ -82,7 +86,7 @@ plot(mod2)
 # Finally, assume a set of new users arrive, who have complete rankings.
 potato_new <- potato_visual[11:12, ]
 # We need to update the user IDs, to show that these users are different
-(user_ids <- rownames(potato_new))
+(user_ids <- 11:12)
 
 mod_final <- update_mallows(
   model = mod2,
@@ -90,3 +94,32 @@ mod_final <- update_mallows(
 )
 
 plot(mod_final)
+
+# We can also update models with pairwise preferences
+# We here start by running MCMC on the first 20 assessors of the beach data
+# A realistic application should run a larger number of iterations than we
+# do in this example.
+set.seed(3)
+dat <- subset(beach_preferences, assessor <= 20)
+mod <- compute_mallows(
+  data = setup_rank_data(
+    preferences = beach_preferences),
+  compute_options = set_compute_options(nmc = 3000, burnin = 1000)
+)
+
+# Next we provide assessors 21 to 24 one at a time.
+for(i in 21:24){
+  mod <- update_mallows(
+    model = mod,
+    new_data = setup_rank_data(
+      preferences = subset(beach_preferences, assessor == i),
+      user_ids = i, shuffle_unranked = TRUE),
+    smc_options = set_smc_options(latent_sampling_lag = 0)
+  )
+}
+
+# Compared to running full MCMC, there is a downward bias in the scale
+# parameter. This can be alleviated by increasing the number of particles,
+# MCMC steps, and the latent sampling lag.
+plot(mod)
+compute_consensus(mod)

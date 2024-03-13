@@ -7,14 +7,16 @@
 setup_rank_data(
   rankings = NULL,
   preferences = NULL,
-  user_ids = NULL,
+  user_ids = numeric(),
   observation_frequency = NULL,
   validate_rankings = TRUE,
   na_action = c("augment", "fail", "omit"),
   cl = NULL,
   shuffle_unranked = FALSE,
   random = FALSE,
-  random_limit = 8L
+  random_limit = 8L,
+  timepoint = NULL,
+  n_items = NULL
 )
 }
 \arguments{
@@ -24,7 +26,9 @@ converted to rankings. If \code{preferences} is provided, \code{rankings} is an
 optional initial value of the rankings. If \code{rankings} has column names,
 these are assumed to be the names of the items. \code{NA} values in rankings are
 treated as missing data and automatically augmented; to change this
-behavior, see the \code{na_action} argument to \code{\link[=set_model_options]{set_model_options()}}.}
+behavior, see the \code{na_action} argument to \code{\link[=set_model_options]{set_model_options()}}. A vector
+length \code{n_items} is silently converted to a matrix of length \verb{1 x n_items},
+and names (if any), are used as column names.}
 
 \item{preferences}{A data frame with one row per pairwise comparison, and
 columns \code{assessor}, \code{top_item}, and \code{bottom_item}. Each column contains the
@@ -48,10 +52,9 @@ we have the following \code{df}:
 2 \tab 5 \tab 3\cr
 }}
 
-\item{user_ids}{Optional vector of user IDs. Defaults to \code{NULL}, and only
-used by \code{\link[=update_mallows]{update_mallows()}}. If provided, new data can consist of updated
-partial rankings from users already in the dataset, as described in Section
-6 of
+\item{user_ids}{Optional \code{numeric} vector of user IDs. Only only used by
+\code{\link[=update_mallows]{update_mallows()}}. If provided, new data can consist of updated partial
+rankings from users already in the dataset, as described in Section 6 of
 \insertCite{steinSequentialInferenceMallows2023;textual}{BayesMallows}.}
 
 \item{observation_frequency}{A vector of observation frequencies (weights) to
@@ -95,6 +98,19 @@ generated for each assessor, and one of them is picked at random.}
 \item{random_limit}{Integer specifying the maximum number of items allowed
 when all possible orderings are computed, i.e., when \code{random=TRUE}.
 Defaults to \code{8L}.}
+
+\item{timepoint}{Integer vector specifying the timepoint. Defaults to \code{NULL},
+which means that a vector of ones, one for each observation, is generated.
+Used by \code{\link[=update_mallows]{update_mallows()}} to identify data with a given iteration of the
+sequential Monte Carlo algorithm. If not \code{NULL}, must contain one integer
+for each row in \code{rankings}.}
+
+\item{n_items}{Integer specifying the number of items. Defaults to \code{NULL},
+which means that the number of items is inferred from \code{rankings} or from
+\code{preferences}. Setting \code{n_items} manually can be useful with pairwise
+preference data in the SMC algorithm, i.e., when \code{rankings} is \code{NULL} and
+\code{preferences} is non-\code{NULL}, and contains a small number of pairwise
+preferences for a subset of users and items.}
 }
 \value{
 An object of class \code{"BayesMallowsData"}, to be provided in the \code{data}
@@ -131,6 +147,9 @@ If in reality there are only two items, they should be relabeled to 1 and
 \strong{assessor} \tab \strong{bottom_item} \tab \strong{top_item}\cr
 1 \tab 1 \tab 2\cr
 }
+}
+\references{
+\insertAllCited{}
 }
 \seealso{
 Other preprocessing: 

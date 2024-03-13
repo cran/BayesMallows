@@ -1,31 +1,33 @@
 #pragma once
 #include <RcppArmadillo.h>
+#include "typedefs.h"
 #include "partition_functions.h"
 #include "distances.h"
-
-using doubly_nested = std::vector<std::vector<unsigned int>>;
-using triply_nested = std::vector<doubly_nested>;
+#include "rank_proposal.h"
 
 struct Data {
   Data(const Rcpp::List& data);
   ~Data() = default;
 
   arma::mat rankings;
-  const unsigned int n_assessors;
+  unsigned int n_assessors;
   const unsigned int n_items;
-  const arma::vec observation_frequency;
-  const triply_nested items_above{};
-  const triply_nested items_below{};
+  arma::vec observation_frequency;
+  triply_nested items_above{};
+  triply_nested items_below{};
   const bool any_missing;
+  const bool augpair;
+  arma::umat missing_indicator;
 };
 
 struct Priors {
   Priors(
     const Rcpp::List& priors
-  ) : lambda { priors["lambda"] }, kappa(priors["kappa"]),
-  psi { priors["psi"] } {}
+  ) : gamma { priors["gamma"] }, lambda { priors["lambda"] },
+  kappa(priors["kappa"]), psi { priors["psi"] } {}
   ~Priors() = default;
 
+  const double gamma;
   const double lambda;
   const arma::ivec kappa;
   const unsigned int psi;
@@ -39,13 +41,12 @@ struct Parameters {
     const unsigned int n_items);
   ~Parameters() = default;
 
-  void update_shape(int t, const Data& dat, const Priors& priors);
-  void update_rho(int t, int& rho_index, const Data& dat,
+  void update_shape(const Data& dat, const Priors& priors);
+  void update_rho(const Data& dat,
                   const arma::uvec& cluster_assignment,
                   const std::unique_ptr<Distance>& distfun);
 
   void update_alpha(
-      int alpha_index,
       const Data& dat,
       const std::unique_ptr<Distance>& distfun,
       const std::unique_ptr<PartitionFunction>& pfun,
@@ -53,22 +54,29 @@ struct Parameters {
       const arma::uvec& current_cluster_assignment);
 
   arma::mat alpha;
+  double alpha_acceptance{};
   arma::vec alpha_old;
   arma::cube rho;
+  double rho_acceptance{};
   arma::mat rho_old;
   arma::vec shape_1;
   arma::vec shape_2;
   arma::vec theta;
+  double theta_current;
   const unsigned int n_clusters;
   const unsigned int nmc;
-  const std::string error_model;
   const int alpha_jump;
+  const std::string metric;
+  size_t burnin{};
+  size_t t{};
+  size_t alpha_index{};
+  size_t rho_index{};
 
 private:
-  const arma::uvec element_indices;
+  const std::unique_ptr<RhoProposal> rho_proposal_function;
   const double alpha_prop_sd;
-  const int leap_size;
   const int rho_thinning;
+  const std::string error_model;
 };
 
 struct Clustering {
@@ -83,10 +91,12 @@ struct Clustering {
   void update_wcd(const int t);
   void update_dist_mat(const Data& dat, const Parameters& pars,
                        const std::unique_ptr<Distance>& distfun);
+  void save_cluster_parameters(size_t t);
 
   arma::vec current_cluster_probs;
   const bool clustering;
   const unsigned int clus_thinning;
+  size_t cluster_assignment_index{};
 
 private:
   const arma::uvec index;
@@ -103,15 +113,9 @@ public:
 };
 
 struct Augmentation {
-  Augmentation(Data& dat, const Rcpp::List& compute_options);
+  Augmentation(Data& dat, const Rcpp::List& compute_options,
+               const Rcpp::List& model_options);
   ~Augmentation() = default;
-
-  void augment_pairwise(
-      const unsigned int t,
-      Data& dat,
-      const Parameters& pars,
-      const Clustering& clus,
-      const std::unique_ptr<Distance>& distfun);
 
   void update_missing_ranks(
       Data& dat,
@@ -119,18 +123,17 @@ struct Augmentation {
       const Parameters& pars,
       const std::unique_ptr<Distance>& distfun
   );
-
-  const bool augpair;
+  void save_augmented_data(const Data& dat, const Parameters& pars);
   const bool save_aug;
   const unsigned int aug_thinning;
   arma::cube augmented_data;
+  size_t aug_index{};
+  double aug_acceptance{};
+  int aug_count{};
 
 private:
-  const unsigned int swap_leap;
-  const arma::umat missing_indicator;
-  const std::string aug_method;
-  const std::string pseudo_aug_metric;
-  const std::unique_ptr<Distance> pseudo_aug_distance;
-  arma::vec log_aug_prob;
+  const std::string error_model;
+  const std::unique_ptr<PartialProposal> partial_aug_prop;
+  const std::unique_ptr<PairwiseProposal> pairwise_aug_prop;
 };
 

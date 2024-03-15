@@ -1,6 +1,6 @@
-880e27793a66a0c14ef23a3679e5d5cf *DESCRIPTION
+b0da7c79ef7974293fbb3f6fdd58a050 *DESCRIPTION
 737320311a793ef32e8e44f0a86fef7c *NAMESPACE
-28909a1c9e4da7a028c3df58be165e6d *NEWS.md
+20f7bde8a1c9da027305099fdb78090d *NEWS.md
 db65711498e29f91f4ba41198d6b9114 *R/BayesMallows.R
 06129adb06bbc2e1047b6aa76861a676 *R/RcppExports.R
 e53690ee9ebb6033d5322ef657264670 *R/acceptance_ratio.R
@@ -11,7 +11,7 @@ ec45aed7370135afe3141ed67fb16dbd *R/assign_cluster.R
 d66919dc6c07ee4246a0134d4468f45e *R/compute_consensus.R
 48a33e561856832daf6cd95d8debc0a7 *R/compute_mallows.R
 6e25bd74fffd57cdb1a32aebf3ddff4c *R/compute_mallows_mixtures.R
-166b36de7c5964f3ed10fb9c0fd1001c *R/compute_mallows_sequentially.R
+916051ef25c75d3d42ec4d9780e354ae *R/compute_mallows_sequentially.R
 50fc8e497267226e3925109f27e21d5b *R/compute_observation_frequency.R
 2dedda6f36d8111d452634a2649d93cf *R/compute_posterior_intervals.R
 2793fc21299f83ced8d769f2ddc2b96e *R/compute_rank_distance.R
@@ -45,7 +45,7 @@ e53ebfd3f9e07cdb91113506bb5a2519 *R/set_model_options.R
 1150c20f4429b6d64c63581bc12b61ba *R/tidy_mcmc.R
 43bc146d135bffa865f6adfcb431c4a5 *R/update_mallows.R
 cac86bf35b3fd76ac8bd4dc3f5714949 *R/validation_functions.R
-392d39252156d6ea9b7feee41b873d46 *build/partial.rdb
+2e63103a7ff4b659f75b884c3ca18ae3 *build/partial.rdb
 10e5ca83d5d1140e484fa734e64dc145 *build/vignette.rds
 a0f101d2398611b83476423acd528939 *data/beach_preferences.rda
 f39158461696ef0450ac13023bdcd7c8 *data/bernoulli_data.rda
@@ -67,7 +67,7 @@ c12b2681395182f04ea47b6a2b3f5013 *inst/examples/burnin_example.R
 d9f2184526e36850c88385c8439bda85 *inst/examples/compute_consensus_example.R
 1ba3353aeb721e084714db93fc419967 *inst/examples/compute_mallows_example.R
 e7a5790a5d2f5cf3af9890f1fdb21429 *inst/examples/compute_mallows_mixtures_example.R
-b00262335fb2db80932ca617699d48c3 *inst/examples/compute_mallows_sequentially_example.R
+e50ac80b5de6e596df305274b6963f3f *inst/examples/compute_mallows_sequentially_example.R
 2672a1af290cf6365894cfc3f84749e9 *inst/examples/compute_observation_frequency_example.R
 0e4e87c62261ed8dc53356b009cdc5c5 *inst/examples/compute_posterior_intervals_example.R
 541433f67c80207c0120487a6fe3ad80 *inst/examples/compute_rank_distance_example.R
@@ -96,7 +96,7 @@ a935865565f78346b59281d344092144 *man/compute_consensus.Rd
 aa33efdd1f90927fa2051916a1212cc4 *man/compute_expected_distance.Rd
 33523497d4af78fa8c7219d06e8a2c9e *man/compute_mallows.Rd
 3ced1facd37ccdd910a1428522b74b1f *man/compute_mallows_mixtures.Rd
-c1149d5bfc4d4128df81514c2ef6a2a8 *man/compute_mallows_sequentially.Rd
+c0a0498b08456c2f39310dbb52bc38dd *man/compute_mallows_sequentially.Rd
 31b4ab4e2ebdaee1bd7ab3b085e6d2bd *man/compute_observation_frequency.Rd
 fca35ec099b47c212356a12a50dce609 *man/compute_posterior_intervals.Rd
 97ea5b6736af45430cbf2ca00b14a8a0 *man/compute_rank_distance.Rd
@@ -181,7 +181,7 @@ e15fd6f15b417d95be39f68815935b4c *tests/testthat/test-assign_cluster.R
 42af04db9b4917970df4eded9d042f85 *tests/testthat/test-burnin.R
 352f54a794bdcea15ca05ba815f10a20 *tests/testthat/test-compute_consensus.R
 9db2ebbac9026034ad26447f6899e9cc *tests/testthat/test-compute_mallows.R
-4354c6e6ccc239a35019310c136921d6 *tests/testthat/test-compute_mallows_sequentially.R
+75a1bed8b22e3b4aed2fcabb4d597b47 *tests/testthat/test-compute_mallows_sequentially.R
 40c43f0e4303d9dd17e9851b883281f1 *tests/testthat/test-compute_observation_frequency.R
 be8bddd8b592cfed43f352ac2717e23b *tests/testthat/test-compute_posterior_intervals.R
 3ba44c63c6a170aee1c59964edfc30df *tests/testthat/test-compute_rank_distance.R

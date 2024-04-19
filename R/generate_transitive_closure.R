@@ -19,7 +19,7 @@ generate_transitive_closure <- function(preferences, cl = NULL) {
   prefs <- lapplyfun(seq_along(prefs), function(i) {
     cbind(
       assessor = as.numeric(names(prefs)[[i]]),
-      .generate_transitive_closure(as.matrix(prefs[[i]]))
+      .generate_transitive_closure(prefs[[i]])
     )
   })
 
@@ -53,7 +53,5 @@ generate_transitive_closure <- function(preferences, cl = NULL) {
     bottom_item = row_inds[new_mat[, 1, drop = FALSE]],
     top_item = row_inds[new_mat[, 2, drop = FALSE]]
   )
-
-
-  return(result)
+  result
 }

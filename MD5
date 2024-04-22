@@ -1,6 +1,6 @@
-a30bae8d868616865f7d13ba2f8bed39 *DESCRIPTION
+2e012963379f514474c62dd8e8cc2fbc *DESCRIPTION
 a4c72df08b72442954a28e52541ecc00 *NAMESPACE
-e9978f4e15666e5f3e4f2404e8dc2e76 *NEWS.md
+96abc332be5649356fde87d70b5fc93a *NEWS.md
 db65711498e29f91f4ba41198d6b9114 *R/BayesMallows.R
 93a167fa7be5f30564bc9261e25f1957 *R/RcppExports.R
 e53690ee9ebb6033d5322ef657264670 *R/acceptance_ratio.R
@@ -46,7 +46,7 @@ c64acdba8f8e3403d99f0f06fe9d0ca1 *R/smc_misc.R
 1150c20f4429b6d64c63581bc12b61ba *R/tidy_mcmc.R
 0e3014b0aae6f3755cee72cea72815fd *R/update_mallows.R
 a633b853517186a91aa829105bcdd214 *R/validation_functions.R
-b00bf89c6348c5e9c5b46d7b0ae3820d *build/partial.rdb
+28d3dbfc9792d9005a34bf3f4ff7268a *build/partial.rdb
 10e5ca83d5d1140e484fa734e64dc145 *build/vignette.rds
 a0f101d2398611b83476423acd528939 *data/beach_preferences.rda
 f39158461696ef0450ac13023bdcd7c8 *data/bernoulli_data.rda
@@ -214,7 +214,7 @@ f38e4a30cf086261519ebf5aa81ae9a1 *tests/testthat/test-heat_plot.R
 54b02fd90b29c179d805a9cca47fbfb8 *tests/testthat/test-set_smc_options.R
 1178db54ff5b6ef3bbd6c2ea41efc22b *tests/testthat/test-setup_rank_data.R
 688c0b8112d78cd6124013c073988fef *tests/testthat/test-smc_pairwise.R
-396315827ef8fe876fca075abd860e34 *tests/testthat/test-smc_update_correctness.R
+11a9ddbbbdcd91695a9eeb0d6f341455 *tests/testthat/test-smc_update_correctness.R
 0951977febb4488a514dfd451f0be765 *tests/testthat/test-update_mallows.R
 3775092bf5841151316011be115dd7e7 *vignettes/BayesMallows.Rmd
 ad87c67fc905ea5c0828134b7134a437 *vignettes/SMC-Mallows.Rmd

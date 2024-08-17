@@ -1,6 +1,6 @@
-2e012963379f514474c62dd8e8cc2fbc *DESCRIPTION
+8a8897d9948730c8ae21b89dc420149f *DESCRIPTION
 a4c72df08b72442954a28e52541ecc00 *NAMESPACE
-96abc332be5649356fde87d70b5fc93a *NEWS.md
+7944c3a0fc969af5709dedf3000cc249 *NEWS.md
 db65711498e29f91f4ba41198d6b9114 *R/BayesMallows.R
 93a167fa7be5f30564bc9261e25f1957 *R/RcppExports.R
 e53690ee9ebb6033d5322ef657264670 *R/acceptance_ratio.R
@@ -22,7 +22,7 @@ d66919dc6c07ee4246a0134d4468f45e *R/compute_consensus.R
 211dc5696fbcab184c6bf282f6897176 *R/generate_initial_ranking.R
 1c5a9147116e7f8c27d16d2e282eba7c *R/generate_transitive_closure.R
 3e1d7d9354b190bc6093dc35d8940ad2 *R/get_cardinalities.R
-2a22c34e5c17e882ab08ed42dcf6793b *R/get_mallows_loglik.R
+b41f91b0d50fe4e01b65ea6fc237cbfe *R/get_mallows_loglik.R
 190fe0564b1e4713560666fc7d90ac0f *R/get_transitive_closure.R
 0addd11cd3b73b30ff50e81dff0b3fb0 *R/heat_plot.R
 bea1aa09dda20b0f15e5360d10550067 *R/misc.R
@@ -46,8 +46,8 @@ c64acdba8f8e3403d99f0f06fe9d0ca1 *R/smc_misc.R
 1150c20f4429b6d64c63581bc12b61ba *R/tidy_mcmc.R
 0e3014b0aae6f3755cee72cea72815fd *R/update_mallows.R
 a633b853517186a91aa829105bcdd214 *R/validation_functions.R
-28d3dbfc9792d9005a34bf3f4ff7268a *build/partial.rdb
-10e5ca83d5d1140e484fa734e64dc145 *build/vignette.rds
+fef0909903f55d4f66c76506cba2793b *build/partial.rdb
+caa6a71c57a7af01e1251dc098de30f2 *build/vignette.rds
 a0f101d2398611b83476423acd528939 *data/beach_preferences.rda
 f39158461696ef0450ac13023bdcd7c8 *data/bernoulli_data.rda
 acba540eed471151dd07ffdf360a7109 *data/cluster_data.rda
@@ -58,11 +58,11 @@ a36735c2425fb1cb3fc06f37db9e707b *data/potato_visual.rda
 5c54fae701360f43495a635888a08a34 *inst/CITATION
 76113951edbfe0783596d90919bbd2c1 *inst/REFERENCES.bib
 3775092bf5841151316011be115dd7e7 *inst/doc/BayesMallows.Rmd
-263f49cc09972354958d17c0bee31b9f *inst/doc/BayesMallows.html
+79c69266f849f2600c6b289b8f8fe142 *inst/doc/BayesMallows.html
 ad87c67fc905ea5c0828134b7134a437 *inst/doc/SMC-Mallows.Rmd
-953d38a9c283fe1f38e53aa4f7e093d9 *inst/doc/SMC-Mallows.html
+46147ae93021c843c902bb0868c715f0 *inst/doc/SMC-Mallows.html
 f806633c3726ddd1a1e0c6788003d3a9 *inst/doc/parallel_chains.Rmd
-008462cc612a2a8bcba781e8a1539205 *inst/doc/parallel_chains.html
+76eb2e595fca073eb966379e850fcb71 *inst/doc/parallel_chains.html
 29142dcb178c44534642d6e0138a0668 *inst/examples/assess_convergence_example.R
 c12b2681395182f04ea47b6a2b3f5013 *inst/examples/burnin_example.R
 d9f2184526e36850c88385c8439bda85 *inst/examples/compute_consensus_example.R
@@ -145,7 +145,7 @@ b8d09d3f7048c02a62565aa8f0c122e5 *man/setup_rank_data.Rd
 09ad98e0c925d2722f685452e7c5dc22 *src/classes.h
 695dc7f25d11e057de27df8bd2b96be8 *src/clustering_class.cpp
 da6635e9e99a74ee7995b12809c63070 *src/data_class.cpp
-85a0dfcdbd7fe22ebc8718c5ebc55aaf *src/distances.cpp
+0ea0f4174c1c793d984c96bef224ad36 *src/distances.cpp
 439fa7fc0b69d66a49ad201bd725747d *src/distances.h
 3a3e36ce987aae2f7507d34390b43905 *src/distributions.cpp
 d9d2ebbc128946aeda381cccd32ba31d *src/distributions.h
@@ -190,11 +190,11 @@ e15fd6f15b417d95be39f68815935b4c *tests/testthat/test-assign_cluster.R
 75a1bed8b22e3b4aed2fcabb4d597b47 *tests/testthat/test-compute_mallows_sequentially.R
 40c43f0e4303d9dd17e9851b883281f1 *tests/testthat/test-compute_observation_frequency.R
 be8bddd8b592cfed43f352ac2717e23b *tests/testthat/test-compute_posterior_intervals.R
-7dc84a23a67bddb1277974af72c8a869 *tests/testthat/test-compute_rank_distance.R
+511ac2d86d6d51f56d9c8436b410913c *tests/testthat/test-compute_rank_distance.R
 9522a8a6159655be79f75171657460bf *tests/testthat/test-estimate_partition_function.R
 d3fb89bcfa3cec9b2a5b18aace557e47 *tests/testthat/test-expected_dist.R
 802ac9b2e3835e910f8c355d112fc640 *tests/testthat/test-get_cardinalities.R
-b361d618bebc0358893759730e0e6dfb *tests/testthat/test-get_mallows_loglik.R
+2409fddddab1db6d206320617ef207e7 *tests/testthat/test-get_mallows_loglik.R
 3b09d8e6ad38b4f92897d581156f8e4f *tests/testthat/test-get_transitive_closure.R
 f38e4a30cf086261519ebf5aa81ae9a1 *tests/testthat/test-heat_plot.R
 950d603eece7131d8ed90588b5497fe3 *tests/testthat/test-mcmc_correctness.R

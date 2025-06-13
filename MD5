@@ -1,6 +1,6 @@
-ca0caa0ffaa60fa23f634c3dbed0a618 *DESCRIPTION
+1866b1c8bf9438f2722376ba78c65d76 *DESCRIPTION
 a4c72df08b72442954a28e52541ecc00 *NAMESPACE
-58a1dd756a9b3f2fe75205a3738e8816 *NEWS.md
+89992f9efb0f5316c32c97748c213ac3 *NEWS.md
 db65711498e29f91f4ba41198d6b9114 *R/BayesMallows.R
 93a167fa7be5f30564bc9261e25f1957 *R/RcppExports.R
 e53690ee9ebb6033d5322ef657264670 *R/acceptance_ratio.R
@@ -46,8 +46,8 @@ c64acdba8f8e3403d99f0f06fe9d0ca1 *R/smc_misc.R
 e4d3d3ec63fd1a22d49274667671adcb *R/tidy_mcmc.R
 0e3014b0aae6f3755cee72cea72815fd *R/update_mallows.R
 a633b853517186a91aa829105bcdd214 *R/validation_functions.R
-b1de47dd241002c48f34733d70d3a82e *build/partial.rdb
-a0c5ddd89e59115370732202d7c70975 *build/vignette.rds
+0fb1f71a00e09b7c0e89de5b66428609 *build/partial.rdb
+1c68d24fbb3c63044df1155f179fd580 *build/vignette.rds
 a0f101d2398611b83476423acd528939 *data/beach_preferences.rda
 f39158461696ef0450ac13023bdcd7c8 *data/bernoulli_data.rda
 acba540eed471151dd07ffdf360a7109 *data/cluster_data.rda
@@ -181,7 +181,7 @@ ee5dac25cea4e93aa86405e5f17c8a57 *tests/testthat.R
 fad6b9f84ce3f235656793fced51f887 *tests/testthat/_snaps/print.md
 b84efe5e81ec9b06d463526b1eac1f79 *tests/testthat/_snaps/setup_rank_data.md
 4176ba48c56c1a700082a728d7d7771b *tests/testthat/test-acceptance_ratio.R
-3c7ef9d055d818a18097b73022756eee *tests/testthat/test-assess_convergence.R
+9a2dd8d10abe369671983062ac7a7bf0 *tests/testthat/test-assess_convergence.R
 6e02d1b7af34507ef88a9a56182339c8 *tests/testthat/test-assign_cluster.R
 42af04db9b4917970df4eded9d042f85 *tests/testthat/test-burnin.R
 352f54a794bdcea15ca05ba815f10a20 *tests/testthat/test-compute_consensus.R
@@ -199,9 +199,9 @@ d3fb89bcfa3cec9b2a5b18aace557e47 *tests/testthat/test-expected_dist.R
 f38e4a30cf086261519ebf5aa81ae9a1 *tests/testthat/test-heat_plot.R
 950d603eece7131d8ed90588b5497fe3 *tests/testthat/test-mcmc_correctness.R
 4d26634933f0a9e32e9018a9e6c4523c *tests/testthat/test-misc_functions.R
-4ba3241ebc22c83a3ac4ef073ae775bc *tests/testthat/test-plot.R
-8da60414733f5c33da9221d3b573bd3e *tests/testthat/test-plot_elbow.R
-f03cdc630560ffcee4c6c43568683fe8 *tests/testthat/test-plot_top_k.R
+f8f27e8a55d401b4613cf17fb1f87267 *tests/testthat/test-plot.R
+f852fa9d02a708c93d22967be782bc9d *tests/testthat/test-plot_elbow.R
+bb064f2b2b3a2c412c455bcb66afe53d *tests/testthat/test-plot_top_k.R
 983b4949f711c4f0fb9e6cb6351f5f1b *tests/testthat/test-print.R
 977eabadc7b538a3cd1c7e1863d8a05b *tests/testthat/test-rank_conversion.R
 1e0834769305fcd6710a70a34b83fd8b *tests/testthat/test-resampling.R

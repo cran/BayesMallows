@@ -1,6 +1,6 @@
-4bde55cf9b1bdb369adf1c906b441d62 *DESCRIPTION
+dbd26f5e1abf41abdff78b2b1ce3ac9f *DESCRIPTION
 a4c72df08b72442954a28e52541ecc00 *NAMESPACE
-e9bd9135e0d18161a4deb2053cafc9bc *NEWS.md
+cc4dc2f7268487052993b1428577857a *NEWS.md
 db65711498e29f91f4ba41198d6b9114 *R/BayesMallows.R
 93a167fa7be5f30564bc9261e25f1957 *R/RcppExports.R
 e53690ee9ebb6033d5322ef657264670 *R/acceptance_ratio.R
@@ -24,9 +24,9 @@ e54969c7955fdb47818e2a58795cfbf7 *R/data.R
 3e1d7d9354b190bc6093dc35d8940ad2 *R/get_cardinalities.R
 b41f91b0d50fe4e01b65ea6fc237cbfe *R/get_mallows_loglik.R
 190fe0564b1e4713560666fc7d90ac0f *R/get_transitive_closure.R
-0addd11cd3b73b30ff50e81dff0b3fb0 *R/heat_plot.R
+54396b902f6b2c7caeaeddfa592f9912 *R/heat_plot.R
 bea1aa09dda20b0f15e5360d10550067 *R/misc.R
-04af5a2df0608104c64ae9cc598c39b9 *R/plot.R
+91167faee819d74f888fb87f30867f2d *R/plot.R
 81910e9461bf9bf7b59964d16d6c7e4d *R/plot_elbow.R
 96df23ebfb579a4d256cce04a02a2f06 *R/plot_top_k.R
 692e30261f8c60d032c8cdc8be5d4781 *R/predict_top_k.R
@@ -43,10 +43,10 @@ e53ebfd3f9e07cdb91113506bb5a2519 *R/set_model_options.R
 eb3d7f5d5ae026bcc07d953f6f415c0e *R/setup_rank_data.R
 c64acdba8f8e3403d99f0f06fe9d0ca1 *R/smc_misc.R
 0ab2a8f93f203117348c23a918178c98 *R/sysdata.rda
-e4d3d3ec63fd1a22d49274667671adcb *R/tidy_mcmc.R
+3e11a51fa01da3d957251930e2747b71 *R/tidy_mcmc.R
 0e3014b0aae6f3755cee72cea72815fd *R/update_mallows.R
 a633b853517186a91aa829105bcdd214 *R/validation_functions.R
-4bff7737af68b1ce71dbb4a0c52edc28 *build/partial.rdb
+38f7cd69970cd185607fa2e22cbe85ba *build/partial.rdb
 34e3d68ed8d5e261b3ba6c11978077de *build/vignette.rds
 a0f101d2398611b83476423acd528939 *data/beach_preferences.rda
 f39158461696ef0450ac13023bdcd7c8 *data/bernoulli_data.rda
@@ -59,11 +59,11 @@ a36735c2425fb1cb3fc06f37db9e707b *data/potato_visual.rda
 5c54fae701360f43495a635888a08a34 *inst/CITATION
 76113951edbfe0783596d90919bbd2c1 *inst/REFERENCES.bib
 3775092bf5841151316011be115dd7e7 *inst/doc/BayesMallows.Rmd
-b0a3d459f657bb7efb500b6eea519c30 *inst/doc/BayesMallows.html
+f5a24d5897d83340466ec4ac795707e4 *inst/doc/BayesMallows.html
 ad87c67fc905ea5c0828134b7134a437 *inst/doc/SMC-Mallows.Rmd
-102de7da32d1ee17919b3e45e8bd56bb *inst/doc/SMC-Mallows.html
+637c95643b5be500e04dc05744e0a57a *inst/doc/SMC-Mallows.html
 f806633c3726ddd1a1e0c6788003d3a9 *inst/doc/parallel_chains.Rmd
-637690ecf4f9b4966ab56ac5cb51f638 *inst/doc/parallel_chains.html
+36438c18096d15117392080f0a0324f1 *inst/doc/parallel_chains.html
 29142dcb178c44534642d6e0138a0668 *inst/examples/assess_convergence_example.R
 c12b2681395182f04ea47b6a2b3f5013 *inst/examples/burnin_example.R
 d9f2184526e36850c88385c8439bda85 *inst/examples/compute_consensus_example.R
@@ -79,7 +79,7 @@ c89ab7d15291f78695c5ff1d741a0a43 *inst/examples/estimate_partition_function_exam
 8dfce1cf6219e2fec374046af3287fba *inst/examples/get_acceptance_ratios_example.R
 57bb70593abb9e89a990b166f1b05a7a *inst/examples/get_cardinalities_example.R
 d6113a3ecdc5b04c4dcc1e62f31a2813 *inst/examples/get_mallows_loglik_example.R
-143d4313319a470ad348996041840f2b *inst/examples/heat_plot_example.R
+388b2bbe742587fba7dcc09435608314 *inst/examples/heat_plot_example.R
 b50565b6d6bf483d2632a9a577b40f4d *inst/examples/label_switching_example.R
 21dd472ccddb2e086e9b602061028f61 *inst/examples/plot.BayesMallows_example.R
 923bde5db1322fc5991884105a3a43d3 *inst/examples/plot_top_k_example.R
@@ -113,7 +113,7 @@ f238503485e7157c254833ab6ebe9cc9 *man/get_acceptance_ratios.Rd
 199bc830606910e60c4388e6145c8f29 *man/get_cardinalities.Rd
 f7dd5f8f663bc35ff724129be5f199dd *man/get_mallows_loglik.Rd
 d1035e13d0e8fd4bed990a321288400a *man/get_transitive_closure.Rd
-d54d26e2eb565f74f294cba8f576bd80 *man/heat_plot.Rd
+debc76333db25e5c34d11e9af895ab4e *man/heat_plot.Rd
 378fe47f0f6e51f5bd4dd9c8ee161bee *man/plot.BayesMallows.Rd
 d3482706d4cd52899a2f422a57133755 *man/plot.SMCMallows.Rd
 e59d072c4d7f9c2d74a64aba4955e7d4 *man/plot_elbow.Rd
@@ -184,8 +184,9 @@ fad6b9f84ce3f235656793fced51f887 *tests/testthat/_snaps/print.md
 b84efe5e81ec9b06d463526b1eac1f79 *tests/testthat/_snaps/setup_rank_data.md
 4176ba48c56c1a700082a728d7d7771b *tests/testthat/test-acceptance_ratio.R
 9a2dd8d10abe369671983062ac7a7bf0 *tests/testthat/test-assess_convergence.R
-6e02d1b7af34507ef88a9a56182339c8 *tests/testthat/test-assign_cluster.R
+56ab3743a00d3dbc30f98a57076d5e54 *tests/testthat/test-assign_cluster.R
 42af04db9b4917970df4eded9d042f85 *tests/testthat/test-burnin.R
+d87f549adfd240478ccaeaef036d6e4c *tests/testthat/test-cluster_assignment_thinning.R
 352f54a794bdcea15ca05ba815f10a20 *tests/testthat/test-compute_consensus.R
 0c8abd648cbff33e6bea6da47215f749 *tests/testthat/test-compute_exact_partition_function.R
 e33a647f2c752c675f45a05c252b8e26 *tests/testthat/test-compute_mallows.R
@@ -198,7 +199,7 @@ d3fb89bcfa3cec9b2a5b18aace557e47 *tests/testthat/test-expected_dist.R
 802ac9b2e3835e910f8c355d112fc640 *tests/testthat/test-get_cardinalities.R
 2409fddddab1db6d206320617ef207e7 *tests/testthat/test-get_mallows_loglik.R
 3b09d8e6ad38b4f92897d581156f8e4f *tests/testthat/test-get_transitive_closure.R
-f38e4a30cf086261519ebf5aa81ae9a1 *tests/testthat/test-heat_plot.R
+73414fb3a2011c66c2a54e6486c3f5b8 *tests/testthat/test-heat_plot.R
 950d603eece7131d8ed90588b5497fe3 *tests/testthat/test-mcmc_correctness.R
 4d26634933f0a9e32e9018a9e6c4523c *tests/testthat/test-misc_functions.R
 f8f27e8a55d401b4613cf17fb1f87267 *tests/testthat/test-plot.R

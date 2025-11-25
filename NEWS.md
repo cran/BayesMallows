@@ -1,3 +1,11 @@
+# BayesMallows 2.2.6
+
+* Fixed bug in assign_cluster() with burn-in and thinning. Issue #433 on GitHub.
+* heat_plot() function now works with clusters.
+* An error in plot(mod, parameter = "rho") when run with parallel chains has 
+  been fixed. It previously showed unnormalized probabilities, but now shows
+  normalized probabilities.
+
 # BayesMallows 2.2.5
 
 * Added sounds dataset from Barrett and Crispino (2018).

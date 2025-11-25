@@ -137,7 +137,7 @@ plot_rho <- function(x, items) {
 
   df <- x$rho[x$rho$iteration > burnin(x) & x$rho$item %in% items, , drop = FALSE]
   df1 <- aggregate(iteration ~ item + cluster + value, data = df, FUN = length)
-  df1$pct <- df1$iteration / length(unique(df$iteration))
+  df1$pct <- df1$iteration / length(unique(df$iteration)) / length(unique(df$chain))
 
   # Finally create the plot
   p <- ggplot2::ggplot(df1, ggplot2::aes(x = factor(.data$value), y = .data$pct)) +
@@ -151,5 +151,5 @@ plot_rho <- function(x, items) {
     p <- p + ggplot2::facet_wrap(~ .data$cluster + .data$item)
   }
 
-  return(p)
+  p
 }

@@ -1,7 +1,7 @@
 Package: BayesMallows
 Type: Package
 Title: Bayesian Preference Learning with the Mallows Rank Model
-Version: 2.2.6
+Version: 2.2.7
 Authors@R: c(person("Oystein", "Sorensen",
                     email = "oystein.sorensen.1985@gmail.com",
                     role = c("aut", "cre"),
@@ -58,7 +58,7 @@ VignetteBuilder: knitr, rmarkdown
 RdMacros: Rdpack
 Config/testthat/edition: 3
 NeedsCompilation: yes
-Packaged: 2025-11-24 11:16:08 UTC; oyss
+Packaged: 2026-01-20 10:51:22 UTC; oyss
 Author: Oystein Sorensen [aut, cre] (ORCID:
     <https://orcid.org/0000-0003-0724-3542>),
   Waldir Leoncio [aut],
@@ -69,4 +69,4 @@ Author: Oystein Sorensen [aut, cre] (ORCID:
   Luca Tardella [aut],
   Anja Stein [aut]
 Repository: CRAN
-Date/Publication: 2025-11-25 06:11:08 UTC
+Date/Publication: 2026-01-20 11:20:08 UTC

@@ -1,3 +1,9 @@
+# BayesMallows 2.2.7
+
+* A bug in the computation of acceptance ratios has been fixed. Issue #436 on 
+  GitHub. Thanks to Jonas Nordstrøm for discovering.
+* Documentation of return value added to get_acceptance_ratios().
+
 # BayesMallows 2.2.6
 
 * Fixed bug in assign_cluster() with burn-in and thinning. Issue #433 on GitHub.

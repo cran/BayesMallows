@@ -1,6 +1,6 @@
-f61afd166710703c5dc9274bfc3bd96a *DESCRIPTION
+5d2fd87b0189b64c0fc2899e732b4f2c *DESCRIPTION
 a4c72df08b72442954a28e52541ecc00 *NAMESPACE
-e75875c4590b935bd7243dc8d16fb724 *NEWS.md
+88357c0e446dc6358ca1bda3b9d2304f *NEWS.md
 db65711498e29f91f4ba41198d6b9114 *R/BayesMallows.R
 93a167fa7be5f30564bc9261e25f1957 *R/RcppExports.R
 f7422dce81b4ec9de8aa6eeab73d7812 *R/acceptance_ratio.R
@@ -37,7 +37,7 @@ c8b2b0ae89d4cd38fbd0962fb45b0034 *R/print.R
 c3adec9bca8a7be04581fa91db27eda8 *R/set_compute_options.R
 323889d8e54c4a0d7f8cb2914e9c4677 *R/set_initial_values.R
 e53ebfd3f9e07cdb91113506bb5a2519 *R/set_model_options.R
-129ff82f984df32680e5a950227d2cb8 *R/set_priors.R
+7818a972b2ef61f9c72c607c6289bf45 *R/set_priors.R
 5d160b578ce96c0f255685e6cc5011c7 *R/set_progress_report.R
 5a2d5c76566e5040f736cfa51cfdb2c3 *R/set_smc_options.R
 eb3d7f5d5ae026bcc07d953f6f415c0e *R/setup_rank_data.R
@@ -46,8 +46,8 @@ c64acdba8f8e3403d99f0f06fe9d0ca1 *R/smc_misc.R
 3e11a51fa01da3d957251930e2747b71 *R/tidy_mcmc.R
 0e3014b0aae6f3755cee72cea72815fd *R/update_mallows.R
 a633b853517186a91aa829105bcdd214 *R/validation_functions.R
-d3baa06598386909523a7dc0e361f4b3 *build/partial.rdb
-db49961e7b0e7c5e2365c6ee3ab2d8fc *build/vignette.rds
+4af1d1e8120508fa740d123378bf7c06 *build/partial.rdb
+491136aba8fa18e2aa5b2237567632a9 *build/vignette.rds
 a0f101d2398611b83476423acd528939 *data/beach_preferences.rda
 f39158461696ef0450ac13023bdcd7c8 *data/bernoulli_data.rda
 acba540eed471151dd07ffdf360a7109 *data/cluster_data.rda
@@ -59,11 +59,11 @@ a36735c2425fb1cb3fc06f37db9e707b *data/potato_visual.rda
 5c54fae701360f43495a635888a08a34 *inst/CITATION
 76113951edbfe0783596d90919bbd2c1 *inst/REFERENCES.bib
 3775092bf5841151316011be115dd7e7 *inst/doc/BayesMallows.Rmd
-f5a24d5897d83340466ec4ac795707e4 *inst/doc/BayesMallows.html
+c86787a7ebde9951002355f0ab086b5a *inst/doc/BayesMallows.html
 ad87c67fc905ea5c0828134b7134a437 *inst/doc/SMC-Mallows.Rmd
-637c95643b5be500e04dc05744e0a57a *inst/doc/SMC-Mallows.html
+5d95be7ca4a8bac4c3fffef169e02bb0 *inst/doc/SMC-Mallows.html
 f806633c3726ddd1a1e0c6788003d3a9 *inst/doc/parallel_chains.Rmd
-36438c18096d15117392080f0a0324f1 *inst/doc/parallel_chains.html
+adaed970a6b878bad124d157327fbbd6 *inst/doc/parallel_chains.html
 29142dcb178c44534642d6e0138a0668 *inst/examples/assess_convergence_example.R
 c12b2681395182f04ea47b6a2b3f5013 *inst/examples/burnin_example.R
 d9f2184526e36850c88385c8439bda85 *inst/examples/compute_consensus_example.R
@@ -129,7 +129,7 @@ daf5237997cf360109a5734d1a931a31 *man/sample_prior.Rd
 39f97a41d587f0e0253454395d065cad *man/set_compute_options.Rd
 477552287c75054cc2c0b3ae6fd426fc *man/set_initial_values.Rd
 ceeba219aa285860a74a992312cd5d41 *man/set_model_options.Rd
-f2224464dda92690e26a0be83b132297 *man/set_priors.Rd
+a84e01c28502bf2d48f1f3b379962169 *man/set_priors.Rd
 847382cbbe9099cf2f3df645a7c34221 *man/set_progress_report.Rd
 bff6d4f25f7bbf734f37ee81d4b4cdd2 *man/set_smc_options.Rd
 b8d09d3f7048c02a62565aa8f0c122e5 *man/setup_rank_data.Rd
@@ -147,7 +147,7 @@ adbd98a6ab1730c105dbff0a1bed0d28 *man/sounds.Rd
 09ad98e0c925d2722f685452e7c5dc22 *src/classes.h
 695dc7f25d11e057de27df8bd2b96be8 *src/clustering_class.cpp
 da6635e9e99a74ee7995b12809c63070 *src/data_class.cpp
-0ea0f4174c1c793d984c96bef224ad36 *src/distances.cpp
+dab81496c5ef6579a5b532d1115e95c5 *src/distances.cpp
 439fa7fc0b69d66a49ad201bd725747d *src/distances.h
 3a3e36ce987aae2f7507d34390b43905 *src/distributions.cpp
 d9d2ebbc128946aeda381cccd32ba31d *src/distributions.h
@@ -155,7 +155,7 @@ abb77d2c5911f0c2fcf5e9b0317cec47 *src/importance_sampling.cpp
 409fe70eec127b18337823d32a5acebd *src/missing_data.h
 67d1a58f4e1187c6ac1a611fc3840cb3 *src/missing_data_functions.cpp
 effb301fec6c3c5ef995d78fede1bad6 *src/parallel_utils.h
-dfc8c93d1b53743da99407f307b2fba3 *src/parameters_class.cpp
+41c7c695eccaf8035234a732735a7ed6 *src/parameters_class.cpp
 09ccb19c4b078331278dea51d9acdbe0 *src/particles.cpp
 81917494ac100ab172d8df0ce5d6b47c *src/particles.h
 3623f8684b572dcbb80b156110573060 *src/partition_functions.cpp
@@ -164,7 +164,7 @@ cdf0bf333bf6a20947f651245050ed62 *src/progress_reporter.cpp
 46d7beff4ee81cfbdab923d605157733 *src/progress_reporter.h
 fcaa2bfbb65458d80d5fce8148b94df6 *src/proposal_functions.cpp
 2d0406126cd01fd69647f651f4701b76 *src/proposal_functions.h
-bd5e7395491f6380aedef9555f33e43b *src/rank_proposal.cpp
+805ed6f17ec9799805c6ba243bc34bf0 *src/rank_proposal.cpp
 9566e4303e42c3e59a706182856d3c0b *src/rank_proposal.h
 31b9c62d5559b002c0eab9688fbd7386 *src/resampler.cpp
 84679117251470429f35d28035ee0f97 *src/resampler.h
@@ -185,6 +185,7 @@ b84efe5e81ec9b06d463526b1eac1f79 *tests/testthat/_snaps/setup_rank_data.md
 666bb27c07acc3b6de377086c5f6abe6 *tests/testthat/test-acceptance_ratio.R
 9a2dd8d10abe369671983062ac7a7bf0 *tests/testthat/test-assess_convergence.R
 56ab3743a00d3dbc30f98a57076d5e54 *tests/testthat/test-assign_cluster.R
+5ff9378258ba23ecffa91b71cde3d128 *tests/testthat/test-bernoulli_error_model.R
 42af04db9b4917970df4eded9d042f85 *tests/testthat/test-burnin.R
 d87f549adfd240478ccaeaef036d6e4c *tests/testthat/test-cluster_assignment_thinning.R
 352f54a794bdcea15ca05ba815f10a20 *tests/testthat/test-compute_consensus.R
@@ -200,7 +201,7 @@ d3fb89bcfa3cec9b2a5b18aace557e47 *tests/testthat/test-expected_dist.R
 2409fddddab1db6d206320617ef207e7 *tests/testthat/test-get_mallows_loglik.R
 3b09d8e6ad38b4f92897d581156f8e4f *tests/testthat/test-get_transitive_closure.R
 73414fb3a2011c66c2a54e6486c3f5b8 *tests/testthat/test-heat_plot.R
-950d603eece7131d8ed90588b5497fe3 *tests/testthat/test-mcmc_correctness.R
+2f59a7f3c3248fd590c51d15d633511b *tests/testthat/test-mcmc_correctness.R
 4d26634933f0a9e32e9018a9e6c4523c *tests/testthat/test-misc_functions.R
 f8f27e8a55d401b4613cf17fb1f87267 *tests/testthat/test-plot.R
 f852fa9d02a708c93d22967be782bc9d *tests/testthat/test-plot_elbow.R
